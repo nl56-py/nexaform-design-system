@@ -1,0 +1,15 @@
+<svg width="760" height="560" viewBox="0 0 760 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="760" height="560" rx="32" fill="#EAF4FF"/>
+  <rect x="36" y="36" width="688" height="488" rx="28" fill="#FFFFFF" stroke="#D8E4F4"/>
+  <path d="M98 372C168 310 224 278 292 278C382 278 402 378 494 378C558 378 612 340 662 292" stroke="#5C59E4" stroke-width="8" stroke-linecap="round"/>
+  <path d="M98 422C176 362 236 334 302 334C388 334 414 430 500 430C554 430 612 404 662 362" stroke="#386CF4" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+  <rect x="96" y="102" width="206" height="122" rx="24" fill="#F7F7FA" stroke="#D8E4F4"/>
+  <text x="126" y="140" fill="#5C59E4" font-family="Arial, sans-serif" font-size="14" font-weight="700">INSIGHTS</text>
+  <text x="126" y="176" fill="#171A2B" font-family="Arial, sans-serif" font-size="26" font-weight="700">Ideas</text>
+  <rect x="328" y="102" width="148" height="122" rx="24" fill="#F7F7FA" stroke="#D8E4F4"/>
+  <text x="358" y="140" fill="#386CF4" font-family="Arial, sans-serif" font-size="14" font-weight="700">CONTENT</text>
+  <text x="358" y="176" fill="#171A2B" font-family="Arial, sans-serif" font-size="26" font-weight="700">Posts</text>
+  <rect x="502" y="102" width="162" height="122" rx="24" fill="#F7F7FA" stroke="#D8E4F4"/>
+  <text x="532" y="140" fill="#E9436F" font-family="Arial, sans-serif" font-size="14" font-weight="700">STRATEGY</text>
+  <text x="532" y="176" fill="#171A2B" font-family="Arial, sans-serif" font-size="26" font-weight="700">Direction</text>
+</svg>

@@ -1,0 +1,15 @@
+<svg width="760" height="560" viewBox="0 0 760 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="760" height="560" rx="32" fill="#EAF4FF"/>
+  <rect x="34" y="34" width="692" height="492" rx="28" fill="#FFFFFF" stroke="#D8E4F4"/>
+  <rect x="92" y="96" width="240" height="150" rx="24" fill="#FFF4F7" stroke="#F1D6DE"/>
+  <rect x="428" y="96" width="240" height="150" rx="24" fill="#EEF5FF" stroke="#D8E4F4"/>
+  <rect x="260" y="314" width="240" height="150" rx="24" fill="#F7F7FA" stroke="#D8E4F4"/>
+  <text x="124" y="136" fill="#E9436F" font-family="Arial, sans-serif" font-size="14" font-weight="700">CASE STUDY</text>
+  <text x="124" y="174" fill="#171A2B" font-family="Arial, sans-serif" font-size="25" font-weight="700">Dashboards</text>
+  <text x="460" y="136" fill="#386CF4" font-family="Arial, sans-serif" font-size="14" font-weight="700">CASE STUDY</text>
+  <text x="460" y="174" fill="#171A2B" font-family="Arial, sans-serif" font-size="25" font-weight="700">Automation</text>
+  <text x="292" y="354" fill="#5C59E4" font-family="Arial, sans-serif" font-size="14" font-weight="700">CASE STUDY</text>
+  <text x="292" y="392" fill="#171A2B" font-family="Arial, sans-serif" font-size="25" font-weight="700">Platforms</text>
+  <path d="M332 246L378 314" stroke="#5C59E4" stroke-width="4" stroke-linecap="round"/>
+  <path d="M428 246L382 314" stroke="#386CF4" stroke-width="4" stroke-linecap="round"/>
+</svg>

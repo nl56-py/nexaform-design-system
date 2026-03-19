@@ -1,0 +1,20 @@
+<svg width="760" height="560" viewBox="0 0 760 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="760" height="560" rx="32" fill="#EAF4FF"/>
+  <rect x="28" y="28" width="704" height="504" rx="28" fill="#FFFFFF" stroke="#D8E4F4"/>
+  <rect x="76" y="92" width="260" height="148" rx="24" fill="#F7F7FA" stroke="#D8E4F4"/>
+  <text x="106" y="130" fill="#5C59E4" font-family="Arial, sans-serif" font-size="14" font-weight="700">SOFTWARE SERVICES</text>
+  <text x="106" y="168" fill="#171A2B" font-family="Arial, sans-serif" font-size="28" font-weight="700">Build</text>
+  <text x="106" y="196" fill="#5C667A" font-family="Arial, sans-serif" font-size="15">Web applications, custom systems,</text>
+  <text x="106" y="218" fill="#5C667A" font-family="Arial, sans-serif" font-size="15">backend architecture, deployment.</text>
+  <rect x="424" y="92" width="260" height="148" rx="24" fill="#F7F7FA" stroke="#D8E4F4"/>
+  <text x="454" y="130" fill="#386CF4" font-family="Arial, sans-serif" font-size="14" font-weight="700">AUTOMATION SERVICES</text>
+  <text x="454" y="168" fill="#171A2B" font-family="Arial, sans-serif" font-size="28" font-weight="700">Optimize</text>
+  <text x="454" y="196" fill="#5C667A" font-family="Arial, sans-serif" font-size="15">AI consulting, workflow design,</text>
+  <text x="454" y="218" fill="#5C667A" font-family="Arial, sans-serif" font-size="15">integrations, support systems.</text>
+  <path d="M206 260V330H554V260" stroke="#5C59E4" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="206" cy="260" r="10" fill="#5C59E4"/>
+  <circle cx="554" cy="260" r="10" fill="#386CF4"/>
+  <rect x="178" y="352" width="404" height="128" rx="28" fill="#EEF5FF" stroke="#D8E4F4"/>
+  <text x="214" y="397" fill="#171A2B" font-family="Arial, sans-serif" font-size="26" font-weight="700">One delivery stack</text>
+  <text x="214" y="430" fill="#5C667A" font-family="Arial, sans-serif" font-size="16">Start with strategy, move into build, then support and improve.</text>
+</svg>

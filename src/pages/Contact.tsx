@@ -3,18 +3,43 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import PageHero from "@/components/PageHero";
 import SectionWrapper, { FadeUp } from "@/components/SectionWrapper";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, MapPin } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const [form, setForm] = useState({
     name: "", email: "", company: "", projectType: "", budget: "", timeline: "", message: "",
   });
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Thank you! We'll be in touch soon.");
-    setForm({ name: "", email: "", company: "", projectType: "", budget: "", timeline: "", message: "" });
+    setSubmitting(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("submit-contact", {
+        body: {
+          name: form.name,
+          email: form.email,
+          company: form.company,
+          projectType: form.projectType,
+          budget: form.budget,
+          timeline: form.timeline,
+          message: form.message,
+        },
+      });
+
+      if (error) throw error;
+
+      toast.success("Thank you! We'll be in touch soon.");
+      setForm({ name: "", email: "", company: "", projectType: "", budget: "", timeline: "", message: "" });
+    } catch (err) {
+      console.error("Submit error:", err);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputClass = "w-full bg-secondary border border-border/50 rounded-lg px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-200";
@@ -92,8 +117,8 @@ const Contact = () => {
                   <label className={labelClass}>Message</label>
                   <textarea className={`${inputClass} min-h-[120px] resize-y`} placeholder="Tell us what you want to build, what challenge you are facing, and what kind of support you need." value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} required />
                 </div>
-                <Button type="submit" variant="gradient" size="lg" className="w-full md:w-auto">
-                  Send Inquiry
+                <Button type="submit" variant="gradient" size="lg" className="w-full md:w-auto" disabled={submitting}>
+                  {submitting ? "Sending..." : "Send Inquiry"}
                 </Button>
               </form>
             </div>

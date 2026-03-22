@@ -6,6 +6,8 @@ import CaseStudyCard from "@/components/CaseStudyCard";
 import WaveDivider from "@/components/WaveDivider";
 import DeviceMockup from "@/components/DeviceMockup";
 import TestimonialSlider from "@/components/TestimonialSlider";
+import heroDeveloper from "@/assets/hero-developer.png";
+import heroWave from "@/assets/hero-wave.png";
 import {
   Globe, Code2, Palette, Server, Cloud, Wrench,
   Lightbulb, Cpu, LayoutList, TrendingUp,

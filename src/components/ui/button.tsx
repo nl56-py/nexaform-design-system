@@ -14,7 +14,7 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-card hover:text-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        gradient: "gradient-primary-btn text-foreground font-semibold hover:shadow-[0_0_24px_rgba(59,130,246,0.3)] hover:-translate-y-0.5 shimmer-btn",
+        gradient: "gradient-primary-btn text-white font-semibold hover:shadow-[0_0_24px_rgba(59,130,246,0.25)] hover:-translate-y-0.5 shimmer-btn",
         "ghost-nav": "text-muted-foreground hover:text-foreground transition-colors duration-200",
       },
       size: {

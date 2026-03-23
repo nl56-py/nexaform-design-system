@@ -13,11 +13,6 @@ export interface AdminAuthContextValue {
     user: User | null;
   }>;
   signOut: () => Promise<void>;
-  signUp: (fullName: string, email: string, password: string) => Promise<{
-    adminUser: AdminUserRecord | null;
-    session: Session | null;
-    user: User | null;
-  }>;
   user: User | null;
 }
 

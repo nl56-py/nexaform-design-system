@@ -12,14 +12,6 @@ interface AdminAuthResult {
 
 const normalizeEmail = (email: string) => email.trim().toLowerCase();
 
-const claimAdminAccess = async () => {
-  const { error } = await supabase.rpc("claim_admin_access");
-
-  if (error) {
-    throw new Error(error.message || "Failed to verify admin access.");
-  }
-};
-
 export const getCurrentSession = async () => {
   const { data, error } = await supabase.auth.getSession();
 
@@ -34,8 +26,6 @@ export const getAdminUser = async (user: User | null) => {
   if (!user?.email) {
     return null;
   }
-
-  await claimAdminAccess();
 
   const { data, error } = await supabase
     .from("admin_users")
@@ -63,37 +53,6 @@ export const signInAdmin = async (email: string, password: string): Promise<Admi
   }
 
   const adminUser = await getAdminUser(data.user);
-
-  return {
-    adminUser,
-    session: data.session,
-    user: data.user,
-  };
-};
-
-export const signUpAdmin = async (
-  fullName: string,
-  email: string,
-  password: string,
-): Promise<AdminAuthResult> => {
-  const normalizedEmail = normalizeEmail(email);
-  const { data, error } = await supabase.auth.signUp({
-    email: normalizedEmail,
-    password,
-    options: {
-      data: fullName.trim()
-        ? {
-            full_name: fullName.trim(),
-          }
-        : undefined,
-    },
-  });
-
-  if (error) {
-    throw new Error(error.message || "Failed to create the admin account.");
-  }
-
-  const adminUser = data.user ? await getAdminUser(data.user) : null;
 
   return {
     adminUser,

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { LockKeyhole, Mail, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { FadeUp } from "@/components/SectionWrapper";
@@ -77,8 +77,8 @@ const AdminLoginPage = () => {
 
           <FadeUp delay={0.14}>
             <p className="mt-4 max-w-[60ch] text-base leading-8 text-muted-foreground md:text-lg">
-              Admin routes are protected by a real Supabase session plus a matching record in the
-              `admin_users` table.
+              Admin routes require a valid Supabase session and a matching active record in the
+              `admin_users` table. Admin accounts are managed directly in Supabase.
             </p>
           </FadeUp>
 
@@ -143,12 +143,9 @@ const AdminLoginPage = () => {
                     />
                   </div>
 
-                  <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     <Button type="submit" variant="gradient" size="lg" disabled={submitting}>
                       {submitting ? "Signing In..." : "Sign In"}
-                    </Button>
-                    <Button asChild variant="outline">
-                      <Link to="/admin/register">Create Admin Account</Link>
                     </Button>
                   </div>
                 </form>

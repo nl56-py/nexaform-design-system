@@ -20,7 +20,6 @@ import AdminDashboardPage from "./pages/admin/Dashboard";
 import AdminLayoutPage from "./pages/admin/Layout";
 import AdminLoginPage from "./pages/admin/Login";
 import AdminProjectsPage from "./pages/admin/Projects";
-import AdminRegisterPage from "./pages/admin/Register";
 
 const queryClient = new QueryClient();
 
@@ -43,7 +42,6 @@ const App = () => (
           <ScrollToTop />
           <Routes>
             <Route path="/admin/login" element={<AdminLoginPage />} />
-            <Route path="/admin/register" element={<AdminRegisterPage />} />
             <Route
               path="/admin"
               element={

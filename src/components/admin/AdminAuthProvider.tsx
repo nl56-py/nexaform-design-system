@@ -10,7 +10,6 @@ import {
   getCurrentSession,
   signInAdmin,
   signOutAdmin,
-  signUpAdmin,
   type AdminUserRecord,
 } from "@/lib/admin-auth";
 
@@ -73,13 +72,6 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     return result;
   };
 
-  const signUp = async (fullName: string, email: string, password: string) => {
-    const result = await signUpAdmin(fullName, email, password);
-    setSession(result.session);
-    setAdminUser(result.adminUser);
-    return result;
-  };
-
   const signOut = async () => {
     await signOutAdmin();
     setSession(null);
@@ -95,7 +87,6 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
         session,
         signIn,
         signOut,
-        signUp,
         user: session?.user ?? null,
       }}
     >

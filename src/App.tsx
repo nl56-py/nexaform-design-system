@@ -42,17 +42,6 @@ const App = () => (
         <BrowserRouter>
           <ScrollToTop />
           <Routes>
-            <Route element={<PublicLayout />}>
-              <Route path="/" element={<Index />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/projects" element={<Projects />} />
-              <Route path="/case-studies" element={<Navigate to="/projects" replace />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="*" element={<NotFound />} />
-            </Route>
-
             <Route path="/admin/login" element={<AdminLoginPage />} />
             <Route path="/admin/register" element={<AdminRegisterPage />} />
             <Route
@@ -68,6 +57,17 @@ const App = () => (
               <Route path="blogs" element={<AdminBlogsPage />} />
               <Route path="contacts" element={<AdminContactsPage />} />
               <Route path="*" element={<Navigate to="/admin" replace />} />
+            </Route>
+
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<Index />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/case-studies" element={<Navigate to="/projects" replace />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
         </BrowserRouter>

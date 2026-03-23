@@ -166,6 +166,53 @@
     background: radial-gradient(ellipse at 50% 30%, rgba(34,211,238,0.06), transparent 55%);
   }
 
+  .admin-rich-text {
+    color: hsl(var(--foreground));
+  }
+
+  .admin-rich-text p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    color: hsl(var(--muted-foreground) / 0.7);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .admin-rich-text p {
+    margin: 0.7rem 0;
+  }
+
+  .admin-rich-text h1,
+  .admin-rich-text h2,
+  .admin-rich-text h3 {
+    color: hsl(var(--foreground));
+    margin-top: 1.25rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .admin-rich-text a {
+    color: hsl(var(--primary));
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .admin-rich-text img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 1rem 0;
+  }
+
+  .admin-rich-text ul,
+  .admin-rich-text ol {
+    margin: 0.9rem 0;
+  }
+
+  .admin-rich-text hr {
+    margin: 1.25rem 0;
+    border-color: hsl(var(--border));
+  }
+
   .service-tree-bg {
     background:
       radial-gradient(circle at 12% 18%, rgba(34, 211, 238, 0.11), transparent 24%),

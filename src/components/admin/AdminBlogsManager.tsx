@@ -1,22 +1,34 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
+import { CalendarDays, Newspaper, Plus, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { CalendarDays, ImagePlus, Plus, Save, Trash2 } from "lucide-react";
+import AdminImageField from "@/components/admin/AdminImageField";
+import RichTextEditor from "@/components/admin/RichTextEditor";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { deleteAdminBlog, listAdminBlogs, saveAdminBlog } from "@/lib/admin-blogs";
 import {
-  buildBlogPayload,
   blogToFormValues,
+  buildBlogPayload,
   emptyBlogForm,
   type BlogFormValues,
 } from "@/lib/blogs";
 import { slugify } from "@/lib/projects";
 
 const queryKey = ["admin-blogs"];
+
+const formatRelativeDate = (value: string | null) => {
+  if (!value) {
+    return "No date yet";
+  }
+
+  return formatDistanceToNow(new Date(value), { addSuffix: true });
+};
 
 const AdminBlogsManager = () => {
   const queryClient = useQueryClient();
@@ -39,6 +51,8 @@ const AdminBlogsManager = () => {
     () => blogs.find((blog) => blog.id === form.id) ?? null,
     [blogs, form.id],
   );
+  const publishedCount = blogs.filter((blog) => blog.published).length;
+  const draftCount = blogs.length - publishedCount;
 
   const startNewBlog = () => setForm(emptyBlogForm());
 
@@ -103,12 +117,35 @@ const AdminBlogsManager = () => {
   return (
     <div className="grid gap-8 xl:grid-cols-[minmax(0,0.76fr)_minmax(0,1.24fr)]">
       <div className="space-y-6">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="card-surface rounded-card p-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <Newspaper size={18} />
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground">Total posts</div>
+                <div className="font-display text-2xl font-semibold text-foreground">{blogs.length}</div>
+              </div>
+            </div>
+          </div>
+          <div className="card-surface rounded-card p-5">
+            <div className="text-sm text-muted-foreground">Publishing status</div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Badge className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/10">
+                {publishedCount} published
+              </Badge>
+              <Badge variant="outline">{draftCount} drafts</Badge>
+            </div>
+          </div>
+        </div>
+
         <div className="card-surface rounded-card p-6 sm:p-7">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h2 className="font-display text-xl font-semibold text-foreground">Blog posts</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Add or edit the posts shown on the blog page and homepage insights section.
+                Rich text articles, covers, and publishing controls all live here now.
               </p>
             </div>
             <Button type="button" variant="outline" onClick={startNewBlog}>
@@ -168,6 +205,12 @@ const AdminBlogsManager = () => {
                 <p className="mt-3 line-clamp-2 text-sm leading-6 text-muted-foreground">
                   {blog.excerpt}
                 </p>
+
+                <div className="mt-3 text-xs text-muted-foreground">
+                  {blog.published
+                    ? `Published ${formatRelativeDate(blog.published_at)}`
+                    : `Updated ${formatRelativeDate(blog.updated_at)}`}
+                </div>
               </button>
             ))}
           </div>
@@ -200,6 +243,20 @@ const AdminBlogsManager = () => {
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSave}>
+          <div className="rounded-[1.5rem] border border-border/60 bg-secondary/30 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="font-display text-lg font-semibold text-foreground">
+                  {form.id ? "Editing existing post" : "Drafting a new post"}
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Use the rich editor for long-form writing and upload images without leaving the page.
+                </p>
+              </div>
+              <Badge variant="outline">{form.id ? "Update mode" : "Create mode"}</Badge>
+            </div>
+          </div>
+
           <div className="grid gap-5 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="blog-title">Title</Label>
@@ -259,34 +316,15 @@ const AdminBlogsManager = () => {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="blog-cover">Cover Image URL</Label>
-            <Input
-              id="blog-cover"
-              value={form.coverImage}
-              onChange={(event) =>
-                setForm((current) => ({ ...current, coverImage: event.target.value }))
-              }
-              placeholder="https://..."
-            />
-            <p className="text-xs text-muted-foreground">
-              Use a public image URL for the post cover.
-            </p>
-          </div>
-
-          {form.coverImage && (
-            <div className="overflow-hidden rounded-[1.5rem] border border-border/60 bg-secondary/40">
-              <div className="flex items-center gap-2 border-b border-border/40 px-4 py-3 text-sm text-muted-foreground">
-                <ImagePlus size={16} />
-                Cover preview
-              </div>
-              <img
-                src={form.coverImage}
-                alt={form.title || "Blog cover preview"}
-                className="h-56 w-full object-cover"
-              />
-            </div>
-          )}
+          <AdminImageField
+            id="blog-cover"
+            label="Cover Image"
+            folder="blogs/covers"
+            value={form.coverImage}
+            previewAlt={form.title || "Blog cover preview"}
+            description="Paste a public image URL or upload directly to the admin-media bucket."
+            onChange={(value) => setForm((current) => ({ ...current, coverImage: value }))}
+          />
 
           <div className="space-y-2">
             <Label htmlFor="blog-tags">Tags</Label>
@@ -313,14 +351,12 @@ const AdminBlogsManager = () => {
 
           <div className="space-y-2">
             <Label htmlFor="blog-content">Content</Label>
-            <Textarea
-              id="blog-content"
+            <RichTextEditor
               value={form.content}
-              onChange={(event) =>
-                setForm((current) => ({ ...current, content: event.target.value }))
-              }
-              className="min-h-[220px]"
-              placeholder="Full blog content."
+              folder="blogs/content"
+              placeholder="Build the article with headings, lists, links, quotes, and uploaded images."
+              minHeightClassName="min-h-[360px]"
+              onChange={(value) => setForm((current) => ({ ...current, content: value }))}
             />
           </div>
 

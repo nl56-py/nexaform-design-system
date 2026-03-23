@@ -44,12 +44,27 @@ export const blogToFormValues = (blog: BlogRecord): BlogFormValues => ({
   publishedAt: blog.published_at ?? "",
 });
 
+const normalizeRichTextContent = (value: string) => {
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  if (/<(img|video|iframe|figure)\b/i.test(trimmed)) {
+    return trimmed;
+  }
+
+  const plainText = trimmed.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim();
+  return plainText ? trimmed : null;
+};
+
 export const buildBlogPayload = (form: BlogFormValues) => ({
   id: form.id ?? undefined,
   title: form.title.trim(),
   slug: slugify(form.slug || form.title),
   excerpt: form.excerpt.trim(),
-  content: form.content.trim() || null,
+  content: normalizeRichTextContent(form.content),
   category: form.category.trim(),
   tags: parseTagString(form.tags),
   cover_image: form.coverImage.trim() || null,

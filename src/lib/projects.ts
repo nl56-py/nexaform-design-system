@@ -62,6 +62,21 @@ export const projectToFormValues = (project: ProjectRecord): ProjectFormValues =
   displayOrder: project.display_order,
 });
 
+const normalizeRichTextContent = (value: string) => {
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  if (/<(img|video|iframe|figure)\b/i.test(trimmed)) {
+    return trimmed;
+  }
+
+  const plainText = trimmed.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim();
+  return plainText ? trimmed : null;
+};
+
 export const buildProjectPayload = (form: ProjectFormValues) => ({
   id: form.id ?? undefined,
   title: form.title.trim(),
@@ -71,7 +86,7 @@ export const buildProjectPayload = (form: ProjectFormValues) => ({
   tags: parseTagString(form.tags),
   industry: form.industry.trim() || null,
   cover_image: form.coverImage.trim() || null,
-  content: form.content.trim() || null,
+  content: normalizeRichTextContent(form.content),
   published: form.published,
   display_order: Number.isFinite(form.displayOrder) ? form.displayOrder : 0,
 });

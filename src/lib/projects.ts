@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
+import { toSupabaseError } from "@/lib/supabase-errors";
 
 export type ProjectRecord = Tables<"case_studies">;
 
@@ -90,7 +91,7 @@ export const fetchPublishedProjects = async (limit?: number) => {
   const { data, error } = await query;
 
   if (error) {
-    throw error;
+    throw toSupabaseError(error, "Failed to load published projects.");
   }
 
   return data;

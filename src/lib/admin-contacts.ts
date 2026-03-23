@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { ContactSubmissionRecord } from "@/lib/contact-submissions";
+import { toSupabaseError } from "@/lib/supabase-errors";
 
 export const listAdminContactSubmissions = async () => {
   const { data, error } = await supabase
@@ -8,7 +9,7 @@ export const listAdminContactSubmissions = async () => {
     .order("created_at", { ascending: false });
 
   if (error) {
-    throw new Error(error.message || "Failed to load contact submissions.");
+    throw toSupabaseError(error, "Failed to load contact submissions.");
   }
 
   return (data ?? []) as ContactSubmissionRecord[];
@@ -23,7 +24,7 @@ export const updateAdminContactSubmissionStatus = async (id: string, status: str
     .single();
 
   if (error) {
-    throw new Error(error.message || "Failed to update the contact submission.");
+    throw toSupabaseError(error, "Failed to update the contact submission.");
   }
 
   return data as ContactSubmissionRecord;

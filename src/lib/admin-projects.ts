@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { ProjectRecord } from "@/lib/projects";
+import { toSupabaseError } from "@/lib/supabase-errors";
 
 export const listAdminProjects = async () => {
   const { data, error } = await supabase
@@ -9,7 +10,7 @@ export const listAdminProjects = async () => {
     .order("created_at", { ascending: false });
 
   if (error) {
-    throw new Error(error.message || "Failed to load projects.");
+    throw toSupabaseError(error, "Failed to load projects.");
   }
 
   return (data ?? []) as ProjectRecord[];
@@ -25,7 +26,7 @@ export const saveAdminProject = async (project: Record<string, unknown>) => {
       .single();
 
     if (error) {
-      throw new Error(error.message || "Failed to update the project.");
+      throw toSupabaseError(error, "Failed to update the project.");
     }
 
     return data as ProjectRecord;
@@ -34,7 +35,7 @@ export const saveAdminProject = async (project: Record<string, unknown>) => {
   const { data, error } = await supabase.from("case_studies").insert(project).select("*").single();
 
   if (error) {
-    throw new Error(error.message || "Failed to create the project.");
+    throw toSupabaseError(error, "Failed to create the project.");
   }
 
   return data as ProjectRecord;
@@ -44,6 +45,6 @@ export const deleteAdminProject = async (id: string) => {
   const { error } = await supabase.from("case_studies").delete().eq("id", id);
 
   if (error) {
-    throw new Error(error.message || "Failed to delete the project.");
+    throw toSupabaseError(error, "Failed to delete the project.");
   }
 };

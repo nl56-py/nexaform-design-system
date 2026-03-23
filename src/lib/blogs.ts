@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import { parseTagString, slugify, tagsToString } from "@/lib/projects";
+import { toSupabaseError } from "@/lib/supabase-errors";
 
 export type BlogRecord = Tables<"blog_posts">;
 
@@ -71,7 +72,7 @@ export const fetchPublishedBlogPosts = async (limit?: number) => {
   const { data, error } = await query;
 
   if (error) {
-    throw error;
+    throw toSupabaseError(error, "Failed to load published blog posts.");
   }
 
   return data;

@@ -1,6 +1,7 @@
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
+import { toSupabaseError } from "@/lib/supabase-errors";
 
 export type AdminUserRecord = Tables<"admin_users">;
 
@@ -16,7 +17,7 @@ export const getCurrentSession = async () => {
   const { data, error } = await supabase.auth.getSession();
 
   if (error) {
-    throw new Error(error.message || "Failed to restore the current session.");
+    throw toSupabaseError(error, "Failed to restore the current session.");
   }
 
   return data.session;
@@ -35,7 +36,7 @@ export const getAdminUser = async (user: User | null) => {
     .maybeSingle();
 
   if (error) {
-    throw new Error(error.message || "Failed to load the admin account.");
+    throw toSupabaseError(error, "Failed to load the admin account.");
   }
 
   return data;
@@ -49,7 +50,7 @@ export const signInAdmin = async (email: string, password: string): Promise<Admi
   });
 
   if (error) {
-    throw new Error(error.message || "Failed to sign in.");
+    throw toSupabaseError(error, "Failed to sign in.");
   }
 
   const adminUser = await getAdminUser(data.user);
@@ -65,6 +66,6 @@ export const signOutAdmin = async () => {
   const { error } = await supabase.auth.signOut();
 
   if (error) {
-    throw new Error(error.message || "Failed to sign out.");
+    throw toSupabaseError(error, "Failed to sign out.");
   }
 };

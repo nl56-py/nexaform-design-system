@@ -6,6 +6,7 @@ import SectionWrapper, { FadeUp } from "@/components/SectionWrapper";
 import { Mail, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { getSupabaseErrorMessage } from "@/lib/supabase-errors";
 
 const Contact = () => {
   const [form, setForm] = useState({
@@ -18,7 +19,7 @@ const Contact = () => {
     setSubmitting(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke("submit-contact", {
+      const { error } = await supabase.functions.invoke("submit-contact", {
         body: {
           name: form.name,
           email: form.email,
@@ -36,7 +37,7 @@ const Contact = () => {
       setForm({ name: "", email: "", company: "", projectType: "", budget: "", timeline: "", message: "" });
     } catch (err) {
       console.error("Submit error:", err);
-      toast.error("Something went wrong. Please try again.");
+      toast.error(getSupabaseErrorMessage(err, "Something went wrong. Please try again."));
     } finally {
       setSubmitting(false);
     }

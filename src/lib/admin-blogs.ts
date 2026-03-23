@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { BlogRecord } from "@/lib/blogs";
+import { toSupabaseError } from "@/lib/supabase-errors";
 
 export const listAdminBlogs = async () => {
   const { data, error } = await supabase
@@ -9,7 +10,7 @@ export const listAdminBlogs = async () => {
     .order("created_at", { ascending: false });
 
   if (error) {
-    throw new Error(error.message || "Failed to load blog posts.");
+    throw toSupabaseError(error, "Failed to load blog posts.");
   }
 
   return (data ?? []) as BlogRecord[];
@@ -25,7 +26,7 @@ export const saveAdminBlog = async (blog: Record<string, unknown>) => {
       .single();
 
     if (error) {
-      throw new Error(error.message || "Failed to update the blog post.");
+      throw toSupabaseError(error, "Failed to update the blog post.");
     }
 
     return data as BlogRecord;
@@ -34,7 +35,7 @@ export const saveAdminBlog = async (blog: Record<string, unknown>) => {
   const { data, error } = await supabase.from("blog_posts").insert(blog).select("*").single();
 
   if (error) {
-    throw new Error(error.message || "Failed to create the blog post.");
+    throw toSupabaseError(error, "Failed to create the blog post.");
   }
 
   return data as BlogRecord;
@@ -44,6 +45,6 @@ export const deleteAdminBlog = async (id: string) => {
   const { error } = await supabase.from("blog_posts").delete().eq("id", id);
 
   if (error) {
-    throw new Error(error.message || "Failed to delete the blog post.");
+    throw toSupabaseError(error, "Failed to delete the blog post.");
   }
 };

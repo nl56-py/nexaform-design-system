@@ -4,22 +4,14 @@ import PageHero from "@/components/PageHero";
 import SectionWrapper, { FadeUp, StaggerContainer, StaggerItem } from "@/components/SectionWrapper";
 import { ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchPublishedBlogPosts } from "@/lib/blogs";
 
 const categories = ["Software Development", "Web Applications", "Product Strategy", "AI & Automation", "Deployment & DevOps", "UX & Interface Design"];
 
 const Blog = () => {
   const { data: articles = [], isLoading } = useQuery({
     queryKey: ["blog-posts"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .eq("published", true)
-        .order("published_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => fetchPublishedBlogPosts(),
   });
 
   return (

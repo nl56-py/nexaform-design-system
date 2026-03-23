@@ -4,7 +4,7 @@ import Logo from "@/components/Logo";
 const quickLinks = [
   { label: "Home", to: "/" },
   { label: "Services", to: "/services" },
-  { label: "Case Studies", to: "/case-studies" },
+  { label: "Projects", to: "/projects" },
   { label: "Blog", to: "/blog" },
   { label: "About", to: "/about" },
   { label: "Contact", to: "/contact" },
@@ -13,13 +13,13 @@ const quickLinks = [
 const Footer = () => (
   <footer className="bg-secondary border-t border-border/50">
     <div className="container section-padding">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div className="grid grid-cols-1 gap-10 text-center md:grid-cols-3 md:gap-12 md:text-left">
         <div className="space-y-4">
           <Logo />
-          <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+          <p className="mx-auto max-w-xs text-sm leading-relaxed text-muted-foreground md:mx-0">
             Custom web applications, modern digital systems, and software solutions built for clarity, performance, and scale.
           </p>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground md:justify-start">
             <span className="available-dot" />
             Available for projects
           </div>

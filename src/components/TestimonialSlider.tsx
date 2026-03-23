@@ -47,11 +47,11 @@ const TestimonialSlider = () => {
   return (
     <FadeUp>
       <div className="max-w-3xl mx-auto">
-        <div className="card-surface rounded-card p-8 md:p-12 relative">
+        <div className="card-surface relative rounded-card p-6 sm:p-8 md:p-12">
           <Quote size={32} className="text-primary/20 absolute top-6 left-6" />
 
           <div className="text-center">
-            <p className="text-lg md:text-xl text-foreground/90 leading-relaxed mb-8 italic">
+            <p className="mb-8 text-base italic leading-relaxed text-foreground/90 sm:text-lg md:text-xl">
               "{t.quote}"
             </p>
 

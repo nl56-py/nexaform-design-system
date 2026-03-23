@@ -1,18 +1,10 @@
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PageHero from "@/components/PageHero";
 import SectionWrapper, { FadeUp, StaggerContainer, StaggerItem } from "@/components/SectionWrapper";
 import ServiceCard from "@/components/ServiceCard";
-import { Globe, Code2, Palette, Server, Cloud, Wrench, ArrowRight } from "lucide-react";
-
-const servicesData = [
-  { icon: <Globe size={22} />, title: "Web Application Development", desc: "We build custom web applications for dashboards, customer portals, admin systems, booking tools, internal platforms, and digital products. Every application is designed for usability, speed, and long-term scalability." },
-  { icon: <Code2 size={22} />, title: "Custom Software Development", desc: "We create tailored software systems built around the way your business actually works. From internal operations tools to service workflows and business platforms, we develop systems that reduce friction and improve efficiency." },
-  { icon: <Palette size={22} />, title: "UI/UX Design", desc: "We design digital experiences that are clear, intuitive, and built around user needs. Our design process focuses on usability, product structure, and interfaces that support trust and action." },
-  { icon: <Server size={22} />, title: "API & Backend Development", desc: "We build the systems behind the product — including databases, APIs, business logic, integrations, and backend services — to make sure your software is connected, reliable, and ready to scale." },
-  { icon: <Cloud size={22} />, title: "Cloud & Deployment", desc: "We help deploy and manage applications using modern infrastructure and practical DevOps workflows. Our focus is on uptime, performance, security, and smooth product delivery." },
-  { icon: <Wrench size={22} />, title: "Maintenance & Product Support", desc: "Launch is only the beginning. We provide ongoing support, updates, fixes, and improvements to help your product stay useful, secure, and aligned with your growth." },
-];
+import { serviceItems } from "@/lib/service-data";
 
 const Services = () => (
   <div>
@@ -23,49 +15,64 @@ const Services = () => (
     />
 
     <SectionWrapper>
-      <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {servicesData.map((s) => (
-          <StaggerItem key={s.title}>
-            <ServiceCard icon={s.icon} title={s.title} description={s.desc} />
-          </StaggerItem>
-        ))}
+      <StaggerContainer className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,19rem),1fr))] gap-6 xl:gap-8">
+        {serviceItems.map((service) => {
+          const Icon = service.icon;
+
+          return (
+            <StaggerItem key={service.title} className="h-full">
+              <ServiceCard
+                icon={<Icon size={22} />}
+                title={service.title}
+                description={service.description}
+                image={service.image}
+                imageAlt={service.imageAlt}
+              />
+            </StaggerItem>
+          );
+        })}
       </StaggerContainer>
     </SectionWrapper>
 
     <SectionWrapper secondary>
-      <FadeUp>
-        <h2 className="font-display font-bold text-3xl md:text-4xl tracking-tight text-foreground mb-3">
+      <FadeUp className="max-w-3xl">
+        <h2 className="mb-3 font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
           Who we work with
         </h2>
-        <p className="text-muted-foreground leading-relaxed max-w-[65ch]">
-          We work with startups, service businesses, educators, local companies, digital-first teams, and growing organizations that need software built around practical goals and long-term value.
+        <p className="max-w-[65ch] leading-relaxed text-muted-foreground">
+          We work with startups, service businesses, educators, local companies, digital-first teams,
+          and growing organizations that need software built around practical goals and long-term value.
         </p>
       </FadeUp>
     </SectionWrapper>
 
     <SectionWrapper>
-      <FadeUp>
-        <h2 className="font-display font-bold text-3xl md:text-4xl tracking-tight text-foreground mb-3">
+      <FadeUp className="max-w-4xl">
+        <h2 className="mb-3 font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
           Built for outcomes, not just output
         </h2>
-        <p className="text-muted-foreground leading-relaxed max-w-[65ch]">
-          Good software should not only function — it should improve how a business operates, serves users, and grows over time. Our services are designed to help businesses move from fragmented tools and manual effort to purposeful digital systems that work better every day.
+        <p className="max-w-[65ch] leading-relaxed text-muted-foreground">
+          Good software should not only function. It should improve how a business operates, serves
+          users, and grows over time. Our services are designed to help businesses move from fragmented
+          tools and manual effort to purposeful digital systems that work better every day.
         </p>
       </FadeUp>
     </SectionWrapper>
 
-    <section className="relative section-padding overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-highlight/10 pointer-events-none" />
-      <div className="container relative z-10 text-center max-w-2xl mx-auto">
+    <section className="relative overflow-hidden section-padding">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-highlight/10" />
+      <div className="container relative z-10 mx-auto max-w-2xl text-center">
         <FadeUp>
-          <h2 className="font-display font-bold text-3xl md:text-4xl tracking-tight gradient-text mb-5">
+          <h2 className="mb-5 font-display text-3xl font-bold tracking-tight gradient-text md:text-4xl">
             Need the right digital system for your business?
           </h2>
-          <p className="text-muted-foreground leading-relaxed mb-8">
-            Let's talk about the product, platform, or software workflow you want to build.
+          <p className="mb-8 leading-relaxed text-muted-foreground">
+            Let&apos;s talk about the product, platform, or software workflow you want to build.
           </p>
           <Link to="/contact">
-            <Button variant="gradient" size="lg">Start a Project</Button>
+            <Button variant="gradient" size="lg" className="gap-2">
+              Start a Project <ArrowRight size={16} />
+            </Button>
           </Link>
         </FadeUp>
       </div>

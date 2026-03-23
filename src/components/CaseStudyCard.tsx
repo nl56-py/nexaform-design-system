@@ -58,7 +58,7 @@ const CaseStudyCard = ({ title, description, outcome, tags, accentColor = "prima
         <div className={`absolute inset-0 bg-gradient-to-t from-card to-transparent opacity-0 group-hover:opacity-60 transition-opacity duration-300 pointer-events-none`} />
       </div>
 
-      <div className="p-6 flex flex-col flex-1">
+      <div className="flex flex-1 flex-col p-5 sm:p-6">
         {tags && (
           <div className="flex flex-wrap gap-2 mb-3">
             {tags.map((tag) => (

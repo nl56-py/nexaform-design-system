@@ -53,7 +53,7 @@ const Blog = () => {
         </FadeUp>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {[1, 2, 3].map((i) => (
               <div key={i} className="card-surface rounded-card p-6 animate-pulse">
                 <div className="h-3 w-24 bg-muted-foreground/10 rounded mb-4" />
@@ -63,7 +63,7 @@ const Blog = () => {
             ))}
           </div>
         ) : (
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <StaggerContainer className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {articles.map((post) => (
               <StaggerItem key={post.id}>
                 <div className="card-surface card-surface-hover rounded-card p-6 flex flex-col h-full">

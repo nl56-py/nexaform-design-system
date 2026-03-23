@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          claimed_at: string | null
+          created_at: string
+          display_name: string | null
+          email: string
+          id: string
+          is_active: boolean
+          role: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          claimed_at?: string | null
+          created_at?: string
+          display_name?: string | null
+          email: string
+          id?: string
+          is_active?: boolean
+          role?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          claimed_at?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string
+          id?: string
+          is_active?: boolean
+          role?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           category: string
@@ -151,7 +187,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_admin_access: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          claimed_at: string | null
+          created_at: string
+          display_name: string | null
+          email: string
+          id: string
+          is_active: boolean
+          role: string
+          updated_at: string
+          user_id: string | null
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

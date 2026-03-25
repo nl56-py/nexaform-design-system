@@ -33,6 +33,7 @@ const formatRelativeDate = (value: string | null) => {
 const AdminProjectsManager = () => {
   const queryClient = useQueryClient();
   const [form, setForm] = useState<ProjectFormValues>(emptyProjectForm());
+  const [isCreatingNew, setIsCreatingNew] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -42,10 +43,16 @@ const AdminProjectsManager = () => {
   });
 
   useEffect(() => {
-    if (!form.id && projects.length > 0) {
+    if (isCreatingNew) {
+      return;
+    }
+
+    const hasSelectedProject = form.id ? projects.some((project) => project.id === form.id) : false;
+
+    if (!hasSelectedProject && projects.length > 0) {
       setForm(projectToFormValues(projects[0]));
     }
-  }, [projects, form.id]);
+  }, [projects, form.id, isCreatingNew]);
 
   const selectedProject = useMemo(
     () => projects.find((project) => project.id === form.id) ?? null,
@@ -54,11 +61,15 @@ const AdminProjectsManager = () => {
   const publishedCount = projects.filter((project) => project.published).length;
   const draftCount = projects.length - publishedCount;
 
-  const startNewProject = () => setForm(emptyProjectForm());
+  const startNewProject = () => {
+    setIsCreatingNew(true);
+    setForm(emptyProjectForm());
+  };
 
   const editProject = (projectId: string) => {
     const project = projects.find((item) => item.id === projectId);
     if (project) {
+      setIsCreatingNew(false);
       setForm(projectToFormValues(project));
     }
   };
@@ -80,6 +91,7 @@ const AdminProjectsManager = () => {
       await queryClient.invalidateQueries({ queryKey });
 
       if (saved) {
+        setIsCreatingNew(false);
         setForm(projectToFormValues(saved));
       }
 
@@ -105,6 +117,7 @@ const AdminProjectsManager = () => {
     try {
       await deleteAdminProject(form.id);
       await queryClient.invalidateQueries({ queryKey });
+      setIsCreatingNew(false);
       setForm(emptyProjectForm());
       toast.success("Project deleted.");
     } catch (err) {

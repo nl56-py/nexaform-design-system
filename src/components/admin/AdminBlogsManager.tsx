@@ -33,6 +33,7 @@ const formatRelativeDate = (value: string | null) => {
 const AdminBlogsManager = () => {
   const queryClient = useQueryClient();
   const [form, setForm] = useState<BlogFormValues>(emptyBlogForm());
+  const [isCreatingNew, setIsCreatingNew] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -42,10 +43,16 @@ const AdminBlogsManager = () => {
   });
 
   useEffect(() => {
-    if (!form.id && blogs.length > 0) {
+    if (isCreatingNew) {
+      return;
+    }
+
+    const hasSelectedBlog = form.id ? blogs.some((blog) => blog.id === form.id) : false;
+
+    if (!hasSelectedBlog && blogs.length > 0) {
       setForm(blogToFormValues(blogs[0]));
     }
-  }, [blogs, form.id]);
+  }, [blogs, form.id, isCreatingNew]);
 
   const selectedBlog = useMemo(
     () => blogs.find((blog) => blog.id === form.id) ?? null,
@@ -54,11 +61,15 @@ const AdminBlogsManager = () => {
   const publishedCount = blogs.filter((blog) => blog.published).length;
   const draftCount = blogs.length - publishedCount;
 
-  const startNewBlog = () => setForm(emptyBlogForm());
+  const startNewBlog = () => {
+    setIsCreatingNew(true);
+    setForm(emptyBlogForm());
+  };
 
   const editBlog = (blogId: string) => {
     const blog = blogs.find((item) => item.id === blogId);
     if (blog) {
+      setIsCreatingNew(false);
       setForm(blogToFormValues(blog));
     }
   };
@@ -80,6 +91,7 @@ const AdminBlogsManager = () => {
       await queryClient.invalidateQueries({ queryKey });
 
       if (saved) {
+        setIsCreatingNew(false);
         setForm(blogToFormValues(saved));
       }
 
@@ -105,6 +117,7 @@ const AdminBlogsManager = () => {
     try {
       await deleteAdminBlog(form.id);
       await queryClient.invalidateQueries({ queryKey });
+      setIsCreatingNew(false);
       setForm(emptyBlogForm());
       toast.success("Blog post deleted.");
     } catch (err) {

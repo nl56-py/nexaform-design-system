@@ -175,12 +175,23 @@ const Index = () => {
           <StaggerContainer className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {latestBlogPosts.map((post) => (
               <StaggerItem key={post.id}>
-                <div className="card-surface card-surface-hover rounded-card p-6">
+                <div className="card-surface card-surface-hover rounded-card p-6 flex flex-col h-full">
                   <div className="mb-3 font-mono text-[11px] uppercase tracking-widest text-primary">
                     {post.category}
                   </div>
-                  <h3 className="mb-3 font-display font-semibold text-foreground">{post.title}</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">{post.excerpt}</p>
+                  <Link
+                    to={`/blog/${post.slug}`}
+                    className="mb-3 inline-block transition-colors hover:text-primary"
+                  >
+                    <h3 className="font-display font-semibold text-foreground">{post.title}</h3>
+                  </Link>
+                  <p className="flex-1 text-sm leading-relaxed text-muted-foreground">{post.excerpt}</p>
+                  <Link
+                    to={`/blog/${post.slug}`}
+                    className="mt-4 inline-flex items-center gap-1 text-sm text-primary transition-all duration-200 hover:gap-2"
+                  >
+                    Read more <ArrowRight size={14} />
+                  </Link>
                 </div>
               </StaggerItem>
             ))}

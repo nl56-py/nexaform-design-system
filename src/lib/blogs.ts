@@ -92,3 +92,18 @@ export const fetchPublishedBlogPosts = async (limit?: number) => {
 
   return data;
 };
+
+export const fetchPublishedBlogPostBySlug = async (slug: string) => {
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .select("*")
+    .eq("published", true)
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (error) {
+    throw toSupabaseError(error, "Failed to load the blog post.");
+  }
+
+  return data;
+};

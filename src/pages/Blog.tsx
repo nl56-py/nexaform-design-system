@@ -62,12 +62,20 @@ const Blog = () => {
                   <span className="font-mono text-[11px] tracking-widest uppercase text-primary mb-3">
                     {post.category}
                   </span>
-                  <h3 className="font-display font-semibold text-lg text-foreground mb-3">{post.title}</h3>
+                  <Link
+                    to={`/blog/${post.slug}`}
+                    className="mb-3 inline-block transition-colors hover:text-primary"
+                  >
+                    <h3 className="font-display font-semibold text-lg text-foreground">{post.title}</h3>
+                  </Link>
                   <p className="text-sm text-muted-foreground leading-relaxed flex-1">{post.excerpt}</p>
                   <div className="mt-4 pt-4 border-t border-border/30">
-                    <span className="text-sm text-primary flex items-center gap-1 hover:gap-2 transition-all duration-200 cursor-pointer">
+                    <Link
+                      to={`/blog/${post.slug}`}
+                      className="text-sm text-primary inline-flex items-center gap-1 hover:gap-2 transition-all duration-200"
+                    >
                       Read more <ArrowRight size={14} />
-                    </span>
+                    </Link>
                   </div>
                 </div>
               </StaggerItem>

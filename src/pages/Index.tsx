@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import BlogPreviewCard from "@/components/BlogPreviewCard";
 import SectionWrapper, { FadeUp, StaggerContainer, StaggerItem } from "@/components/SectionWrapper";
 import ServiceTreeSection from "@/components/ServiceTreeSection";
 import WaveDivider from "@/components/WaveDivider";
@@ -126,6 +127,7 @@ const Index = () => {
                     title={project.title}
                     description={project.description}
                     outcome={project.outcome}
+                    slug={project.slug}
                     tags={project.tags}
                     industry={project.industry}
                     coverImage={project.cover_image}
@@ -175,24 +177,13 @@ const Index = () => {
           <StaggerContainer className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {latestBlogPosts.map((post) => (
               <StaggerItem key={post.id}>
-                <div className="card-surface card-surface-hover rounded-card p-6 flex flex-col h-full">
-                  <div className="mb-3 font-mono text-[11px] uppercase tracking-widest text-primary">
-                    {post.category}
-                  </div>
-                  <Link
-                    to={`/blog/${post.slug}`}
-                    className="mb-3 inline-block transition-colors hover:text-primary"
-                  >
-                    <h3 className="font-display font-semibold text-foreground">{post.title}</h3>
-                  </Link>
-                  <p className="flex-1 text-sm leading-relaxed text-muted-foreground">{post.excerpt}</p>
-                  <Link
-                    to={`/blog/${post.slug}`}
-                    className="mt-4 inline-flex items-center gap-1 text-sm text-primary transition-all duration-200 hover:gap-2"
-                  >
-                    Read more <ArrowRight size={14} />
-                  </Link>
-                </div>
+                <BlogPreviewCard
+                  category={post.category}
+                  coverImage={post.cover_image}
+                  excerpt={post.excerpt}
+                  slug={post.slug}
+                  title={post.title}
+                />
               </StaggerItem>
             ))}
           </StaggerContainer>

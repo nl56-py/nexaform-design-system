@@ -54,6 +54,7 @@ const Projects = () => {
                   title={project.title}
                   description={project.description}
                   outcome={project.outcome}
+                  slug={project.slug}
                   tags={project.tags}
                   industry={project.industry}
                   coverImage={project.cover_image}

@@ -1,9 +1,13 @@
+import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface ProjectCardProps {
   title: string;
   description: string;
   outcome: string;
+  slug: string;
   tags?: string[] | null;
   industry?: string | null;
   coverImage?: string | null;
@@ -14,12 +18,18 @@ const ProjectCard = ({
   title,
   description,
   outcome,
+  slug,
   tags,
   industry,
   coverImage,
   className = "",
 }: ProjectCardProps) => (
-  <article className={cn("group card-surface card-surface-hover overflow-hidden rounded-card", className)}>
+  <article
+    className={cn(
+      "group card-surface card-surface-hover flex h-full flex-col overflow-hidden rounded-card",
+      className,
+    )}
+  >
     <div className="relative aspect-[16/10] overflow-hidden bg-secondary/60">
       {coverImage ? (
         <>
@@ -59,7 +69,7 @@ const ProjectCard = ({
       </div>
     </div>
 
-    <div className="space-y-4 p-5 sm:p-6">
+    <div className="flex flex-1 flex-col space-y-4 p-5 sm:p-6">
       <div className="space-y-2">
         {industry && (
           <div className="font-mono text-[11px] uppercase tracking-[0.24em] text-accent">
@@ -74,6 +84,15 @@ const ProjectCard = ({
       <div className="rounded-2xl border border-border/50 bg-secondary/55 p-4">
         <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-primary">Outcome</div>
         <p className="mt-2 text-sm leading-6 text-foreground/85">{outcome}</p>
+      </div>
+
+      <div className="mt-auto pt-1">
+        <Button asChild variant="outline" className="gap-2">
+          <Link to={`/projects/${slug}`}>
+            Know More
+            <ArrowRight size={16} />
+          </Link>
+        </Button>
       </div>
     </div>
   </article>

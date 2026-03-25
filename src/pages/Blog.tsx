@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import BlogPreviewCard from "@/components/BlogPreviewCard";
 import PageHero from "@/components/PageHero";
 import SectionWrapper, { FadeUp, StaggerContainer, StaggerItem } from "@/components/SectionWrapper";
-import { ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPublishedBlogPosts } from "@/lib/blogs";
 
@@ -58,26 +58,13 @@ const Blog = () => {
           <StaggerContainer className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {articles.map((post) => (
               <StaggerItem key={post.id}>
-                <div className="card-surface card-surface-hover rounded-card p-6 flex flex-col h-full">
-                  <span className="font-mono text-[11px] tracking-widest uppercase text-primary mb-3">
-                    {post.category}
-                  </span>
-                  <Link
-                    to={`/blog/${post.slug}`}
-                    className="mb-3 inline-block transition-colors hover:text-primary"
-                  >
-                    <h3 className="font-display font-semibold text-lg text-foreground">{post.title}</h3>
-                  </Link>
-                  <p className="text-sm text-muted-foreground leading-relaxed flex-1">{post.excerpt}</p>
-                  <div className="mt-4 pt-4 border-t border-border/30">
-                    <Link
-                      to={`/blog/${post.slug}`}
-                      className="text-sm text-primary inline-flex items-center gap-1 hover:gap-2 transition-all duration-200"
-                    >
-                      Read more <ArrowRight size={14} />
-                    </Link>
-                  </div>
-                </div>
+                <BlogPreviewCard
+                  category={post.category}
+                  coverImage={post.cover_image}
+                  excerpt={post.excerpt}
+                  slug={post.slug}
+                  title={post.title}
+                />
               </StaggerItem>
             ))}
           </StaggerContainer>

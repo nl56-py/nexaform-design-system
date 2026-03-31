@@ -3,11 +3,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { LockKeyhole, Mail, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import Logo from "@/components/Logo";
+import Seo from "@/components/Seo";
 import { FadeUp } from "@/components/SectionWrapper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
+import { createTitle } from "@/lib/seo";
 
 const AdminLoginPage = () => {
   const navigate = useNavigate();
@@ -59,6 +61,12 @@ const AdminLoginPage = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-secondary px-6 py-20">
+      <Seo
+        title={createTitle("Admin Login")}
+        description="Protected Nexaform admin login."
+        path="/admin/login"
+        noindex
+      />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.12),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(139,92,246,0.12),transparent_28%)]" />
 
       <div className="container relative z-10 flex min-h-[calc(100vh-10rem)] items-center justify-center">
@@ -132,7 +140,7 @@ const AdminLoginPage = () => {
                         autoComplete="email"
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
-                        placeholder="admin@nexaform.com"
+                        placeholder="admin@nexa-form.com"
                         className="pl-10"
                       />
                     </div>

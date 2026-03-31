@@ -1,18 +1,66 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import Seo from "@/components/Seo";
 import { Button } from "@/components/ui/button";
 import PageHero from "@/components/PageHero";
 import SectionWrapper, { FadeUp, StaggerContainer, StaggerItem } from "@/components/SectionWrapper";
 import ServiceCard from "@/components/ServiceCard";
 import { serviceItems } from "@/lib/service-data";
+import {
+  absoluteUrl,
+  buildBreadcrumbSchema,
+  buildWebPageSchema,
+  createTitle,
+  organizationId,
+  toMetaDescription,
+} from "@/lib/seo";
 
-const Services = () => (
-  <div>
-    <PageHero
-      headline="Software development services"
-      subheadline="Nexaform provides software development and product engineering services for businesses that need modern, scalable, and outcome-focused digital systems."
-      paragraph="We work with businesses that want more efficient workflows, better digital experiences, and software built to support real growth."
-    />
+const Services = () => {
+  const pageTitle = createTitle("Software Development Services");
+  const pageDescription = toMetaDescription(
+    "Explore Nexaform services for web application development, custom software development, AI automation, API and backend systems, cloud deployment, and maintenance for businesses in Nepal and worldwide.",
+  );
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Services", path: "/services" },
+  ]);
+  const structuredData = [
+    breadcrumbSchema,
+    buildWebPageSchema({
+      title: pageTitle,
+      description: pageDescription,
+      path: "/services",
+      type: "CollectionPage",
+      breadcrumbId: `${absoluteUrl("/services")}#breadcrumb`,
+    }),
+    {
+      "@context": "https://schema.org",
+      "@type": "OfferCatalog",
+      "@id": `${absoluteUrl("/services")}#service-catalog`,
+      name: "Nexaform Software Development Services",
+      itemListElement: serviceItems.map((service) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: service.title,
+          description: service.description,
+          provider: {
+            "@id": organizationId,
+          },
+        },
+      })),
+    },
+  ];
+
+  return (
+    <div>
+      <Seo title={pageTitle} description={pageDescription} path="/services" structuredData={structuredData} />
+
+      <PageHero
+        headline="Software development services"
+        subheadline="Nexaform provides software development and product engineering services for businesses that need modern, scalable, and outcome-focused digital systems."
+        paragraph="We work with businesses that want more efficient workflows, better digital experiences, and software built to support real growth."
+      />
 
     <SectionWrapper>
       <StaggerContainer className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,19rem),1fr))] gap-6 xl:gap-8">
@@ -77,7 +125,8 @@ const Services = () => (
         </FadeUp>
       </div>
     </section>
-  </div>
-);
+    </div>
+  );
+};
 
 export default Services;

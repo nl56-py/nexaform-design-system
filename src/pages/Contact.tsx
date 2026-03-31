@@ -3,12 +3,20 @@ import { Link } from "react-router-dom";
 import { Mail, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import PageHero from "@/components/PageHero";
+import Seo from "@/components/Seo";
 import SectionWrapper, { FadeUp } from "@/components/SectionWrapper";
 import SocialFollowButtons from "@/components/SocialFollowButtons";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { siteContact } from "@/lib/site-config";
 import { getSupabaseErrorMessage } from "@/lib/supabase-errors";
+import {
+  absoluteUrl,
+  buildBreadcrumbSchema,
+  buildWebPageSchema,
+  createTitle,
+  toMetaDescription,
+} from "@/lib/seo";
 
 const Contact = () => {
   const [form, setForm] = useState({
@@ -62,9 +70,39 @@ const Contact = () => {
   const inputClass =
     "w-full rounded-lg border border-border/50 bg-secondary px-4 py-3 text-sm text-foreground transition-all duration-200 placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20";
   const labelClass = "mb-1.5 block text-sm font-medium text-foreground";
+  const pageTitle = createTitle("Contact Nexaform");
+  const pageDescription = toMetaDescription(
+    "Contact Nexaform to discuss custom software development, web applications, AI automation, or digital systems for your business.",
+  );
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Contact", path: "/contact" },
+  ]);
+  const structuredData = [
+    breadcrumbSchema,
+    buildWebPageSchema({
+      title: pageTitle,
+      description: pageDescription,
+      path: "/contact",
+      type: "ContactPage",
+      breadcrumbId: `${absoluteUrl("/contact")}#breadcrumb`,
+    }),
+    {
+      "@context": "https://schema.org",
+      "@type": "ContactPoint",
+      "@id": `${absoluteUrl("/contact")}#contact-point`,
+      contactType: "sales",
+      email: siteContact.email,
+      areaServed: siteContact.areaServed,
+      availableLanguage: "English",
+      url: absoluteUrl("/contact"),
+    },
+  ];
 
   return (
     <div>
+      <Seo title={pageTitle} description={pageDescription} path="/contact" structuredData={structuredData} />
+
       <PageHero
         headline="Contact Nexaform"
         subheadline="Tell us about your business challenge, product idea, or software project. We'd love to explore how we can help."

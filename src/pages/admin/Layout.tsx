@@ -1,7 +1,9 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { BookText, FolderKanban, LayoutDashboard, LogOut, Mail, ShieldCheck } from "lucide-react";
+import Seo from "@/components/Seo";
 import { Button } from "@/components/ui/button";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
+import { createTitle } from "@/lib/seo";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Overview", to: "/admin" },
@@ -11,6 +13,7 @@ const navItems = [
 ];
 
 const AdminLayoutPage = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const { adminUser, signOut, user } = useAdminAuth();
 
@@ -21,6 +24,12 @@ const AdminLayoutPage = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-secondary px-6 py-12">
+      <Seo
+        title={createTitle("Admin Workspace")}
+        description="Protected Nexaform admin workspace."
+        path={location.pathname}
+        noindex
+      />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.12),transparent_35%),radial-gradient(circle_at_top_right,rgba(139,92,246,0.14),transparent_30%)]" />
 
       <div className="container relative z-10">

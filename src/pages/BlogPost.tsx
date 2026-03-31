@@ -2,9 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight, CalendarDays } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import PageHero from "@/components/PageHero";
+import Seo from "@/components/Seo";
 import SectionWrapper, { FadeUp } from "@/components/SectionWrapper";
 import { Button } from "@/components/ui/button";
 import { fetchPublishedBlogPostBySlug } from "@/lib/blogs";
+import {
+  absoluteUrl,
+  buildBlogPostingSchema,
+  buildBreadcrumbSchema,
+  buildWebPageSchema,
+  createTitle,
+  toMetaDescription,
+} from "@/lib/seo";
 
 const formatPublishedDate = (value: string | null) => {
   if (!value) {
@@ -25,6 +34,11 @@ const BlogPost = () => {
   if (isLoading) {
     return (
       <SectionWrapper>
+        <Seo
+          title={createTitle("Loading Article")}
+          description="Loading blog article from Nexaform."
+          path={`/blog/${slug}`}
+        />
         <div className="mx-auto max-w-3xl animate-pulse space-y-4">
           <div className="h-4 w-32 rounded bg-muted-foreground/10" />
           <div className="h-10 w-full rounded bg-muted-foreground/10" />
@@ -38,6 +52,12 @@ const BlogPost = () => {
   if (!post) {
     return (
       <SectionWrapper>
+        <Seo
+          title={createTitle("Article Not Found")}
+          description="The requested Nexaform article could not be found."
+          path={`/blog/${slug}`}
+          noindex
+        />
         <div className="mx-auto max-w-2xl rounded-[2rem] border border-border/60 bg-card px-6 py-12 text-center shadow-sm">
           <p className="mb-3 font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
             Blog Post Not Found
@@ -59,8 +79,38 @@ const BlogPost = () => {
     );
   }
 
+  const pageTitle = createTitle(post.title);
+  const pageDescription = toMetaDescription(post.excerpt);
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog" },
+    { name: post.title, path: `/blog/${post.slug}` },
+  ]);
+  const structuredData = [
+    breadcrumbSchema,
+    buildWebPageSchema({
+      title: pageTitle,
+      description: pageDescription,
+      path: `/blog/${post.slug}`,
+      image: post.cover_image,
+      breadcrumbId: `${absoluteUrl(`/blog/${post.slug}`)}#breadcrumb`,
+    }),
+    buildBlogPostingSchema(post),
+  ];
+
   return (
     <div>
+      <Seo
+        title={pageTitle}
+        description={pageDescription}
+        path={`/blog/${post.slug}`}
+        image={post.cover_image}
+        type="article"
+        publishedTime={post.published_at ?? post.created_at}
+        modifiedTime={post.updated_at}
+        structuredData={structuredData}
+      />
+
       <PageHero
         badge={post.category}
         headline={post.title}

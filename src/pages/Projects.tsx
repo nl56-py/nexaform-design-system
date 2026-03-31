@@ -1,11 +1,20 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
+import Seo from "@/components/Seo";
 import { Button } from "@/components/ui/button";
 import PageHero from "@/components/PageHero";
 import ProjectCard from "@/components/ProjectCard";
 import SectionWrapper, { FadeUp, StaggerContainer, StaggerItem } from "@/components/SectionWrapper";
 import { fetchPublishedProjects } from "@/lib/projects";
+import {
+  absoluteUrl,
+  buildBreadcrumbSchema,
+  buildItemListSchema,
+  buildWebPageSchema,
+  createTitle,
+  toMetaDescription,
+} from "@/lib/seo";
 
 const Projects = () => {
   const { data: projects = [], isLoading } = useQuery({
@@ -13,8 +22,42 @@ const Projects = () => {
     queryFn: () => fetchPublishedProjects(),
   });
 
+  const pageTitle = createTitle("Custom Software Projects and Case Studies");
+  const pageDescription = toMetaDescription(
+    "Browse Nexaform case studies, project work, and digital systems built around custom software, business workflows, and practical product delivery.",
+  );
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Projects", path: "/projects" },
+  ]);
+  const structuredData = [
+    breadcrumbSchema,
+    buildWebPageSchema({
+      title: pageTitle,
+      description: pageDescription,
+      path: "/projects",
+      type: "CollectionPage",
+      breadcrumbId: `${absoluteUrl("/projects")}#breadcrumb`,
+    }),
+    ...(projects.length > 0
+      ? [
+          buildItemListSchema({
+            path: "/projects",
+            idSuffix: "projects",
+            name: "Nexaform Case Studies",
+            items: projects.map((project) => ({
+              name: project.title,
+              path: `/projects/${project.slug}`,
+            })),
+          }),
+        ]
+      : []),
+  ];
+
   return (
     <div>
+      <Seo title={pageTitle} description={pageDescription} path="/projects" structuredData={structuredData} />
+
       <PageHero
         headline="Projects built around real business needs"
         subheadline="Explore how Nexaform turns software challenges, internal workflows, and growth goals into practical digital products."

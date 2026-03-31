@@ -2,9 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import PageHero from "@/components/PageHero";
+import Seo from "@/components/Seo";
 import SectionWrapper, { FadeUp } from "@/components/SectionWrapper";
 import { Button } from "@/components/ui/button";
 import { fetchPublishedProjectBySlug } from "@/lib/projects";
+import {
+  absoluteUrl,
+  buildBreadcrumbSchema,
+  buildProjectSchema,
+  buildWebPageSchema,
+  createTitle,
+  toMetaDescription,
+} from "@/lib/seo";
 
 const ProjectDetail = () => {
   const { slug = "" } = useParams();
@@ -17,6 +26,11 @@ const ProjectDetail = () => {
   if (isLoading) {
     return (
       <SectionWrapper>
+        <Seo
+          title={createTitle("Loading Project")}
+          description="Loading project details from Nexaform."
+          path={`/projects/${slug}`}
+        />
         <div className="mx-auto max-w-4xl animate-pulse space-y-4">
           <div className="h-4 w-32 rounded bg-muted-foreground/10" />
           <div className="h-10 w-full rounded bg-muted-foreground/10" />
@@ -30,6 +44,12 @@ const ProjectDetail = () => {
   if (!project) {
     return (
       <SectionWrapper>
+        <Seo
+          title={createTitle("Project Not Found")}
+          description="The requested Nexaform project or case study could not be found."
+          path={`/projects/${slug}`}
+          noindex
+        />
         <div className="mx-auto max-w-2xl rounded-[2rem] border border-border/60 bg-card px-6 py-12 text-center shadow-sm">
           <p className="mb-3 font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
             Project Not Found
@@ -51,8 +71,35 @@ const ProjectDetail = () => {
     );
   }
 
+  const pageTitle = createTitle(`${project.title} Case Study`);
+  const pageDescription = toMetaDescription(project.description || project.outcome);
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Projects", path: "/projects" },
+    { name: project.title, path: `/projects/${project.slug}` },
+  ]);
+  const structuredData = [
+    breadcrumbSchema,
+    buildWebPageSchema({
+      title: pageTitle,
+      description: pageDescription,
+      path: `/projects/${project.slug}`,
+      image: project.cover_image,
+      breadcrumbId: `${absoluteUrl(`/projects/${project.slug}`)}#breadcrumb`,
+    }),
+    buildProjectSchema(project),
+  ];
+
   return (
     <div>
+      <Seo
+        title={pageTitle}
+        description={pageDescription}
+        path={`/projects/${project.slug}`}
+        image={project.cover_image}
+        structuredData={structuredData}
+      />
+
       <PageHero
         badge={project.industry || "Featured Project"}
         headline={project.title}

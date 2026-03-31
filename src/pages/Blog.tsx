@@ -2,9 +2,18 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import BlogPreviewCard from "@/components/BlogPreviewCard";
 import PageHero from "@/components/PageHero";
+import Seo from "@/components/Seo";
 import SectionWrapper, { FadeUp, StaggerContainer, StaggerItem } from "@/components/SectionWrapper";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPublishedBlogPosts } from "@/lib/blogs";
+import {
+  absoluteUrl,
+  buildBreadcrumbSchema,
+  buildItemListSchema,
+  buildWebPageSchema,
+  createTitle,
+  toMetaDescription,
+} from "@/lib/seo";
 
 const categories = ["Software Development", "Web Applications", "Product Strategy", "AI & Automation", "Deployment & DevOps", "UX & Interface Design"];
 
@@ -14,8 +23,42 @@ const Blog = () => {
     queryFn: () => fetchPublishedBlogPosts(),
   });
 
+  const pageTitle = createTitle("Blog and Software Insights");
+  const pageDescription = toMetaDescription(
+    "Read Nexaform articles on software development, custom web applications, AI automation, product strategy, UX, and digital systems.",
+  );
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog" },
+  ]);
+  const structuredData = [
+    breadcrumbSchema,
+    buildWebPageSchema({
+      title: pageTitle,
+      description: pageDescription,
+      path: "/blog",
+      type: "Blog",
+      breadcrumbId: `${absoluteUrl("/blog")}#breadcrumb`,
+    }),
+    ...(articles.length > 0
+      ? [
+          buildItemListSchema({
+            path: "/blog",
+            idSuffix: "articles",
+            name: "Nexaform Blog Articles",
+            items: articles.map((article) => ({
+              name: article.title,
+              path: `/blog/${article.slug}`,
+            })),
+          }),
+        ]
+      : []),
+  ];
+
   return (
     <div>
+      <Seo title={pageTitle} description={pageDescription} path="/blog" structuredData={structuredData} />
+
       <PageHero
         headline="Blog and insights"
         subheadline="Practical writing on software development, digital systems, product strategy, AI-assisted workflows, and building for the future."

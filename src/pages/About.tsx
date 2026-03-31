@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, BarChart3, Mail, MapPin, MonitorSmartphone, Sparkles, Target, Workflow } from "lucide-react";
+import Seo from "@/components/Seo";
 import { Button } from "@/components/ui/button";
 import SocialFollowButtons from "@/components/SocialFollowButtons";
 import { FadeUp } from "@/components/SectionWrapper";
@@ -8,6 +9,13 @@ import launchImage from "@/assets/launch.jpg";
 import meetingImage from "@/assets/meeting.jpg";
 import uiUxImage from "@/assets/ui ux.jpg";
 import { siteContact } from "@/lib/site-config";
+import {
+  absoluteUrl,
+  buildBreadcrumbSchema,
+  buildWebPageSchema,
+  createTitle,
+  toMetaDescription,
+} from "@/lib/seo";
 
 const capabilityHighlights = [
   { value: "Custom", label: "Product builds" },
@@ -29,8 +37,31 @@ const quickLinks = [
   { label: "Contact", to: "/contact" },
 ];
 
-const About = () => (
-  <div className="bg-[#fffaf7] text-foreground">
+const About = () => {
+  const pageTitle = createTitle("About Nexaform");
+  const pageDescription = toMetaDescription(
+    "Learn about Nexaform, a Nepal-based software development partner building custom web applications, business platforms, and AI-assisted digital systems for growing teams.",
+  );
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about" },
+  ]);
+  const structuredData = [
+    breadcrumbSchema,
+    buildWebPageSchema({
+      title: pageTitle,
+      description: pageDescription,
+      path: "/about",
+      type: "AboutPage",
+      image: aboutHeroImage,
+      breadcrumbId: `${absoluteUrl("/about")}#breadcrumb`,
+    }),
+  ];
+
+  return (
+    <div className="bg-[#fffaf7] text-foreground">
+      <Seo title={pageTitle} description={pageDescription} path="/about" image={aboutHeroImage} structuredData={structuredData} />
+
     <section className="relative overflow-hidden pt-20 md:pt-24">
       <div className="relative min-h-[60svh] md:min-h-[68svh]">
         <img
@@ -326,7 +357,8 @@ const About = () => (
         </FadeUp>
       </div>
     </section>
-  </div>
-);
+    </div>
+  );
+};
 
 export default About;

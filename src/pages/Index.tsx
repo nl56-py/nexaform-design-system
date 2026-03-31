@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BlogPreviewCard from "@/components/BlogPreviewCard";
+import Seo from "@/components/Seo";
 import SectionWrapper, { FadeUp, StaggerContainer, StaggerItem } from "@/components/SectionWrapper";
 import ServiceTreeSection from "@/components/ServiceTreeSection";
 import WaveDivider from "@/components/WaveDivider";
@@ -15,6 +16,14 @@ import heroDeveloper from "@/assets/hero-developer.png";
 import heroWave from "@/assets/hero-wave.png";
 import { fetchPublishedBlogPosts } from "@/lib/blogs";
 import { fetchPublishedProjects } from "@/lib/projects";
+import {
+  buildItemListSchema,
+  buildOrganizationSchema,
+  buildWebPageSchema,
+  buildWebsiteSchema,
+  createTitle,
+  toMetaDescription,
+} from "@/lib/seo";
 
 const Index = () => {
   const { data: featuredProjects = [] } = useQuery({
@@ -27,8 +36,57 @@ const Index = () => {
     queryFn: () => fetchPublishedBlogPosts(3),
   });
 
+  const pageTitle = createTitle("Custom Software Development Company in Nepal");
+  const pageDescription = toMetaDescription(
+    "Nexaform is a software development company in Nepal building custom web applications, scalable software, AI automation, and digital systems for businesses that want to operate smarter and grow with confidence.",
+  );
+  const structuredData = [
+    buildOrganizationSchema(),
+    buildWebsiteSchema(),
+    buildWebPageSchema({
+      title: pageTitle,
+      description: pageDescription,
+      path: "/",
+      image: heroDeveloper,
+    }),
+    ...(featuredProjects.length > 0
+      ? [
+          buildItemListSchema({
+            path: "/",
+            idSuffix: "featured-projects",
+            name: "Featured Nexaform Projects",
+            items: featuredProjects.map((project) => ({
+              name: project.title,
+              path: `/projects/${project.slug}`,
+            })),
+          }),
+        ]
+      : []),
+    ...(latestBlogPosts.length > 0
+      ? [
+          buildItemListSchema({
+            path: "/",
+            idSuffix: "latest-articles",
+            name: "Latest Nexaform Articles",
+            items: latestBlogPosts.map((post) => ({
+              name: post.title,
+              path: `/blog/${post.slug}`,
+            })),
+          }),
+        ]
+      : []),
+  ];
+
   return (
     <div>
+      <Seo
+        title={pageTitle}
+        description={pageDescription}
+        path="/"
+        image={heroDeveloper}
+        structuredData={structuredData}
+      />
+
       <section className="relative overflow-hidden pb-16 pt-28 md:pb-20 md:pt-36 lg:pb-24 lg:pt-40">
         <div className="pointer-events-none absolute inset-0 gradient-glow-bg" />
         <div className="pointer-events-none absolute right-0 top-1/2 h-[320px] w-[320px] -translate-y-1/2 rounded-full bg-primary/5 blur-3xl sm:h-[420px] sm:w-[420px] lg:h-[600px] lg:w-[600px]" />
@@ -48,9 +106,9 @@ const Index = () => {
               </FadeUp>
               <FadeUp delay={0.2}>
                 <p className="mb-4 max-w-[55ch] text-lg leading-relaxed text-muted-foreground">
-                  Nexaform designs and develops custom web applications, scalable software, and
-                  modern digital systems for businesses that want to operate smarter and grow with
-                  confidence.
+                  Nexaform is a software development company in Nepal that designs and develops
+                  custom web applications, scalable software, and modern digital systems for
+                  businesses that want to operate smarter and grow with confidence.
                 </p>
               </FadeUp>
               <FadeUp delay={0.25}>

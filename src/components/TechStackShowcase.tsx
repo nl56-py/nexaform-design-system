@@ -1,4 +1,4 @@
-import type { ComponentType, SVGProps } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ComponentType, type SVGProps } from "react";
 
 type TechLogoProps = SVGProps<SVGSVGElement>;
 
@@ -168,38 +168,81 @@ const techStack: TechStackItem[] = [
   },
 ];
 
-const TechStackShowcase = () => (
-  <div className="relative overflow-hidden py-4">
-    <div className="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-16 bg-gradient-to-r from-background to-transparent" />
-    <div className="pointer-events-none absolute bottom-0 right-0 top-0 z-10 w-16 bg-gradient-to-l from-background to-transparent" />
+const TechStackShowcase = () => {
+  const firstTrackRef = useRef<HTMLDivElement | null>(null);
+  const [scrollDistance, setScrollDistance] = useState(0);
 
-    <div className="logo-scroll flex w-max gap-5 sm:gap-6 lg:gap-8">
-      {[...techStack, ...techStack].map(({ name, logo: Logo, toneClassName }, index) => {
-        const isDuplicate = index >= techStack.length;
+  useEffect(() => {
+    const element = firstTrackRef.current;
 
-        return (
-          <article
-            key={`${name}-${index}`}
-            aria-hidden={isDuplicate}
-            className="group flex min-w-[11.5rem] shrink-0 items-center gap-4 rounded-[1.4rem] border border-white/10 bg-card/80 px-5 py-4 shadow-[0_18px_45px_-32px_rgba(14,165,233,0.38)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1"
-          >
+    if (!element) {
+      return undefined;
+    }
+
+    const updateDistance = () => {
+      const nextDistance = Math.round(element.getBoundingClientRect().width);
+      setScrollDistance((currentDistance) =>
+        currentDistance === nextDistance ? currentDistance : nextDistance,
+      );
+    };
+
+    updateDistance();
+
+    const resizeObserver = new ResizeObserver(() => updateDistance());
+    resizeObserver.observe(element);
+
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  const trackStyle =
+    scrollDistance > 0
+      ? ({
+          "--tech-stack-scroll-distance": `${scrollDistance}px`,
+          "--tech-stack-scroll-duration": `${Math.max(18, scrollDistance / 42).toFixed(1)}s`,
+        } as CSSProperties)
+      : undefined;
+
+  return (
+    <div className="relative overflow-hidden py-4">
+      <div className="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-16 bg-gradient-to-r from-background to-transparent" />
+      <div className="pointer-events-none absolute bottom-0 right-0 top-0 z-10 w-16 bg-gradient-to-l from-background to-transparent" />
+
+      <div className="tech-stack-marquee" aria-label="Technology stack">
+        <div className="tech-stack-marquee-track" style={trackStyle}>
+          {[0, 1].map((copyIndex) => (
             <div
-              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.05rem] border border-white/10 ${toneClassName}`}
+              key={copyIndex}
+              ref={copyIndex === 0 ? firstTrackRef : undefined}
+              aria-hidden={copyIndex === 1}
+              className="flex shrink-0 gap-5 pr-5 sm:gap-6 sm:pr-6 lg:gap-8 lg:pr-8"
             >
-              <Logo className="h-8 w-8" aria-hidden="true" />
-            </div>
+              {techStack.map(({ name, logo: Logo, toneClassName }) => (
+                <article
+                  key={`${name}-${copyIndex}`}
+                  className="group flex min-w-[11rem] shrink-0 items-center gap-4 rounded-[1.4rem] border border-white/10 bg-card/80 px-5 py-4 shadow-[0_18px_45px_-32px_rgba(14,165,233,0.38)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1 sm:min-w-[11.5rem]"
+                >
+                  <div
+                    className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.05rem] border border-white/10 ${toneClassName}`}
+                  >
+                    <Logo className="h-8 w-8" aria-hidden="true" />
+                  </div>
 
-            <div className="min-w-0">
-              <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground/65">
-                Tech Stack
-              </p>
-              <p className="mt-1 text-sm font-semibold text-foreground sm:text-[15px]">{name}</p>
+                  <div className="min-w-0">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground/65">
+                      Tech Stack
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-foreground sm:text-[15px]">
+                      {name}
+                    </p>
+                  </div>
+                </article>
+              ))}
             </div>
-          </article>
-        );
-      })}
+          ))}
+        </div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default TechStackShowcase;

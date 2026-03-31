@@ -25,6 +25,7 @@ const ecosystemAreas = [
     image: vibeCodingImage,
     alt: "Vibe coding visual for hands-on AI-assisted development",
     icon: Code2,
+    imageClassName: "object-[center_42%]",
   },
   {
     title: "AI Literacy",
@@ -34,6 +35,7 @@ const ecosystemAreas = [
     image: aiLiteracyImage,
     alt: "AI literacy visual focused on practical understanding",
     icon: BrainCircuit,
+    imageClassName: "object-[center_46%]",
   },
   {
     title: "AI Tools",
@@ -43,6 +45,7 @@ const ecosystemAreas = [
     image: aiToolsImage,
     alt: "AI tools visual showing practical tool fluency",
     icon: Sparkles,
+    imageClassName: "object-center",
   },
   {
     title: "AI Automation",
@@ -52,6 +55,7 @@ const ecosystemAreas = [
     image: aiAutomationImage,
     alt: "AI automation visual for connected workflows",
     icon: Bot,
+    imageClassName: "object-[center_44%]",
   },
 ];
 
@@ -173,21 +177,22 @@ const VibenestEcosystemSection = () => {
 
               return (
                 <StaggerItem key={area.title} className="h-full">
-                  <article className="card-surface card-surface-hover group flex h-full flex-col overflow-hidden rounded-[28px] border border-white/60 bg-white/80 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur-sm">
-                    <div className="relative aspect-[4/3] overflow-hidden">
+                  <article className="card-surface card-surface-hover group flex h-full min-h-[23rem] flex-col overflow-hidden rounded-[28px] border border-white/60 bg-white/80 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:min-h-[25rem]">
+                    <div className="relative aspect-[4/3] overflow-hidden bg-slate-950">
                       <img
                         src={area.image}
                         alt={area.alt}
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+                        className={`h-full w-full object-cover saturate-[0.92] transition-transform duration-700 group-hover:scale-[1.04] ${area.imageClassName}`}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-slate-950/10 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/72 via-slate-950/16 to-slate-950/8" />
+                      <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-cyan-200/20 via-transparent to-transparent" />
                       <div className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/80 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.24em] text-slate-900 backdrop-blur-sm">
                         <Icon size={14} className="text-primary" />
                         {area.label}
                       </div>
                     </div>
 
-                    <div className="flex flex-1 flex-col p-6">
+                    <div className="flex min-h-[10.75rem] flex-1 flex-col p-6">
                       <h3 className="font-display text-xl font-semibold tracking-tight text-foreground">
                         {area.title}
                       </h3>
@@ -207,9 +212,9 @@ const VibenestEcosystemSection = () => {
             const Icon = card.icon;
 
             return (
-              <FadeUp key={card.title} delay={0.1 + index * 0.08}>
+              <FadeUp key={card.title} delay={0.1 + index * 0.08} className="h-full">
                 <article
-                  className={`rounded-[28px] border border-border/60 bg-white/75 p-6 shadow-[0_18px_44px_rgba(15,23,42,0.06)] backdrop-blur-sm sm:p-7 ${card.className}`}
+                  className={`flex h-full flex-col rounded-[28px] border border-border/60 bg-white/75 p-6 shadow-[0_18px_44px_rgba(15,23,42,0.06)] backdrop-blur-sm sm:p-7 ${card.className}`}
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
@@ -223,7 +228,9 @@ const VibenestEcosystemSection = () => {
                   <h3 className="mt-5 font-display text-xl font-semibold text-foreground">
                     {card.title}
                   </h3>
-                  <p className="mt-3 text-sm leading-7 text-muted-foreground">{card.description}</p>
+                  <p className="mt-3 flex-1 text-sm leading-7 text-muted-foreground">
+                    {card.description}
+                  </p>
                 </article>
               </FadeUp>
             );

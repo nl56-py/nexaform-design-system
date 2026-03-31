@@ -668,11 +668,20 @@
     font-size: clamp(4.8rem, 11vw, 7.4rem);
   }
 
-  .logo-scroll {
-    animation: logo-scroll 25s linear infinite;
+  .tech-stack-marquee {
+    overflow: hidden;
   }
 
-  .logo-scroll:hover {
+  .tech-stack-marquee-track {
+    display: flex;
+    width: max-content;
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+    backface-visibility: hidden;
+    animation: tech-stack-scroll var(--tech-stack-scroll-duration, 24s) linear infinite;
+  }
+
+  .tech-stack-marquee-track:hover {
     animation-play-state: paused;
   }
 }
@@ -687,9 +696,9 @@
   50% { opacity: 1; }
 }
 
-@keyframes logo-scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+@keyframes tech-stack-scroll {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(calc(var(--tech-stack-scroll-distance, 0px) * -1), 0, 0); }
 }
 
 @keyframes consultation-wave-flow {
@@ -939,5 +948,18 @@
     width: 3rem;
     height: 3rem;
     border-radius: 1rem;
+  }
+}
+
+@media (hover: none) {
+  .tech-stack-marquee-track:hover {
+    animation-play-state: running;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-stack-marquee-track {
+    animation: none;
+    transform: none;
   }
 }

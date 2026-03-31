@@ -1,5 +1,8 @@
 import { Link } from "react-router-dom";
+import { Mail, MapPin } from "lucide-react";
 import Logo from "@/components/Logo";
+import SocialFollowButtons from "@/components/SocialFollowButtons";
+import { siteContact } from "@/lib/site-config";
 
 const quickLinks = [
   { label: "Home", to: "/" },
@@ -13,7 +16,7 @@ const quickLinks = [
 const Footer = () => (
   <footer className="border-t border-border/50 bg-secondary">
     <div className="container section-padding">
-      <div className="grid grid-cols-1 gap-10 text-center md:grid-cols-3 md:gap-12 md:text-left">
+      <div className="grid grid-cols-1 gap-10 text-center md:grid-cols-2 md:gap-12 md:text-left xl:grid-cols-4">
         <div className="space-y-4">
           <Logo className="justify-center md:justify-start" />
           <p className="mx-auto max-w-xs text-sm leading-relaxed text-muted-foreground md:mx-0">
@@ -39,6 +42,28 @@ const Footer = () => (
               </Link>
             ))}
           </nav>
+        </div>
+
+        <div className="space-y-4">
+          <h4 className="mb-4 text-sm font-display font-semibold text-foreground">Connect</h4>
+          <div className="space-y-3">
+            <a
+              href={siteContact.emailHref}
+              className="inline-flex items-center justify-center gap-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground md:justify-start"
+            >
+              <Mail size={16} />
+              <span>{siteContact.email}</span>
+            </a>
+            <div className="flex items-start justify-center gap-2 text-sm text-muted-foreground md:justify-start">
+              <MapPin size={16} className="mt-0.5 shrink-0" />
+              <span>{siteContact.location}</span>
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-3 text-sm font-display font-semibold text-foreground">Follow Us On</div>
+            <SocialFollowButtons className="justify-center md:justify-start" />
+          </div>
         </div>
 
         <div className="space-y-4">

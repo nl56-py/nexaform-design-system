@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, BarChart3, Mail, MapPin, MonitorSmartphone, Sparkles, Target, Workflow } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import SocialFollowButtons from "@/components/SocialFollowButtons";
 import { FadeUp } from "@/components/SectionWrapper";
 import aboutHeroImage from "@/assets/programming.jpg";
 import launchImage from "@/assets/launch.jpg";
 import meetingImage from "@/assets/meeting.jpg";
 import uiUxImage from "@/assets/ui ux.jpg";
+import { siteContact } from "@/lib/site-config";
 
 const capabilityHighlights = [
   { value: "Custom", label: "Product builds" },
@@ -240,7 +242,12 @@ const About = () => (
                     </div>
                     <div>
                       <div className="text-white/65">Email</div>
-                      <div className="mt-1 text-base font-medium text-white">hello@nexaform.com</div>
+                      <a
+                        href={siteContact.emailHref}
+                        className="mt-1 inline-block text-base font-medium text-white transition-opacity duration-200 hover:opacity-85"
+                      >
+                        {siteContact.email}
+                      </a>
                     </div>
                   </div>
 
@@ -250,9 +257,17 @@ const About = () => (
                     </div>
                     <div>
                       <div className="text-white/65">Location</div>
-                      <div className="mt-1 text-base font-medium text-white">Nepal, serving teams globally</div>
+                      <div className="mt-1 text-base font-medium text-white">{siteContact.location}</div>
                     </div>
                   </div>
+                </div>
+
+                <div className="mt-6">
+                  <div className="text-white/65">Follow us on</div>
+                  <SocialFollowButtons
+                    className="mt-3"
+                    buttonClassName="border-white/20 bg-white/10 text-white hover:border-white/30 hover:bg-white/15 hover:text-white"
+                  />
                 </div>
 
                 <Button

@@ -18,9 +18,7 @@ import { fetchPublishedBlogPosts } from "@/lib/blogs";
 import { fetchPublishedProjects } from "@/lib/projects";
 import {
   buildItemListSchema,
-  buildOrganizationSchema,
   buildWebPageSchema,
-  buildWebsiteSchema,
   createTitle,
   toMetaDescription,
 } from "@/lib/seo";
@@ -41,8 +39,6 @@ const Index = () => {
     "Nexaform is a software development company in Nepal building custom web applications, scalable software, AI automation, and digital systems for businesses that want to operate smarter and grow with confidence.",
   );
   const structuredData = [
-    buildOrganizationSchema(),
-    buildWebsiteSchema(),
     buildWebPageSchema({
       title: pageTitle,
       description: pageDescription,

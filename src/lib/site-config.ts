@@ -1,6 +1,7 @@
 export const siteConfig = {
-  name: "Nexaform",
-  alternateName: "Nexa Form",
+  brandName: "Nexaform",
+  siteName: "Nexaform Pvt. Ltd.",
+  alternateName: "Nexaform",
   siteUrl: "https://www.nexa-form.com",
   domain: "www.nexa-form.com",
   defaultTitle: "Nexaform | Custom Software Development Company in Nepal",

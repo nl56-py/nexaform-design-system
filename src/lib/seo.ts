@@ -76,13 +76,14 @@ export const toMetaDescription = (value: string, maxLength = 160) => {
   return `${(lastSpace > 0 ? clipped.slice(0, lastSpace) : clipped.slice(0, maxLength)).trim()}...`;
 };
 
-export const createTitle = (pageTitle: string) => `${pageTitle} | ${siteConfig.name}`;
+export const createTitle = (pageTitle: string) => `${pageTitle} | ${siteConfig.brandName}`;
 
 export const buildOrganizationSchema = (): JsonLd => ({
   "@context": "https://schema.org",
   "@type": "Organization",
   "@id": organizationId,
-  name: siteConfig.name,
+  name: siteConfig.siteName,
+  legalName: siteConfig.siteName,
   alternateName: siteConfig.alternateName,
   description: siteConfig.defaultDescription,
   url: siteConfig.siteUrl,
@@ -104,7 +105,7 @@ export const buildWebsiteSchema = (): JsonLd => ({
   "@context": "https://schema.org",
   "@type": "WebSite",
   "@id": websiteId,
-  name: siteConfig.name,
+  name: siteConfig.siteName,
   alternateName: siteConfig.alternateName,
   url: siteConfig.siteUrl,
   inLanguage: "en",

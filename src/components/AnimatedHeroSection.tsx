@@ -39,7 +39,7 @@ const AnimatedHeroSection = () => {
         preload="auto"
         poster={heroBackgroundPoster}
         disablePictureInPicture
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-[0.68] [transform:translateZ(0)]"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-[0.82] [transform:translateZ(0)]"
       >
         <source src={heroBackgroundLoop} type="video/mp4" />
       </video>

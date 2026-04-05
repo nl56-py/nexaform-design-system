@@ -44,9 +44,6 @@ const AnimatedHeroSection = () => {
         <source src={heroBackgroundLoop} type="video/mp4" />
       </video>
 
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(248,250,252,0.98)_0%,rgba(248,250,252,0.93)_28%,rgba(248,250,252,0.66)_56%,rgba(248,250,252,0.34)_100%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,rgba(34,211,238,0.1),transparent_21%),radial-gradient(circle_at_78%_18%,rgba(59,130,246,0.09),transparent_23%),linear-gradient(180deg,rgba(248,250,252,0.24),rgba(248,250,252,0.5))]" />
-
       <div className="container relative z-10">
         <div className="max-w-3xl lg:min-h-[calc(100vh-10rem)] lg:flex lg:items-center">
           <div className="p-6 sm:p-8 lg:p-10">

@@ -9,6 +9,7 @@ import { serviceItems } from "@/lib/service-data";
 import {
   absoluteUrl,
   buildBreadcrumbSchema,
+  buildItemListSchema,
   buildWebPageSchema,
   createTitle,
   organizationId,
@@ -40,6 +41,7 @@ const Services = () => {
       name: "Nexaform Software Development Services",
       itemListElement: serviceItems.map((service) => ({
         "@type": "Offer",
+        url: absoluteUrl(`/services/${service.slug}`),
         itemOffered: {
           "@type": "Service",
           name: service.title,
@@ -50,6 +52,15 @@ const Services = () => {
         },
       })),
     },
+    buildItemListSchema({
+      path: "/services",
+      idSuffix: "service-pages",
+      name: "Nexaform service detail pages",
+      items: serviceItems.map((service) => ({
+        name: service.title,
+        path: `/services/${service.slug}`,
+      })),
+    }),
   ];
 
   return (
@@ -59,7 +70,7 @@ const Services = () => {
       <PageHero
         headline="Software development services"
         subheadline="Nexaform provides software development and product engineering services for businesses that need modern, scalable, and outcome-focused digital systems."
-        paragraph="We work with businesses that want more efficient workflows, better digital experiences, and software built to support real growth."
+        paragraph="Explore each service page for detailed scope, FAQs, service fit, and the fastest route to contact us or request a quote."
       />
 
     <SectionWrapper>
@@ -69,13 +80,16 @@ const Services = () => {
 
           return (
             <StaggerItem key={service.title} className="h-full">
-              <ServiceCard
-                icon={<Icon size={22} />}
-                title={service.title}
-                description={service.description}
-                image={service.image}
-                imageAlt={service.imageAlt}
-              />
+              <Link to={`/services/${service.slug}`} className="block h-full">
+                <ServiceCard
+                  icon={<Icon size={22} />}
+                  title={service.title}
+                  description={service.description}
+                  image={service.image}
+                  imageAlt={service.imageAlt}
+                  ctaLabel="View service details"
+                />
+              </Link>
             </StaggerItem>
           );
         })}
@@ -90,6 +104,11 @@ const Services = () => {
         <p className="max-w-[65ch] leading-relaxed text-muted-foreground">
           We work with startups, service businesses, educators, local companies, digital-first teams,
           and growing organizations that need software built around practical goals and long-term value.
+        </p>
+        <p className="mt-4 max-w-[65ch] leading-relaxed text-muted-foreground">
+          Each service page includes detailed scope, internal links to related services, and direct paths
+          to <Link to="/contact" className="text-primary hover:underline">contact Nexaform</Link> or request
+          a quote for the work you need.
         </p>
       </FadeUp>
     </SectionWrapper>

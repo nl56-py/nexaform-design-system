@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { Mail, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import PageHero from "@/components/PageHero";
@@ -9,6 +9,7 @@ import SocialFollowButtons from "@/components/SocialFollowButtons";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { siteContact } from "@/lib/site-config";
+import { getServiceBySlug, serviceItems } from "@/lib/service-data";
 import { getSupabaseErrorMessage } from "@/lib/supabase-errors";
 import {
   absoluteUrl,
@@ -19,6 +20,7 @@ import {
 } from "@/lib/seo";
 
 const Contact = () => {
+  const [searchParams] = useSearchParams();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -29,6 +31,32 @@ const Contact = () => {
     message: "",
   });
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const serviceParam = searchParams.get("service")?.trim() ?? "";
+    const matchedService =
+      getServiceBySlug(serviceParam) ??
+      serviceItems.find((service) => service.title.toLowerCase() === serviceParam.toLowerCase());
+    const intent = searchParams.get("intent");
+    const serviceTitle = matchedService?.title ?? "";
+
+    setForm((current) => {
+      const quoteMessage =
+        serviceTitle && intent === "quote"
+          ? `I would like a quote for ${serviceTitle}. Please share the next steps, estimated timeline, and the information you need from our side.`
+          : current.message;
+
+      return {
+        ...current,
+        projectType: serviceTitle || current.projectType,
+        message:
+          !current.message ||
+          current.message.startsWith("I would like a quote for")
+            ? quoteMessage
+            : current.message,
+      };
+    });
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,6 +147,11 @@ const Contact = () => {
             applications, or digital systems? Share your project details and we'll get back to you
             with the next best step.
           </p>
+          {form.projectType ? (
+            <div className="inline-flex rounded-full border border-primary/15 bg-primary/5 px-4 py-2 text-sm text-primary">
+              Preselected service: {form.projectType}
+            </div>
+          ) : null}
         </FadeUp>
 
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
@@ -167,11 +200,9 @@ const Contact = () => {
                       onChange={(e) => setForm({ ...form, projectType: e.target.value })}
                     >
                       <option value="">Select type</option>
-                      <option>Web Application</option>
-                      <option>Custom Software</option>
-                      <option>AI Literacy</option>
-                      <option>AI Automation</option>
-                      <option>API & Backend</option>
+                      {serviceItems.map((service) => (
+                        <option key={service.slug}>{service.title}</option>
+                      ))}
                       <option>Other</option>
                     </select>
                   </div>

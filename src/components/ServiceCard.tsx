@@ -6,9 +6,10 @@ interface ServiceCardProps {
   description: string;
   image?: string;
   imageAlt?: string;
+  ctaLabel?: string;
 }
 
-const ServiceCard = ({ icon, title, description, image, imageAlt }: ServiceCardProps) => (
+const ServiceCard = ({ icon, title, description, image, imageAlt, ctaLabel }: ServiceCardProps) => (
   <div className="card-surface card-surface-hover group flex h-full flex-col overflow-hidden rounded-card">
     {image ? (
       <div className="relative aspect-[16/9] overflow-hidden border-b border-border/60 bg-muted/10">
@@ -33,6 +34,11 @@ const ServiceCard = ({ icon, title, description, image, imageAlt }: ServiceCardP
     <div className="flex flex-1 flex-col p-6 sm:p-7 lg:p-8">
       <h3 className="mb-3 font-display text-lg font-semibold text-foreground">{title}</h3>
       <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
+      {ctaLabel ? (
+        <div className="mt-5 text-sm font-medium text-primary transition-transform duration-200 group-hover:translate-x-1">
+          {ctaLabel}
+        </div>
+      ) : null}
     </div>
   </div>
 );

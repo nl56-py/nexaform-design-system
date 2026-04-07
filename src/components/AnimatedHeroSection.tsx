@@ -57,7 +57,7 @@ const AnimatedHeroSection = () => {
 
   return (
     <section className="relative isolate overflow-hidden pb-16 pt-28 md:pb-20 md:pt-36 lg:min-h-screen lg:pb-24 lg:pt-40">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden bg-[linear-gradient(180deg,rgba(241,245,249,0.92),rgba(226,232,240,0.7))]">
         <video
           ref={videoRef}
           autoPlay
@@ -66,7 +66,7 @@ const AnimatedHeroSection = () => {
           preload="auto"
           poster={heroBackgroundPoster}
           disablePictureInPicture
-          className="absolute left-1/2 top-1/2 min-h-full min-w-full w-auto max-w-none -translate-x-1/2 -translate-y-1/2 object-cover object-center opacity-[0.82] [transform:translate3d(-50%,-50%,0)]"
+          className="absolute inset-0 h-full w-full object-contain object-center opacity-[0.82] [transform:translateZ(0)] md:object-cover"
         >
           <source src={heroBackgroundLoop} type="video/mp4" />
         </video>

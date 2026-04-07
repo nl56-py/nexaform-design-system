@@ -15,7 +15,7 @@ const orbitDuration = 38;
 
 const ServiceTreeSection = () => {
   const detailScrollerRef = useRef<HTMLDivElement | null>(null);
-  const detailCardRefs = useRef<Array<HTMLArticleElement | null>>([]);
+  const detailCardRefs = useRef<Array<HTMLDivElement | null>>([]);
   const prefersReducedMotion = useReducedMotion();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -290,11 +290,11 @@ const ServiceTreeSection = () => {
                   Service Details
                 </div>
                 <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight text-slate-950">
-                  Scroll the stack on the right
+                  Open the service stack on the right
                 </h3>
                 <p className="mt-2 max-w-[38ch] text-sm leading-6 text-slate-500">
-                  Three service cards stay in view here, and the orbit on the left follows the card
-                  you are reading.
+                  Each service card opens its full detail page, and the orbit on the left follows
+                  the card you are browsing.
                 </p>
               </div>
               <div className="rounded-full border border-slate-200 bg-white/90 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">
@@ -313,7 +313,7 @@ const ServiceTreeSection = () => {
                 const isActive = index === activeIndex;
 
                 return (
-                  <motion.article
+                  <motion.div
                     key={service.title}
                     ref={(node) => {
                       detailCardRefs.current[index] = node;
@@ -329,40 +329,50 @@ const ServiceTreeSection = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-80px" }}
                     transition={{ duration: 0.42, delay: index * 0.04, ease: [0.4, 0, 0.2, 1] }}
-                    onClick={() => scrollToService(index)}
+                    onMouseEnter={() => setActiveIndex(index)}
                   >
-                    <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_8rem] sm:items-center">
-                      <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-3">
-                          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">
-                            <Icon size={14} />
-                            {service.eyebrow}
+                    <Link
+                      to={`/services/${service.slug}`}
+                      className="group block h-full"
+                      onFocus={() => setActiveIndex(index)}
+                      aria-label={`View ${service.title} service details`}
+                    >
+                      <article className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_8rem] sm:items-center">
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-3">
+                            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">
+                              <Icon size={14} />
+                              {service.eyebrow}
+                            </div>
+                            <div className="rounded-full border border-white/90 bg-white px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-slate-400">
+                              {String(index + 1).padStart(2, "0")}
+                            </div>
                           </div>
-                          <div className="rounded-full border border-white/90 bg-white px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-slate-400">
-                            {String(index + 1).padStart(2, "0")}
+
+                          <h4 className="mt-4 font-display text-2xl font-semibold tracking-tight text-slate-950">
+                            {service.title}
+                          </h4>
+                          <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+                            {service.description}
+                          </p>
+                          <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-sky-700 transition-transform duration-200 group-hover:translate-x-1">
+                            View service page <ArrowRight size={16} />
                           </div>
                         </div>
 
-                        <h4 className="mt-4 font-display text-2xl font-semibold tracking-tight text-slate-950">
-                          {service.title}
-                        </h4>
-                        <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
-                          {service.description}
-                        </p>
-                      </div>
-
-                      <div className="overflow-hidden rounded-[1.35rem] border border-white/90 bg-slate-100 shadow-[0_18px_40px_rgba(148,163,184,0.14)]">
-                        <div className="aspect-[0.92/1]">
-                          <img
-                            src={service.image}
-                            alt={service.imageAlt}
-                            className="h-full w-full object-cover"
-                            loading="lazy"
-                          />
+                        <div className="overflow-hidden rounded-[1.35rem] border border-white/90 bg-slate-100 shadow-[0_18px_40px_rgba(148,163,184,0.14)]">
+                          <div className="aspect-[0.92/1]">
+                            <img
+                              src={service.image}
+                              alt={service.imageAlt}
+                              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                              loading="lazy"
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </motion.article>
+                      </article>
+                    </Link>
+                  </motion.div>
                 );
               })}
             </div>

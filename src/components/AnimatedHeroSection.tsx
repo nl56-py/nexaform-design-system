@@ -9,25 +9,25 @@ const heroBackgroundPoster = "/animations/hero-background-poster.jpg";
 
 const AnimatedHeroSection = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const mobileVideoRef = useRef<HTMLVideoElement | null>(null);
   const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
     setIsMuted(true);
-    const videos = [videoRef.current, mobileVideoRef.current].filter(Boolean) as HTMLVideoElement[];
+    const video = videoRef.current;
+    if (!video) {
+      return;
+    }
 
-    videos.forEach((video, index) => {
-      video.muted = true;
-      video.volume = index === 0 ? 1 : 0;
+    video.muted = true;
+    video.volume = 1;
 
-      const playPromise = video.play();
-      if (playPromise) {
-        playPromise.catch(() => {
-          video.muted = true;
-          void video.play().catch(() => {});
-        });
-      }
-    });
+    const playPromise = video.play();
+    if (playPromise) {
+      playPromise.catch(() => {
+        video.muted = true;
+        void video.play().catch(() => {});
+      });
+    }
   }, []);
 
   const handleToggleSound = async () => {
@@ -55,8 +55,8 @@ const AnimatedHeroSection = () => {
   };
 
   return (
-    <section className="relative isolate overflow-hidden pb-16 pt-28 md:pb-20 md:pt-36 lg:min-h-screen lg:pb-24 lg:pt-40">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden bg-[linear-gradient(180deg,rgba(241,245,249,0.88),rgba(226,232,240,0.68))]">
+    <section className="relative isolate min-h-[100svh] overflow-hidden pb-16 pt-28 md:pb-20 md:pt-36 lg:min-h-screen lg:pb-24 lg:pt-40">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden bg-[linear-gradient(180deg,rgba(241,245,249,0.28),rgba(226,232,240,0.2))]">
         <video
           ref={videoRef}
           autoPlay
@@ -65,29 +65,11 @@ const AnimatedHeroSection = () => {
           preload="auto"
           poster={heroBackgroundPoster}
           disablePictureInPicture
-          className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.82] [transform:translateZ(0)]"
+          className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.9] [transform:translateZ(0)]"
         >
           <source src={heroBackgroundLoop} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(248,250,252,0.46),rgba(241,245,249,0.12),rgba(226,232,240,0.44))] md:hidden" />
-        <div className="absolute inset-x-0 bottom-0 top-0 flex items-center justify-center px-3 md:hidden">
-          <div className="relative h-full w-full max-w-[30rem] overflow-hidden rounded-[1.6rem] border border-white/30 bg-white/10 shadow-[0_24px_70px_rgba(15,23,42,0.16)]">
-            <video
-              ref={mobileVideoRef}
-              autoPlay
-              loop
-              playsInline
-              muted
-              preload="auto"
-              poster={heroBackgroundPoster}
-              disablePictureInPicture
-              aria-hidden="true"
-              className="absolute inset-0 h-full w-full object-contain object-center opacity-[0.96] [transform:translateZ(0)]"
-            >
-              <source src={heroBackgroundLoop} type="video/mp4" />
-            </video>
-          </div>
-        </div>
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(248,250,252,0.26),rgba(241,245,249,0.08),rgba(226,232,240,0.24))]" />
       </div>
 
       <div className="container relative z-10">

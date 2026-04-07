@@ -21,6 +21,9 @@ export const siteContact = {
   location: "Nepal, serving teams globally",
   countryCode: "NP",
   areaServed: "Nepal and worldwide",
+  whatsappNumber: "9868731607",
+  whatsappHref:
+    "https://wa.me/9779868731607?text=Hello%20Nexaform%2C%20I%20want%20to%20discuss%20my%20project.",
 } as const;
 
 export const socialLinks = [

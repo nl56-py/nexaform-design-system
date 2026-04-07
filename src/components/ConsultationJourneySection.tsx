@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Cpu, Network, Radar } from "lucide-react";
+import { ArrowRight, Cpu, MessageCircle, Network, Radar } from "lucide-react";
 import { FadeUp } from "@/components/SectionWrapper";
 import { Button } from "@/components/ui/button";
+import { siteContact } from "@/lib/site-config";
 
 const consultationSteps = [
   {
@@ -64,9 +65,21 @@ const ConsultationJourneySection = () => {
 
               <FadeUp delay={0.24}>
                 <div className="mt-8 flex flex-wrap items-center gap-4">
+                  <Button variant="gradient" size="lg" className="w-full rounded-2xl px-8 sm:w-auto" asChild>
+                    <a
+                      href={siteContact.whatsappHref}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`Chat with Nexaform on WhatsApp at ${siteContact.whatsappNumber}`}
+                    >
+                      <MessageCircle size={18} />
+                      Get in Touch
+                      <ArrowRight size={18} />
+                    </a>
+                  </Button>
                   <Link to="/contact">
-                    <Button variant="gradient" size="lg" className="w-full rounded-2xl px-8 sm:w-auto">
-                      Get in Touch <ArrowRight size={18} />
+                    <Button variant="outline" size="lg" className="w-full rounded-2xl px-8 sm:w-auto">
+                      Contact Form
                     </Button>
                   </Link>
                 </div>

@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FadeUp } from "@/components/SectionWrapper";
 
@@ -9,6 +9,7 @@ const heroBackgroundPoster = "/animations/hero-background-poster.jpg";
 
 const AnimatedHeroSection = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -16,18 +17,43 @@ const AnimatedHeroSection = () => {
       return;
     }
 
-    video.muted = false;
+    video.muted = true;
     video.volume = 1;
+    setIsMuted(true);
 
     const playPromise = video.play();
     if (playPromise) {
       playPromise.catch(() => {
-        // Most browsers block autoplay with sound; keep the background playing if that happens.
+        // Keep the background video alive even when autoplay is restricted.
         video.muted = true;
         void video.play().catch(() => {});
       });
     }
   }, []);
+
+  const handleToggleSound = async () => {
+    const video = videoRef.current;
+    if (!video) {
+      return;
+    }
+
+    if (isMuted) {
+      try {
+        video.muted = false;
+        video.volume = 1;
+        await video.play();
+        setIsMuted(false);
+      } catch {
+        video.muted = true;
+        setIsMuted(true);
+      }
+
+      return;
+    }
+
+    video.muted = true;
+    setIsMuted(true);
+  };
 
   return (
     <section className="relative isolate overflow-hidden pb-16 pt-28 md:pb-20 md:pt-36 lg:min-h-screen lg:pb-24 lg:pt-40">
@@ -88,6 +114,18 @@ const AnimatedHeroSection = () => {
                   </Button>
                 </Link>
               </div>
+            </FadeUp>
+            <FadeUp delay={0.32}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => void handleToggleSound()}
+                className="mb-6 border-slate-400 bg-white/75 text-slate-950 hover:bg-white"
+              >
+                {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                {isMuted ? "Enable Hero Sound" : "Mute Hero Sound"}
+              </Button>
             </FadeUp>
             <FadeUp delay={0.35}>
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 [text-shadow:0_1px_0_rgba(255,255,255,0.12)]">

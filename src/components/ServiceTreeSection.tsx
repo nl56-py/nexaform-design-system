@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils";
 
 const serviceCenterVideo =
   "/animations/services-7fps-56/Nexaform_services_ecosystem_202604051719.mp4";
-const orbitRadius = 39;
 const orbitDuration = 38;
 
 const ServiceTreeSection = () => {
@@ -117,6 +116,7 @@ const ServiceTreeSection = () => {
   };
 
   const activeService = serviceItems[activeIndex] ?? serviceItems[0];
+  const orbitRadius = isDesktop ? 39 : 31;
 
   return (
     <SectionWrapper className="service-tree-section relative overflow-hidden bg-[linear-gradient(180deg,#f8fcff_0%,#f1f8ff_46%,#fdfaf3_100%)] text-slate-900">
@@ -167,7 +167,7 @@ const ServiceTreeSection = () => {
             <div className="pointer-events-none absolute -left-10 top-16 h-28 w-28 rounded-full bg-sky-200/40 blur-3xl" />
             <div className="pointer-events-none absolute -right-6 bottom-10 h-28 w-28 rounded-full bg-amber-200/40 blur-3xl" />
 
-            <div className="relative mx-auto aspect-square w-full max-w-[48rem]">
+            <div className="relative mx-auto aspect-square w-full max-w-[22rem] sm:max-w-[28rem] lg:max-w-[48rem]">
               <div className="absolute inset-[2%] rounded-full border border-sky-200/80" />
               <motion.div
                 className="absolute inset-[8%] rounded-full border border-slate-200/90"
@@ -219,7 +219,7 @@ const ServiceTreeSection = () => {
                     >
                       <motion.div
                         className={cn(
-                          "flex w-[7.5rem] items-center gap-2 rounded-[1.35rem] border bg-white/94 p-2 text-left shadow-[0_16px_34px_rgba(148,163,184,0.16)] backdrop-blur-xl transition-all sm:w-[8.4rem] sm:p-2.5 lg:w-[9.4rem]",
+                          "flex w-[5.1rem] items-center gap-1.5 rounded-[1.1rem] border bg-white/94 p-1.5 text-left shadow-[0_16px_34px_rgba(148,163,184,0.16)] backdrop-blur-xl transition-all sm:w-[8.4rem] sm:gap-2 sm:rounded-[1.35rem] sm:p-2.5 lg:w-[9.4rem]",
                           isActive
                             ? "border-sky-300 text-sky-700 shadow-[0_20px_40px_rgba(14,165,233,0.22)]"
                             : "border-white/85 text-slate-700 hover:border-sky-200 hover:text-sky-700",
@@ -237,7 +237,7 @@ const ServiceTreeSection = () => {
                           scale: { duration: 2.1, repeat: Infinity, ease: "easeInOut" },
                         }}
                       >
-                        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-white/90 bg-slate-100 shadow-[0_10px_24px_rgba(148,163,184,0.12)]">
+                        <div className="h-8 w-8 shrink-0 overflow-hidden rounded-lg border border-white/90 bg-slate-100 shadow-[0_10px_24px_rgba(148,163,184,0.12)] sm:h-10 sm:w-10 sm:rounded-xl">
                           <img
                             src={service.image}
                             alt={service.imageAlt}
@@ -246,12 +246,12 @@ const ServiceTreeSection = () => {
                           />
                         </div>
                         <div className="min-w-0">
-                          <div className="text-[11px] font-semibold leading-4 text-inherit sm:text-xs">
+                          <div className="text-[9px] font-semibold leading-3 text-inherit sm:text-xs sm:leading-4">
                             {service.title}
                           </div>
                           <div
                             className={cn(
-                              "mt-1 font-mono text-[9px] uppercase tracking-[0.16em]",
+                              "mt-0.5 hidden font-mono text-[9px] uppercase tracking-[0.16em] sm:block",
                               isActive ? "text-sky-600" : "text-slate-500",
                             )}
                           >
@@ -289,13 +289,6 @@ const ServiceTreeSection = () => {
                 <div className="font-mono text-[10px] uppercase tracking-[0.26em] text-sky-700/80">
                   Service Details
                 </div>
-                <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight text-slate-950">
-                  Open the service stack on the right
-                </h3>
-                <p className="mt-2 max-w-[38ch] text-sm leading-6 text-slate-500">
-                  Each service card opens its full detail page, and the orbit on the left follows
-                  the card you are browsing.
-                </p>
               </div>
               <div className="rounded-full border border-slate-200 bg-white/90 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">
                 {String(activeIndex + 1).padStart(2, "0")} /{" "}
@@ -337,7 +330,7 @@ const ServiceTreeSection = () => {
                       onFocus={() => setActiveIndex(index)}
                       aria-label={`View ${service.title} service details`}
                     >
-                      <article className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_8rem] sm:items-center">
+                      <article className="grid grid-cols-[minmax(0,1fr)_5.5rem] items-center gap-4 sm:grid-cols-[minmax(0,1fr)_8rem] sm:gap-5">
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-3">
                             <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">
@@ -349,10 +342,10 @@ const ServiceTreeSection = () => {
                             </div>
                           </div>
 
-                          <h4 className="mt-4 font-display text-2xl font-semibold tracking-tight text-slate-950">
+                          <h4 className="mt-4 font-display text-xl font-semibold tracking-tight text-slate-950 sm:text-2xl">
                             {service.title}
                           </h4>
-                          <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+                          <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7">
                             {service.description}
                           </p>
                           <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-sky-700 transition-transform duration-200 group-hover:translate-x-1">
@@ -360,8 +353,8 @@ const ServiceTreeSection = () => {
                           </div>
                         </div>
 
-                        <div className="overflow-hidden rounded-[1.35rem] border border-white/90 bg-slate-100 shadow-[0_18px_40px_rgba(148,163,184,0.14)]">
-                          <div className="aspect-[0.92/1]">
+                        <div className="h-24 w-[5.5rem] overflow-hidden rounded-[1rem] border border-white/90 bg-slate-100 shadow-[0_18px_40px_rgba(148,163,184,0.14)] sm:h-auto sm:w-auto sm:rounded-[1.35rem]">
+                          <div className="h-full w-full sm:aspect-[0.92/1]">
                             <img
                               src={service.image}
                               alt={service.imageAlt}

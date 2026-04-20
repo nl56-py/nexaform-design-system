@@ -63,19 +63,21 @@ const AnimatedHeroSection = () => {
   return (
     <section className="relative isolate min-h-[100svh] overflow-hidden pb-16 pt-28 md:pb-20 md:pt-36 lg:min-h-screen lg:pb-24 lg:pt-40">
       <div className="pointer-events-none absolute inset-0 overflow-hidden bg-[linear-gradient(180deg,rgba(241,245,249,0.28),rgba(226,232,240,0.2))]">
-        <video
-          key={isMobile ? "mobile" : "desktop"}
-          ref={videoRef}
-          autoPlay
-          loop
-          playsInline
-          preload="auto"
-          poster={heroBackgroundPoster}
-          disablePictureInPicture
-          className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.9] [transform:translateZ(0)]"
-        >
-          <source src={isMobile ? heroBackgroundLoopMobile : heroBackgroundLoop} type="video/mp4" />
-        </video>
+        {typeof isMobile === "boolean" && (
+          <video
+            key={isMobile ? "mobile" : "desktop"}
+            ref={videoRef}
+            autoPlay
+            loop
+            playsInline
+            preload="auto"
+            poster={heroBackgroundPoster}
+            disablePictureInPicture
+            className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.9] [transform:translateZ(0)]"
+          >
+            <source src={isMobile ? heroBackgroundLoopMobile : heroBackgroundLoop} type="video/mp4" />
+          </video>
+        )}
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(248,250,252,0.26),rgba(241,245,249,0.08),rgba(226,232,240,0.24))]" />
       </div>
 

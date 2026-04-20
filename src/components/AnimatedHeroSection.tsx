@@ -9,24 +9,27 @@ const heroBackgroundLoop = "/animations/hero-background-original.mp4";
 const heroBackgroundLoopMobile = "/animations/mo-hero-video.mp4";
 const heroBackgroundPoster = "/animations/hero-background-poster.jpg";
 
+
 const AnimatedHeroSection = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isMuted, setIsMuted] = useState(true);
   const isMobile = useIsMobile();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     setIsMuted(true);
     const video = videoRef.current;
     if (!video) {
       return;
     }
-
     video.muted = true;
     video.volume = 1;
-
-    // Force reload of the video source
     video.load();
-
     const playPromise = video.play();
     if (playPromise) {
       playPromise.catch(() => {
@@ -34,7 +37,7 @@ const AnimatedHeroSection = () => {
         void video.play().catch(() => {});
       });
     }
-  }, [isMobile]);
+  }, [isMobile, mounted]);
 
   const handleToggleSound = async () => {
     const video = videoRef.current;
@@ -63,9 +66,9 @@ const AnimatedHeroSection = () => {
   return (
     <section className="relative isolate min-h-[100svh] overflow-hidden pb-16 pt-28 md:pb-20 md:pt-36 lg:min-h-screen lg:pb-24 lg:pt-40">
       <div className="pointer-events-none absolute inset-0 overflow-hidden bg-[linear-gradient(180deg,rgba(241,245,249,0.28),rgba(226,232,240,0.2))]">
-        {typeof isMobile === "boolean" && (
+        {mounted && (
           <video
-            key={isMobile ? "mobile" : "desktop"}
+            key={isMobile ? "mobile-video" : "desktop-video"}
             ref={videoRef}
             autoPlay
             loop
@@ -75,7 +78,13 @@ const AnimatedHeroSection = () => {
             disablePictureInPicture
             className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.9] [transform:translateZ(0)]"
           >
-            <source src={isMobile ? heroBackgroundLoopMobile : heroBackgroundLoop} type="video/mp4" />
+            <source
+              key={isMobile ? "mobile-source" : "desktop-source"}
+              src={
+                (isMobile ? heroBackgroundLoopMobile : heroBackgroundLoop) + (import.meta.env.DEV ? `?t=${Date.now()}` : "")
+              }
+              type="video/mp4"
+            />
           </video>
         )}
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(248,250,252,0.26),rgba(241,245,249,0.08),rgba(226,232,240,0.24))]" />

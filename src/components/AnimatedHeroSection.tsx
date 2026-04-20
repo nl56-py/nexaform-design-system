@@ -24,6 +24,9 @@ const AnimatedHeroSection = () => {
     video.muted = true;
     video.volume = 1;
 
+    // Force reload of the video source
+    video.load();
+
     const playPromise = video.play();
     if (playPromise) {
       playPromise.catch(() => {
@@ -61,6 +64,7 @@ const AnimatedHeroSection = () => {
     <section className="relative isolate min-h-[100svh] overflow-hidden pb-16 pt-28 md:pb-20 md:pt-36 lg:min-h-screen lg:pb-24 lg:pt-40">
       <div className="pointer-events-none absolute inset-0 overflow-hidden bg-[linear-gradient(180deg,rgba(241,245,249,0.28),rgba(226,232,240,0.2))]">
         <video
+          key={isMobile ? "mobile" : "desktop"}
           ref={videoRef}
           autoPlay
           loop

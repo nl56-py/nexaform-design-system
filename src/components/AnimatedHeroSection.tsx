@@ -3,13 +3,16 @@ import { Link } from "react-router-dom";
 import { CheckCircle2, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FadeUp } from "@/components/SectionWrapper";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const heroBackgroundLoop = "/animations/hero-background-original.mp4";
+const heroBackgroundLoopMobile = "/animations/mo-hero-video.mp4";
 const heroBackgroundPoster = "/animations/hero-background-poster.jpg";
 
 const AnimatedHeroSection = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isMuted, setIsMuted] = useState(true);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     setIsMuted(true);
@@ -28,7 +31,7 @@ const AnimatedHeroSection = () => {
         void video.play().catch(() => {});
       });
     }
-  }, []);
+  }, [isMobile]);
 
   const handleToggleSound = async () => {
     const video = videoRef.current;
@@ -67,7 +70,7 @@ const AnimatedHeroSection = () => {
           disablePictureInPicture
           className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.9] [transform:translateZ(0)]"
         >
-          <source src={heroBackgroundLoop} type="video/mp4" />
+          <source src={isMobile ? heroBackgroundLoopMobile : heroBackgroundLoop} type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(248,250,252,0.26),rgba(241,245,249,0.08),rgba(226,232,240,0.24))]" />
       </div>

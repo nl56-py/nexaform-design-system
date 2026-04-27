@@ -5,6 +5,7 @@ import { ArrowRight, BookText, FolderKanban, Mail, ShieldCheck, Sparkles } from 
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { listAdminDigitalFairnessBookings, listAdminFreeAuditRequests } from "@/lib/admin-campaign-leads";
 import { listAdminBlogs } from "@/lib/admin-blogs";
 import { listAdminContactSubmissions } from "@/lib/admin-contacts";
 import { listAdminProjects } from "@/lib/admin-projects";
@@ -51,12 +52,22 @@ const AdminDashboardPage = () => {
     queryKey: ["dashboard", "contacts"],
     queryFn: listAdminContactSubmissions,
   });
+  const { data: campaignBookings = [], isLoading: loadingCampaignBookings } = useQuery({
+    queryKey: ["dashboard", "campaign-bookings"],
+    queryFn: listAdminDigitalFairnessBookings,
+  });
+  const { data: auditRequests = [], isLoading: loadingAuditRequests } = useQuery({
+    queryKey: ["dashboard", "audit-requests"],
+    queryFn: listAdminFreeAuditRequests,
+  });
 
-  const isLoading = loadingBlogs || loadingProjects || loadingContacts;
+  const isLoading =
+    loadingBlogs || loadingProjects || loadingContacts || loadingCampaignBookings || loadingAuditRequests;
   const publishedBlogs = blogs.filter((blog) => blog.published).length;
   const publishedProjects = projects.filter((project) => project.published).length;
-  const newContacts = contacts.filter((contact) => contact.status === "new").length;
-  const reviewingContacts = contacts.filter((contact) => contact.status === "reviewing").length;
+  const leadRecords = [...contacts, ...campaignBookings, ...auditRequests];
+  const newContacts = leadRecords.filter((lead) => lead.status === "new").length;
+  const reviewingContacts = leadRecords.filter((lead) => lead.status === "reviewing").length;
 
   const recentActivity = useMemo(
     () =>
@@ -79,10 +90,22 @@ const AdminDashboardPage = () => {
           timestamp: contact.created_at,
           title: `${contact.name} - ${contact.status}`,
         })),
+        ...campaignBookings.map((booking) => ({
+          id: booking.id,
+          kind: "Digital Fairness booking",
+          timestamp: booking.created_at,
+          title: `${booking.name} - ${booking.status}`,
+        })),
+        ...auditRequests.map((request) => ({
+          id: request.id,
+          kind: "Free audit request",
+          timestamp: request.created_at,
+          title: `${request.business_name} - ${request.status}`,
+        })),
       ]
         .sort((left, right) => new Date(right.timestamp).getTime() - new Date(left.timestamp).getTime())
         .slice(0, 6),
-    [blogs, contacts, projects],
+    [auditRequests, blogs, campaignBookings, contacts, projects],
   );
 
   return (
@@ -127,7 +150,7 @@ const AdminDashboardPage = () => {
           <div className="mt-2 text-sm text-muted-foreground">{blogs.length} total posts</div>
         </div>
         <div className="card-surface rounded-card p-5">
-          <div className="text-sm text-muted-foreground">New contacts</div>
+          <div className="text-sm text-muted-foreground">New leads</div>
           <div className="mt-2 font-display text-3xl font-semibold text-foreground">{newContacts}</div>
           <div className="mt-2 text-sm text-muted-foreground">{reviewingContacts} under review</div>
         </div>

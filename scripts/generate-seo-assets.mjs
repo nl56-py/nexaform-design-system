@@ -19,6 +19,8 @@ const staticPages = [
   { path: "/services/api-backend-systems", changefreq: "monthly", priority: "0.8" },
   { path: "/services/cloud-deployment", changefreq: "monthly", priority: "0.8" },
   { path: "/services/maintenance-support", changefreq: "monthly", priority: "0.8" },
+  { path: "/digital-fairness-campaign", changefreq: "weekly", priority: "0.95" },
+  { path: "/free-audit", changefreq: "weekly", priority: "0.9" },
   { path: "/projects", changefreq: "weekly", priority: "0.9" },
   { path: "/blog", changefreq: "weekly", priority: "0.8" },
   { path: "/about", changefreq: "monthly", priority: "0.7" },

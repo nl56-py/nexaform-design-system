@@ -17,6 +17,8 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { label: "Home", to: "/" },
+  { label: "Rs. 6,999", to: "/digital-fairness-campaign" },
+  { label: "Free Audit", to: "/free-audit" },
   { label: "Projects", to: "/projects" },
   { label: "Blog", to: "/blog" },
   { label: "About", to: "/about" },
@@ -53,11 +55,11 @@ const Navbar = () => {
           <Logo />
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-0.5 lg:flex">
           <Link
             to="/"
             className={cn(
-              "link-underline px-3 py-2 text-sm transition-colors duration-200",
+              "link-underline px-2.5 py-2 text-sm transition-colors duration-200",
               location.pathname === "/"
                 ? "text-foreground"
                 : "text-muted-foreground hover:text-foreground",
@@ -71,7 +73,7 @@ const Navbar = () => {
               <button
                 type="button"
                 className={cn(
-                  "inline-flex items-center gap-1 px-3 py-2 text-sm transition-colors duration-200",
+                  "inline-flex items-center gap-1 px-2.5 py-2 text-sm transition-colors duration-200",
                   servicesActive
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground",
@@ -111,7 +113,7 @@ const Navbar = () => {
               key={link.to}
               to={link.to}
               className={cn(
-                "link-underline px-3 py-2 text-sm transition-colors duration-200",
+                "link-underline px-2.5 py-2 text-sm transition-colors duration-200",
                 location.pathname === link.to
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",

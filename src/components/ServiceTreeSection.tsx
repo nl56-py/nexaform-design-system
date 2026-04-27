@@ -10,14 +10,18 @@ import { cn } from "@/lib/utils";
 
 const serviceCenterVideo =
   "/animations/services-7fps-56/Nexaform_services_ecosystem_202604051719.mp4";
+const serviceCenterPoster =
+  "/animations/services-7fps-56/service-001.png";
 const orbitDuration = 38;
 
 const ServiceTreeSection = () => {
   const detailScrollerRef = useRef<HTMLDivElement | null>(null);
   const detailCardRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const serviceVideoRef = useRef<HTMLVideoElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 1024px)");
@@ -32,6 +36,41 @@ const ServiceTreeSection = () => {
   useEffect(() => {
     detailCardRefs.current = detailCardRefs.current.slice(0, serviceItems.length);
   }, []);
+
+  useEffect(() => {
+    const video = serviceVideoRef.current;
+    if (!video) {
+      return;
+    }
+
+    setIsVideoReady(false);
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+
+    const handleReady = () => setIsVideoReady(true);
+    const handleError = () => setIsVideoReady(false);
+
+    video.addEventListener("loadeddata", handleReady);
+    video.addEventListener("canplay", handleReady);
+    video.addEventListener("error", handleError);
+
+    const playPromise = video.play();
+    if (playPromise) {
+      playPromise
+        .then(() => setIsVideoReady(true))
+        .catch(() => {
+          video.muted = true;
+          setIsVideoReady(false);
+        });
+    }
+
+    return () => {
+      video.removeEventListener("loadeddata", handleReady);
+      video.removeEventListener("canplay", handleReady);
+      video.removeEventListener("error", handleError);
+    };
+  }, [isDesktop]);
 
   useEffect(() => {
     const scroller = detailScrollerRef.current;
@@ -117,6 +156,8 @@ const ServiceTreeSection = () => {
 
   const activeService = serviceItems[activeIndex] ?? serviceItems[0];
   const orbitRadius = isDesktop ? 39 : 31;
+  const allowAmbientMotion = isDesktop && !prefersReducedMotion;
+  const allowOrbitMotion = isDesktop && !prefersReducedMotion;
 
   return (
     <SectionWrapper className="service-tree-section relative overflow-hidden bg-[linear-gradient(180deg,#f8fcff_0%,#f1f8ff_46%,#fdfaf3_100%)] text-slate-900">
@@ -171,25 +212,38 @@ const ServiceTreeSection = () => {
               <div className="absolute inset-[2%] rounded-full border border-sky-200/80" />
               <motion.div
                 className="absolute inset-[8%] rounded-full border border-slate-200/90"
-                animate={prefersReducedMotion ? undefined : { rotate: 360 }}
+                animate={allowAmbientMotion ? { rotate: 360 } : undefined}
                 transition={{ duration: 52, repeat: Infinity, ease: "linear" }}
               />
               <motion.div
                 className="absolute inset-[13.5%] rounded-full border border-slate-200 border-dashed"
-                animate={prefersReducedMotion ? undefined : { rotate: -360 }}
+                animate={allowAmbientMotion ? { rotate: -360 } : undefined}
                 transition={{ duration: 70, repeat: Infinity, ease: "linear" }}
               />
               <div className="absolute inset-[18%] rounded-full bg-[radial-gradient(circle_at_50%_46%,rgba(255,255,255,0.98),rgba(224,242,254,0.94)_56%,rgba(186,230,253,0.74)_76%,rgba(125,211,252,0.38)_100%)] shadow-[0_28px_90px_rgba(125,211,252,0.24)]" />
               <div className="absolute inset-[18.5%] overflow-hidden rounded-full border border-white/85 bg-white p-[3%] shadow-[0_24px_70px_rgba(148,163,184,0.18)]">
                 <div className="relative h-full w-full overflow-hidden rounded-full border-[10px] border-white bg-slate-100 shadow-[inset_0_0_0_1px_rgba(148,163,184,0.14)] sm:border-[12px]">
+                  {!isVideoReady ? (
+                    <img
+                      src={serviceCenterPoster}
+                      alt="Nexaform services ecosystem preview"
+                      className="absolute inset-0 h-full w-full rounded-full object-cover"
+                      loading="eager"
+                    />
+                  ) : null}
                   <video
-                    className="h-full w-full rounded-full object-cover"
+                    ref={serviceVideoRef}
+                    className={cn(
+                      "h-full w-full rounded-full object-cover transition-opacity duration-300",
+                      isVideoReady ? "opacity-100" : "opacity-0",
+                    )}
                     src={serviceCenterVideo}
                     autoPlay
                     muted
                     loop
                     playsInline
-                    preload="auto"
+                    preload={isDesktop ? "auto" : "metadata"}
+                    poster={serviceCenterPoster}
                     aria-label="Nexaform services ecosystem animation"
                   />
                   <div className="pointer-events-none absolute inset-0 rounded-full bg-[radial-gradient(circle_at_34%_24%,rgba(255,255,255,0.26),transparent_24%),linear-gradient(180deg,rgba(255,255,255,0.04),rgba(15,23,42,0.1))]" />
@@ -198,7 +252,7 @@ const ServiceTreeSection = () => {
 
               <motion.div
                 className="absolute inset-0"
-                animate={prefersReducedMotion ? undefined : { rotate: 360 }}
+                animate={allowOrbitMotion ? { rotate: 360 } : undefined}
                 transition={{ duration: orbitDuration, repeat: Infinity, ease: "linear" }}
               >
                 {serviceItems.map((service, index) => {
@@ -225,7 +279,7 @@ const ServiceTreeSection = () => {
                             : "border-white/85 text-slate-700 hover:border-sky-200 hover:text-sky-700",
                         )}
                         animate={
-                          prefersReducedMotion
+                          !allowOrbitMotion
                             ? undefined
                             : {
                                 rotate: -360,

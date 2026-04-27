@@ -7,6 +7,7 @@ import BlogPreviewCard from "@/components/BlogPreviewCard";
 import Seo from "@/components/Seo";
 import SectionWrapper, { FadeUp, StaggerContainer, StaggerItem } from "@/components/SectionWrapper";
 import ServiceTreeSection from "@/components/ServiceTreeSection";
+import DigitalFairnessHomeSection from "@/components/DigitalFairnessHomeSection";
 import WaveDivider from "@/components/WaveDivider";
 import ConsultationJourneySection from "@/components/ConsultationJourneySection";
 import BuildProcessSection from "@/components/BuildProcessSection";
@@ -84,6 +85,8 @@ const Index = () => {
       />
 
       <AnimatedHeroSection />
+
+      <DigitalFairnessHomeSection />
 
       <WaveDivider variant="blue" />
 

@@ -182,6 +182,108 @@ export type Database = {
         }
         Relationships: []
       }
+      digital_fairness_bookings: {
+        Row: {
+          business_category: string
+          created_at: string
+          domain_support: string | null
+          email: string
+          id: string
+          name: string
+          organization: string | null
+          phone: string
+          preferred_timeline: string | null
+          services_description: string
+          source_path: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          business_category: string
+          created_at?: string
+          domain_support?: string | null
+          email: string
+          id?: string
+          name: string
+          organization?: string | null
+          phone: string
+          preferred_timeline?: string | null
+          services_description: string
+          source_path?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          business_category?: string
+          created_at?: string
+          domain_support?: string | null
+          email?: string
+          id?: string
+          name?: string
+          organization?: string | null
+          phone?: string
+          preferred_timeline?: string | null
+          services_description?: string
+          source_path?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      free_audit_requests: {
+        Row: {
+          business_category: string
+          business_name: string
+          contact_number: string
+          created_at: string
+          email: string
+          id: string
+          name: string
+          notes: string | null
+          primary_goal: string | null
+          service_area: string | null
+          services: string
+          source_path: string
+          status: string
+          updated_at: string
+          website_url: string
+        }
+        Insert: {
+          business_category: string
+          business_name: string
+          contact_number: string
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          notes?: string | null
+          primary_goal?: string | null
+          service_area?: string | null
+          services: string
+          source_path?: string
+          status?: string
+          updated_at?: string
+          website_url: string
+        }
+        Update: {
+          business_category?: string
+          business_name?: string
+          contact_number?: string
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          primary_goal?: string | null
+          service_area?: string | null
+          services?: string
+          source_path?: string
+          status?: string
+          updated_at?: string
+          website_url?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

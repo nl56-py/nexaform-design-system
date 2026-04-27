@@ -13,6 +13,8 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import DigitalFairnessCampaign from "./pages/DigitalFairnessCampaign";
+import FreeAudit from "./pages/FreeAudit";
 import NotFound from "./pages/NotFound";
 import ScrollToTop from "@/components/ScrollToTop";
 import { AdminAuthProvider } from "@/components/admin/AdminAuthProvider";
@@ -71,6 +73,8 @@ const App = () => (
               <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/digital-fairness-campaign" element={<DigitalFairnessCampaign />} />
+              <Route path="/free-audit" element={<FreeAudit />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

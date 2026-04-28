@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
-import { ArrowRight, BookText, FolderKanban, Mail, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, BookText, FolderKanban, Mail, SearchCheck, ShieldCheck, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,12 @@ import { listAdminContactSubmissions } from "@/lib/admin-contacts";
 import { listAdminProjects } from "@/lib/admin-projects";
 
 const sections = [
+  {
+    description: "Monitor free SEO/AEO/GEO audits and Rs. 6,999 campaign bookings.",
+    icon: SearchCheck,
+    title: "SEO & Campaign",
+    to: "/admin/seo-campaign",
+  },
   {
     description: "Add rich project stories, reorder case studies, and upload cover imagery.",
     icon: FolderKanban,
@@ -121,8 +127,9 @@ const AdminDashboardPage = () => {
                 Admin workspace overview
               </h2>
               <p className="mt-3 text-sm leading-7 text-muted-foreground md:text-base">
-                Manage projects, blog posts, media uploads, and inbound leads from one place. The
-                content editors now support rich text and storage-backed image uploads.
+                Manage projects, blog posts, SEO campaign leads, media uploads, and inbound leads
+                from one place. The content editors support rich text and storage-backed image
+                uploads.
               </p>
             </div>
           </div>

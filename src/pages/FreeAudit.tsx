@@ -21,7 +21,7 @@ import SectionWrapper, { FadeUp, StaggerContainer, StaggerItem } from "@/compone
 import { Button } from "@/components/ui/button";
 import freeAuditHero from "@/assets/free-ai-seo-audit-hero.png";
 import digitalFairnessHero from "@/assets/digital-fairness-campaign-hero.png";
-import { supabase } from "@/integrations/supabase/client";
+import { submitFreeAuditRequest } from "@/lib/campaign-leads";
 import { absoluteUrl, buildBreadcrumbSchema, buildWebPageSchema, createTitle, toMetaDescription } from "@/lib/seo";
 import { siteContact } from "@/lib/site-config";
 import { getSupabaseErrorMessage } from "@/lib/supabase-errors";
@@ -94,22 +94,18 @@ const FreeAudit = () => {
     setSubmitting(true);
 
     try {
-      const { error } = await supabase.functions.invoke("submit-free-audit", {
-        body: {
-          name: form.name,
-          businessName: form.businessName,
-          businessCategory: form.businessCategory,
-          services: form.services,
-          websiteUrl: form.websiteUrl,
-          contactNumber: form.contactNumber,
-          email: form.email,
-          serviceArea: form.location,
-          primaryGoal: form.goal,
-          notes: form.notes,
-        },
+      await submitFreeAuditRequest({
+        name: form.name,
+        businessName: form.businessName,
+        businessCategory: form.businessCategory,
+        services: form.services,
+        websiteUrl: form.websiteUrl,
+        contactNumber: form.contactNumber,
+        email: form.email,
+        serviceArea: form.location,
+        primaryGoal: form.goal,
+        notes: form.notes,
       });
-
-      if (error) throw error;
 
       toast.success("Free audit request submitted. Nexaform will review your site soon.");
       setForm({

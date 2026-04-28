@@ -64,7 +64,7 @@ export const getSupabaseErrorMessage = (error: unknown, fallback: string) => {
   }
 
   if (message.toLowerCase().includes("permission denied") || message.includes("new row violates row-level security policy")) {
-    return "Supabase denied this request. Check that the required RLS policies are applied and that the signed-in user has admin access.";
+    return "Supabase denied this request. Check that the required RLS policies are applied, and for admin routes, that the signed-in user has admin access.";
   }
 
   if (message.includes("Failed to send a request to the Edge Function")) {

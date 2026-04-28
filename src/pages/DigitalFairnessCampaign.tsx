@@ -24,7 +24,7 @@ import SectionWrapper, { FadeUp, StaggerContainer, StaggerItem } from "@/compone
 import { Button } from "@/components/ui/button";
 import digitalFairnessHero from "@/assets/digital-fairness-campaign-hero.png";
 import freeAuditHero from "@/assets/free-ai-seo-audit-hero.png";
-import { supabase } from "@/integrations/supabase/client";
+import { submitDigitalFairnessBooking } from "@/lib/campaign-leads";
 import { absoluteUrl, buildBreadcrumbSchema, buildWebPageSchema, createTitle, toMetaDescription } from "@/lib/seo";
 import { siteContact } from "@/lib/site-config";
 import { getSupabaseErrorMessage } from "@/lib/supabase-errors";
@@ -125,20 +125,16 @@ const DigitalFairnessCampaign = () => {
     setSubmitting(true);
 
     try {
-      const { error } = await supabase.functions.invoke("submit-digital-fairness-booking", {
-        body: {
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          organization: form.organization,
-          businessCategory: form.category,
-          domainSupport: form.domainNeed,
-          preferredTimeline: form.timeline,
-          servicesDescription: form.message,
-        },
+      await submitDigitalFairnessBooking({
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        organization: form.organization,
+        businessCategory: form.category,
+        domainSupport: form.domainNeed,
+        preferredTimeline: form.timeline,
+        servicesDescription: form.message,
       });
-
-      if (error) throw error;
 
       toast.success("Campaign booking request received. Nexaform will contact you soon.");
       setForm({

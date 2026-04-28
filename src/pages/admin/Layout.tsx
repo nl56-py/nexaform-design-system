@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { BookText, FolderKanban, LayoutDashboard, LogOut, Mail, ShieldCheck } from "lucide-react";
+import { BookText, FolderKanban, LayoutDashboard, LogOut, Mail, SearchCheck, ShieldCheck } from "lucide-react";
 import Seo from "@/components/Seo";
 import { Button } from "@/components/ui/button";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
@@ -7,6 +7,7 @@ import { createTitle } from "@/lib/seo";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Overview", to: "/admin" },
+  { icon: SearchCheck, label: "SEO & Campaign", to: "/admin/seo-campaign" },
   { icon: FolderKanban, label: "Projects", to: "/admin/projects" },
   { icon: BookText, label: "Blogs", to: "/admin/blogs" },
   { icon: Mail, label: "Contacts", to: "/admin/contacts" },
@@ -40,7 +41,7 @@ const AdminLayoutPage = () => {
               Protected Admin Workspace
             </div>
             <h1 className="mt-6 font-display text-4xl font-bold tracking-tight text-foreground md:text-5xl">
-              Manage projects, blog posts, and inbound leads
+              Manage projects, blogs, SEO campaigns, and inbound leads
             </h1>
             <p className="mt-4 max-w-[64ch] text-base leading-8 text-muted-foreground md:text-lg">
               Signed in as {adminUser?.display_name || user?.email || "admin user"}. These routes

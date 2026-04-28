@@ -25,6 +25,7 @@ import AdminDashboardPage from "./pages/admin/Dashboard";
 import AdminLayoutPage from "./pages/admin/Layout";
 import AdminLoginPage from "./pages/admin/Login";
 import AdminProjectsPage from "./pages/admin/Projects";
+import AdminSeoCampaignPage from "./pages/admin/SeoCampaign";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ const App = () => (
               }
             >
               <Route index element={<AdminDashboardPage />} />
+              <Route path="seo-campaign" element={<AdminSeoCampaignPage />} />
               <Route path="projects" element={<AdminProjectsPage />} />
               <Route path="blogs" element={<AdminBlogsPage />} />
               <Route path="contacts" element={<AdminContactsPage />} />

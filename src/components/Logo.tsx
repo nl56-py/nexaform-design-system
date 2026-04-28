@@ -15,22 +15,23 @@ const Logo = ({
   textClassName,
   ...props
 }: LogoProps) => (
-  <div className={cn("flex items-center gap-3", className)} {...props}>
+  <div className={cn("flex items-center gap-2.5", className)} {...props}>
     <img
       src={logoImage}
       alt={hideText ? "Nexaform" : ""}
       aria-hidden={hideText ? undefined : true}
-      className={cn("h-9 w-auto shrink-0 object-contain", imageClassName)}
+      className={cn("aspect-square h-9 w-auto shrink-0 rounded-full bg-transparent object-cover select-none", imageClassName)}
       decoding="async"
     />
     {!hideText ? (
       <span
         className={cn(
-          "font-display text-lg font-semibold tracking-tight text-foreground",
+          "font-display text-lg font-extrabold tracking-normal leading-none",
           textClassName,
         )}
       >
-        Nexaform
+        <span className="text-[#0A84D6]">Nexa</span>
+        <span className="text-foreground">form</span>
       </span>
     ) : null}
   </div>

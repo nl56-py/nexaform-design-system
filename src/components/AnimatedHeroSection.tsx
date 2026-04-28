@@ -121,7 +121,7 @@ const AnimatedHeroSection = () => {
               <div className="mb-5 flex flex-wrap gap-3">
                 <Link to="/digital-fairness-campaign">
                   <Button variant="gradient" size="lg">
-                    Rs. 6,999 Website Package
+                    Rs. 6,999 Offers
                   </Button>
                 </Link>
                 <Link to="/free-audit">
@@ -149,7 +149,7 @@ const AnimatedHeroSection = () => {
               <div className="mb-5 grid max-w-2xl gap-3 sm:grid-cols-2">
                 <div className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white/92 p-4 text-sm font-semibold leading-6 text-slate-900 shadow-sm backdrop-blur">
                   <Sparkles size={18} className="mt-0.5 shrink-0 text-sky-700" />
-                  Digital Fairness Campaign for Nepali businesses and professionals.
+                  Digital Fairness Campaign for Nepali businesses and professionals, with free hosting. Terms and conditions applied.
                 </div>
                 <div className="flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50/94 p-4 text-sm font-semibold leading-6 text-emerald-900 shadow-sm backdrop-blur">
                   <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-emerald-600" />

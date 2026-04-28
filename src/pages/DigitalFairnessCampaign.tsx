@@ -57,8 +57,13 @@ const packageFeatures = [
   },
   {
     title: "Domain coordination",
-    description: "Registered organization lai .com.np, education sector lai .edu.np, personal brand lai name-based .np domain - Mercantile coordination support included for eligible cases.",
+    description: "Mercantile coordination support is included for eligible .com.np, .edu.np, or name-based personal .np domains.",
     icon: Globe2,
+  },
+  {
+    title: "Free hosting support",
+    description: "Starter hosting is included with terms and conditions applied, so eligible businesses can launch without a separate first hosting bill.",
+    icon: ShieldCheck,
   },
   {
     title: "Maintenance support",
@@ -89,7 +94,8 @@ const packageIncludes = [
   "Contact form and WhatsApp call-to-action",
   "Mobile-first responsive experience",
   "Basic technical SEO setup",
-  "Eligible .np domain and starter hosting setup guidance",
+  "Eligible .np domain coordination with Mercantile support",
+  "Free hosting included with terms and conditions applied",
   "Free SEO/AEO/GEO audit offer included",
 ];
 
@@ -155,7 +161,7 @@ const DigitalFairnessCampaign = () => {
 
   const pageTitle = createTitle("Digital Fairness Campaign - Rs. 6,999 Website Package");
   const pageDescription = toMetaDescription(
-    "Nexaform Digital Fairness Campaign helps Nepali businesses and professionals launch a mobile-first professional website with admin panel, booking, contact forms, domain coordination, maintenance support, and a free SEO/AEO/GEO audit for Rs. 6,999.",
+    "Nexaform Digital Fairness Campaign helps Nepali businesses and professionals launch a mobile-first professional website with admin panel, booking, contact forms, domain coordination, free hosting with terms and conditions applied, maintenance support, and a free SEO/AEO/GEO audit for Rs. 6,999.",
   );
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: "Home", path: "/" },
@@ -217,9 +223,10 @@ const DigitalFairnessCampaign = () => {
             </FadeUp>
             <FadeUp delay={0.16}>
               <p className="mt-5 max-w-[62ch] text-base font-medium leading-7 text-slate-700 sm:text-lg">
-                Agency haru lai 30,000 to 40,000 tirna parne barrier todna Nexaform le yo
-                campaign launch gareko ho. This is not just a business deal. It is a campaign for
-                digital fairness.
+                Nexaform launched this campaign to remove the barrier of paying Rs. 30,000 to
+                Rs. 40,000 for a professional website. This is more than a business offer; it is a
+                campaign for digital fairness, with free hosting included. Terms and conditions
+                applied.
               </p>
             </FadeUp>
             <FadeUp delay={0.22}>
@@ -232,6 +239,9 @@ const DigitalFairnessCampaign = () => {
                 </div>
                 <div className="rounded-lg border border-emerald-200 bg-emerald-50/90 px-4 py-3 text-sm font-semibold text-emerald-800 shadow-sm backdrop-blur">
                   Free SEO, AEO and GEO audit included
+                </div>
+                <div className="rounded-lg border border-sky-200 bg-sky-50/90 px-4 py-3 text-sm font-semibold text-sky-800 shadow-sm backdrop-blur">
+                  Free hosting included. Terms and conditions applied.
                 </div>
               </div>
             </FadeUp>
@@ -263,9 +273,8 @@ const DigitalFairnessCampaign = () => {
               Everything a serious professional website needs to go live.
             </h2>
             <p className="mt-4 max-w-[62ch] leading-7 text-slate-600">
-              Tapaiko brand, logo, services, booking flow, content updates, and contact capture -
-              all shaped into a mobile-first website that gives your business a proper digital
-              identity.
+              Your brand, logo, services, booking flow, content updates, and contact capture are
+              shaped into a mobile-first website that gives your business a proper digital identity.
             </p>
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
               {packageIncludes.map((item) => (
@@ -308,20 +317,24 @@ const DigitalFairnessCampaign = () => {
                 Professional website pricing should not block Nepali businesses from being found.
               </h2>
               <p className="mt-4 max-w-[68ch] leading-7 text-slate-600">
-                Kunai agency lai professional website ko rate sodhnu bhayo bhane, common answer
-                30,000 to 40,000 huncha. For many businesses and professionals, that is not just a
-                price. It is a barrier. Nexaform is here to break that barrier with a fair launch
-                package.
+                Many agencies quote Rs. 30,000 to Rs. 40,000 for a professional website. For many
+                businesses and professionals, that is not just a price; it is a barrier. Nexaform is
+                here to break that barrier with a fair launch package.
               </p>
               <p className="mt-4 max-w-[68ch] leading-7 text-slate-600">
-                Yo project profit ko lagi matra haina. Nepal ko businesses, doctors, clinics,
-                lawyers, schools, colleges, and professionals lai proper digital identity dina
-                launch gareko ho.
+                This campaign is not only about profit. It is designed to help businesses, doctors,
+                clinics, lawyers, schools, colleges, and professionals in Nepal build a proper
+                digital identity.
               </p>
               <p className="mt-4 max-w-[68ch] leading-7 text-slate-600">
-                Registered organization ho bhane .com.np, education sector lai .edu.np, ya personal
-                brand ko lagi name-based .np domain chahiyo bhane, Mercantile sanga coordinate garna
-                pani hami help garchhau. Eligible cases ma setup support campaign bhitrai parchha.
+                If you are a registered organization, we can help coordinate an eligible .com.np
+                domain. For education-sector organizations, we can support eligible .edu.np
+                coordination. For personal brands, we can help with eligible name-based .np domain
+                coordination through Mercantile.
+              </p>
+              <p className="mt-4 max-w-[68ch] leading-7 text-slate-600">
+                Starter hosting is also included with the campaign package. Terms and conditions
+                applied. Hosting scope, renewal, and usage limits will be confirmed during onboarding.
               </p>
             </FadeUp>
 
@@ -363,8 +376,8 @@ const DigitalFairnessCampaign = () => {
               Your website should be readable by Google and AI engines.
             </h2>
             <p className="mt-4 max-w-[64ch] leading-7 text-slate-600">
-              Website bhayera matra bhayena. In 2026, customers search on Google, ChatGPT, Gemini,
-              and Grok-style AI engines. Nexaform will check your SEO, AEO, and GEO readiness and
+              A website alone is not enough. In 2026, customers search on Google, ChatGPT, Gemini,
+              Grok, and other AI engines. Nexaform will check your SEO, AEO, and GEO readiness and
               send an in-depth report for free.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
@@ -452,7 +465,7 @@ const DigitalFairnessCampaign = () => {
                       />
                     </div>
                     <div>
-                      <label className={labelClass}>Gmail / Email</label>
+                      <label className={labelClass}>Email address</label>
                       <input
                         type="email"
                         className={inputClass}
@@ -463,7 +476,7 @@ const DigitalFairnessCampaign = () => {
                       />
                     </div>
                     <div>
-                      <label className={labelClass}>WhatsApp / Contact number</label>
+                      <label className={labelClass}>WhatsApp or contact number</label>
                       <input
                         className={inputClass}
                         value={form.phone}

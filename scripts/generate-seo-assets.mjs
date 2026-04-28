@@ -14,6 +14,7 @@ const staticPages = [
   { path: "/services", changefreq: "monthly", priority: "0.9" },
   { path: "/services/web-application-development", changefreq: "monthly", priority: "0.85" },
   { path: "/services/custom-software-development", changefreq: "monthly", priority: "0.85" },
+  { path: "/services/search-engine-optimization", changefreq: "monthly", priority: "0.85" },
   { path: "/services/ai-literacy", changefreq: "monthly", priority: "0.8" },
   { path: "/services/ai-automation", changefreq: "monthly", priority: "0.8" },
   { path: "/services/api-backend-systems", changefreq: "monthly", priority: "0.8" },

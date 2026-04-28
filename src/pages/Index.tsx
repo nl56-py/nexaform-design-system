@@ -37,7 +37,7 @@ const Index = () => {
 
   const pageTitle = createTitle("Custom Software Development Company in Nepal");
   const pageDescription = toMetaDescription(
-    "Nexaform is a software development company in Nepal building custom web applications, scalable software, AI automation, and digital systems for businesses that want to operate smarter and grow with confidence.",
+    "Nexaform is a software development company in Nepal building custom web applications, scalable software, SEO, AI automation, and digital systems for businesses that want to operate smarter and grow with confidence.",
   );
   const structuredData = [
     buildWebPageSchema({

@@ -6,7 +6,7 @@ export const siteConfig = {
   domain: "www.nexa-form.com",
   defaultTitle: "Nexaform | Custom Software Development Company in Nepal",
   defaultDescription:
-    "Nexaform is a software development company in Nepal building custom web applications, scalable software, AI automation, and digital systems for businesses in Nepal and worldwide.",
+    "Nexaform is a software development company in Nepal building custom web applications, scalable software, SEO, AI automation, and digital systems for businesses in Nepal and worldwide.",
   defaultImagePath: "/android-chrome-512x512.png",
   logoPath: "/android-chrome-512x512.png",
   faviconPath: "/favicon-48x48.png",

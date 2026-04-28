@@ -197,9 +197,9 @@ const FreeAudit = () => {
             </FadeUp>
             <FadeUp delay={0.16}>
               <p className="mt-5 max-w-[64ch] text-base font-medium leading-7 text-slate-700 sm:text-lg">
-                Aajkal customers Google matra hoina, ChatGPT, Gemini, Grok-style AI engines ma pani
-                search gariraheka hunchan. Website bhayera matra bhayena. If AI cannot read your
-                site, you are harder to discover.
+                Customers now search beyond Google. They also use ChatGPT, Gemini, Grok, and other
+                AI engines. Having a website is not enough; if AI systems cannot understand your
+                site, your business is harder to discover.
               </p>
             </FadeUp>
             <FadeUp delay={0.24}>
@@ -283,9 +283,9 @@ const FreeAudit = () => {
                 Submit your site for a zero-risk visibility report.
               </h2>
               <p className="mt-4 max-w-[58ch] leading-7 text-slate-600">
-                Agency haru lai yesto audit ko lagi thousands tirna pardaina. Share your business
-                details once and we will review how your website performs for Google, AI answers,
-                and generative search visibility.
+                You should not have to pay thousands just to understand whether your website can be
+                found. Share your business details once and we will review how your website performs
+                for Google, AI answers, and generative search visibility.
               </p>
               <div className="mt-7 grid gap-3">
                 <div className="flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-emerald-900">
@@ -382,7 +382,7 @@ const FreeAudit = () => {
                       />
                     </div>
                     <div>
-                      <label className={labelClass}>Gmail / Email</label>
+                      <label className={labelClass}>Email address</label>
                       <input
                         type="email"
                         className={inputClass}
@@ -419,7 +419,7 @@ const FreeAudit = () => {
                   </div>
 
                   <div>
-                    <label className={labelClass}>Service or product they provide</label>
+                    <label className={labelClass}>Services or products you provide</label>
                     <textarea
                       className={`${inputClass} min-h-[108px] resize-y`}
                       value={form.services}

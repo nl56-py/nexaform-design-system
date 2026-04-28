@@ -19,7 +19,7 @@ import {
 const Services = () => {
   const pageTitle = createTitle("Software Development Services");
   const pageDescription = toMetaDescription(
-    "Explore Nexaform services for web application development, custom software development, AI automation, API and backend systems, cloud deployment, and maintenance for businesses in Nepal and worldwide.",
+    "Explore Nexaform services for web application development, custom software development, SEO, AI automation, API and backend systems, cloud deployment, and maintenance for businesses in Nepal and worldwide.",
   );
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: "Home", path: "/" },
@@ -69,7 +69,7 @@ const Services = () => {
 
       <PageHero
         headline="Software development services"
-        subheadline="Nexaform provides software development and product engineering services for businesses that need modern, scalable, and outcome-focused digital systems."
+        subheadline="Nexaform provides software development, SEO, and product engineering services for businesses that need modern, scalable, and outcome-focused digital systems."
         paragraph="Explore each service page for detailed scope, FAQs, service fit, and the fastest route to contact us or request a quote."
       />
 

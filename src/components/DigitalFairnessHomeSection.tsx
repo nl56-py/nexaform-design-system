@@ -11,6 +11,7 @@ const highlights = [
   "Admin panel for photos, videos, blogs, and service updates",
   "Booking inquiry flow, contact form, and WhatsApp CTA",
   "Eligible .com.np, .edu.np, or personal .np domain coordination with Mercantile support",
+  "Free hosting included with terms and conditions applied",
 ];
 
 const whatsappHref = `https://wa.me/977${siteContact.whatsappNumber}?text=${encodeURIComponent(
@@ -33,7 +34,7 @@ const DigitalFairnessHomeSection = () => (
         <p className="mt-4 max-w-[64ch] leading-7 text-slate-600">
           Nexaform is launching a fair Rs. 6,999 website package for Nepali businesses and
           professionals, plus a free SEO, AEO, and GEO audit so your site can be found by Google
-          and AI search engines.
+          and AI search engines. Free hosting is included with terms and conditions applied.
         </p>
 
         <div className="mt-7 grid gap-3 sm:grid-cols-2">
@@ -81,7 +82,7 @@ const DigitalFairnessHomeSection = () => (
             </div>
             <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
               <Globe2 size={18} className="text-sky-700" />
-              Eligible .np domain and starter hosting setup guidance
+              Eligible .np domain guidance plus free hosting with terms and conditions applied
             </div>
           </div>
         </div>

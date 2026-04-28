@@ -31,6 +31,7 @@ const ServiceDetail = () => {
   const pageTitle = createTitle(service.metaTitle);
   const pageDescription = toMetaDescription(service.metaDescription);
   const relatedServices = serviceItems.filter((item) => service.relatedSlugs.includes(item.slug));
+  const educationSection = service.educationSection;
   const contactQuery = new URLSearchParams({ service: service.slug }).toString();
   const quoteQuery = new URLSearchParams({ service: service.slug, intent: "quote" }).toString();
   const breadcrumbSchema = buildBreadcrumbSchema([
@@ -168,6 +169,65 @@ const ServiceDetail = () => {
           </FadeUp>
         </div>
       </SectionWrapper>
+
+      {educationSection ? (
+        <SectionWrapper secondary>
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.72fr)] lg:items-start">
+            <div>
+              <FadeUp className="max-w-3xl">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/5 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.24em] text-primary">
+                  <Icon size={14} />
+                  {educationSection.eyebrow}
+                </div>
+                <h2 className="mb-4 font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+                  {educationSection.title}
+                </h2>
+                <p className="max-w-[70ch] leading-8 text-muted-foreground">{educationSection.intro}</p>
+              </FadeUp>
+
+              <StaggerContainer className="mt-8 grid gap-5 md:grid-cols-3">
+                {educationSection.points.map((point) => (
+                  <StaggerItem key={point.title}>
+                    <article className="card-surface h-full rounded-[26px] p-6">
+                      <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                        <CheckCircle2 size={20} />
+                      </div>
+                      <h3 className="font-display text-lg font-semibold text-foreground">{point.title}</h3>
+                      <p className="mt-3 text-sm leading-7 text-muted-foreground">{point.description}</p>
+                    </article>
+                  </StaggerItem>
+                ))}
+              </StaggerContainer>
+            </div>
+
+            <FadeUp delay={0.1}>
+              <aside className="card-surface rounded-[28px] p-7">
+                <div className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/5 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.24em] text-primary">
+                  Free Audit
+                </div>
+                <h3 className="mt-5 font-display text-2xl font-semibold text-foreground">
+                  {educationSection.ctaTitle}
+                </h3>
+                <p className="mt-4 text-sm leading-7 text-muted-foreground">
+                  {educationSection.ctaDescription}
+                </p>
+                <p className="mt-4 text-sm leading-7 text-muted-foreground">
+                  Start with the{" "}
+                  <Link to={educationSection.ctaPath} className="font-medium text-primary hover:underline">
+                    free SEO audit service by Nexaform
+                  </Link>{" "}
+                  before deciding what SEO work should come next.
+                </p>
+                <Button asChild variant="gradient" size="lg" className="mt-6 w-full">
+                  <Link to={educationSection.ctaPath}>
+                    {educationSection.ctaLabel} <ArrowRight size={16} />
+                  </Link>
+                </Button>
+              </aside>
+            </FadeUp>
+          </div>
+        </SectionWrapper>
+      ) : null}
 
       <SectionWrapper secondary>
         <div className="grid gap-6 lg:grid-cols-2">

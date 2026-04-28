@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from "react";
-import logoImage from "@/assets/logo.PNG?url";
+import logoImage from "@/assets/nflogo.png?url";
 import { cn } from "@/lib/utils";
 
 type LogoProps = HTMLAttributes<HTMLDivElement> & {

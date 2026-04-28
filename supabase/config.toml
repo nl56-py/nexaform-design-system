@@ -2,3 +2,9 @@ project_id = "ljjlopuelwbwpwxtzhpa"
 
 [functions.submit-contact]
 verify_jwt = false
+
+[functions.submit-digital-fairness-booking]
+verify_jwt = false
+
+[functions.submit-free-audit]
+verify_jwt = false

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, Sparkles, X } from "lucide-react";
 
 import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
@@ -17,11 +17,16 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { label: "Home", to: "/" },
+  { label: "Rs. 6,999 Offers", to: "/digital-fairness-campaign" },
+  { label: "Free Audit", to: "/free-audit" },
   { label: "Projects", to: "/projects" },
   { label: "Blog", to: "/blog" },
   { label: "About", to: "/about" },
   { label: "Contact", to: "/contact" },
 ];
+
+const offerLinks = navLinks.slice(1, 3);
+const standardLinks = navLinks.slice(3);
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -53,11 +58,11 @@ const Navbar = () => {
           <Logo />
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-0.5 lg:flex">
           <Link
             to="/"
             className={cn(
-              "link-underline px-3 py-2 text-sm transition-colors duration-200",
+              "link-underline px-2.5 py-2 text-sm transition-colors duration-200",
               location.pathname === "/"
                 ? "text-foreground"
                 : "text-muted-foreground hover:text-foreground",
@@ -71,7 +76,7 @@ const Navbar = () => {
               <button
                 type="button"
                 className={cn(
-                  "inline-flex items-center gap-1 px-3 py-2 text-sm transition-colors duration-200",
+                  "inline-flex items-center gap-1 px-2.5 py-2 text-sm transition-colors duration-200",
                   servicesActive
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground",
@@ -106,12 +111,39 @@ const Navbar = () => {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {navLinks.slice(1).map((link) => (
+          <div className="relative mx-1 inline-flex items-center gap-0.5 rounded-full border border-sky-200/80 bg-white/80 px-1 py-1 shadow-[0_8px_24px_rgba(14,165,233,0.12)] backdrop-blur">
+            <Sparkles
+              size={14}
+              className="pointer-events-none absolute -left-2 -top-2 text-amber-400 drop-shadow-sm"
+              aria-hidden="true"
+            />
+            <Sparkles
+              size={12}
+              className="pointer-events-none absolute -bottom-1.5 -right-1.5 text-cyan-500 drop-shadow-sm"
+              aria-hidden="true"
+            />
+            {offerLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={cn(
+                  "relative rounded-full px-2.5 py-1.5 text-sm font-semibold transition-colors duration-200",
+                  location.pathname === link.to
+                    ? "bg-sky-600 text-white shadow-sm"
+                    : "text-slate-700 hover:bg-sky-50 hover:text-sky-800",
+                )}
+              >
+                <span className="whitespace-nowrap">{link.label}</span>
+              </Link>
+            ))}
+          </div>
+
+          {standardLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
               className={cn(
-                "link-underline px-3 py-2 text-sm transition-colors duration-200",
+                "link-underline px-2.5 py-2 text-sm transition-colors duration-200",
                 location.pathname === link.to
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -203,7 +235,31 @@ const Navbar = () => {
               </div>
             ) : null}
 
-            {navLinks.slice(1).map((link) => (
+            <div className="relative rounded-xl border border-sky-200 bg-white/85 p-1.5 shadow-sm">
+              <Sparkles
+                size={14}
+                className="pointer-events-none absolute -right-1.5 -top-1.5 text-amber-400 drop-shadow-sm"
+                aria-hidden="true"
+              />
+              <div className="grid gap-1 sm:grid-cols-2">
+                {offerLinks.map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className={cn(
+                      "rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors",
+                      location.pathname === link.to
+                        ? "bg-sky-600 text-white"
+                        : "text-slate-700 hover:bg-sky-50 hover:text-sky-800",
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {standardLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}

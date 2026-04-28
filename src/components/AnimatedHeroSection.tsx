@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle2, Volume2, VolumeX } from "lucide-react";
+import { CheckCircle2, SearchCheck, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FadeUp } from "@/components/SectionWrapper";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -118,21 +118,43 @@ const AnimatedHeroSection = () => {
               </p>
             </FadeUp>
             <FadeUp delay={0.3}>
-              <div className="mb-8 flex flex-wrap gap-3">
-                <Link to="/contact">
+              <div className="mb-5 flex flex-wrap gap-3">
+                <Link to="/digital-fairness-campaign">
                   <Button variant="gradient" size="lg">
-                    Start a Project
+                    Rs. 6,999 Offers
                   </Button>
                 </Link>
-                <Link to="/projects">
+                <Link to="/free-audit">
                   <Button
                     variant="outline"
                     size="lg"
-                    className="border-slate-400 bg-white/70 text-slate-950 hover:bg-white"
+                    className="border-slate-400 bg-white/90 text-slate-950 hover:bg-white"
                   >
-                    View Projects
+                    <SearchCheck size={18} />
+                    Free SEO/AI Audit
                   </Button>
                 </Link>
+                <Link to="/contact">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="border-slate-400 bg-white/90 text-slate-950 hover:bg-white"
+                  >
+                    Start a Project
+                  </Button>
+                </Link>
+              </div>
+            </FadeUp>
+            <FadeUp delay={0.31}>
+              <div className="mb-5 grid max-w-2xl gap-3 sm:grid-cols-2">
+                <div className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white/92 p-4 text-sm font-semibold leading-6 text-slate-900 shadow-sm backdrop-blur">
+                  <Sparkles size={18} className="mt-0.5 shrink-0 text-sky-700" />
+                  Digital Fairness Campaign for Nepali businesses and professionals, with free hosting. Terms and conditions applied.
+                </div>
+                <div className="flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50/94 p-4 text-sm font-semibold leading-6 text-emerald-900 shadow-sm backdrop-blur">
+                  <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-emerald-600" />
+                  Free SEO, AEO and GEO audit included with the offer.
+                </div>
               </div>
             </FadeUp>
             <FadeUp delay={0.32}>
@@ -141,17 +163,11 @@ const AnimatedHeroSection = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => void handleToggleSound()}
-                className="mb-6 border-slate-400 bg-white/75 text-slate-950 hover:bg-white"
+                className="border-slate-400 bg-white/90 text-slate-950 hover:bg-white"
               >
                 {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
                 {isMuted ? "Enable Hero Sound" : "Mute Hero Sound"}
               </Button>
-            </FadeUp>
-            <FadeUp delay={0.35}>
-              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 [text-shadow:0_1px_0_rgba(255,255,255,0.12)]">
-                <CheckCircle2 size={16} className="text-accent" />
-                Software solutions built for clarity, performance, and scale.
-              </div>
             </FadeUp>
           </div>
         </div>

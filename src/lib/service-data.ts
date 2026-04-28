@@ -5,6 +5,7 @@ import {
   Cloud,
   Code2,
   Globe,
+  Search,
   Server,
   Wrench,
 } from "lucide-react";
@@ -15,11 +16,26 @@ import customSoftwareImage from "@/assets/csd-compressed.jpg";
 import maintenanceImage from "@/assets/maintainence.png";
 import aiAutomationImage from "@/assets/ai-automation-unsplash.jpg";
 import aiLiteracyImage from "@/assets/vibe-coding-literacy-skill.avif";
+import seoServicesImage from "@/assets/seo-services-hero.png";
 import webDevelopmentImage from "@/assets/Web-Development.jpeg";
 
 export interface ServiceFaq {
   question: string;
   answer: string;
+}
+
+export interface ServiceEducationSection {
+  eyebrow: string;
+  title: string;
+  intro: string;
+  points: {
+    title: string;
+    description: string;
+  }[];
+  ctaTitle: string;
+  ctaDescription: string;
+  ctaLabel: string;
+  ctaPath: string;
 }
 
 export interface ServiceItem {
@@ -45,6 +61,7 @@ export interface ServiceItem {
   process: string[];
   faqs: ServiceFaq[];
   relatedSlugs: string[];
+  educationSection?: ServiceEducationSection;
 }
 
 export const serviceItems: ServiceItem[] = [
@@ -114,8 +131,112 @@ export const serviceItems: ServiceItem[] = [
     ],
     relatedSlugs: [
       "custom-software-development",
+      "search-engine-optimization",
       "api-backend-systems",
       "cloud-deployment",
+    ],
+  },
+  {
+    slug: "search-engine-optimization",
+    title: "SEO Services",
+    navLabel: "SEO",
+    description:
+      "Improve search visibility, technical health, content structure, and organic growth with practical SEO for modern websites.",
+    eyebrow: "Visibility",
+    image: seoServicesImage,
+    imageAlt: "SEO analytics and search visibility dashboard visual",
+    icon: Search,
+    heroTitle: "SEO services for search visibility that turns into qualified leads",
+    heroSubtitle:
+      "We improve technical SEO, on-page structure, content signals, local search readiness, AEO, GEO, and analytics so your website can be found by the right people.",
+    heroParagraph:
+      "Nexaform helps businesses in Nepal and teams worldwide turn websites into stronger organic growth channels with practical SEO strategy, clean implementation, and measurable next steps.",
+    metaTitle: "SEO Services in Nepal",
+    metaDescription:
+      "Nexaform provides SEO, AEO, and GEO services in Nepal for technical SEO, on-page optimization, content structure, local search visibility, analytics, and organic growth.",
+    serviceOverview:
+      "SEO works best when strategy, content, design, and technical implementation support each other. We review how search engines, answer engines, generative AI tools, and users experience your website, then improve the structure, metadata, performance signals, internal linking, and content priorities that influence organic visibility.",
+    localFocus:
+      "For businesses in Nepal, that often means improving local search presence, service pages, Google-ready content, and the technical foundation needed to compete when customers search nearby.",
+    geoSummary:
+      "For teams serving wider markets, we focus on scalable information architecture, search intent, schema markup, analytics, and optimization workflows that can keep growing with the site.",
+    deliverables: [
+      "Technical SEO audit covering crawlability, indexation, page speed, metadata, and site structure",
+      "On-page optimization for service pages, headings, internal links, titles, and descriptions",
+      "Keyword and search-intent mapping for priority pages and content opportunities",
+      "Structured data, sitemap, robots, canonical, AEO, GEO, and analytics readiness improvements",
+      "Local SEO recommendations for location-based visibility and lead generation",
+    ],
+    outcomes: [
+      "Clearer search visibility for the services and locations that matter",
+      "A healthier website foundation for Google, AI answer engines, and users",
+      "Better content priorities backed by search intent and measurable signals",
+    ],
+    idealFor: [
+      "Businesses with a website that is not bringing enough organic leads",
+      "Teams launching a new website that should be SEO-ready from day one",
+      "Organizations that need technical fixes, content direction, or local search improvement",
+    ],
+    process: [
+      "Audit the website, analytics, search visibility, technical health, and priority goals",
+      "Map keywords, search intent, page gaps, and opportunities for higher-value traffic",
+      "Implement technical and on-page improvements across the highest-impact pages",
+      "Track results, refine content priorities, and plan the next optimization cycle",
+    ],
+    educationSection: {
+      eyebrow: "SEO, GEO & AEO",
+      title: "Why SEO, GEO, and AEO matter",
+      intro:
+        "People no longer discover businesses only by typing keywords into a search box. They compare Google results, map listings, featured answers, AI summaries, and generative search responses before they decide who to trust.",
+      points: [
+        {
+          title: "SEO keeps your website visible in search",
+          description:
+            "Search Engine Optimization helps your pages rank for the services, locations, and questions your customers already search for on Google and other search engines.",
+        },
+        {
+          title: "AEO helps answer engines understand you",
+          description:
+            "Answer Engine Optimization makes your content clearer, better structured, and easier to use in featured snippets, voice-style answers, and AI-powered answer surfaces.",
+        },
+        {
+          title: "GEO prepares your brand for generative discovery",
+          description:
+            "Generative Engine Optimization improves the signals, structure, and authority cues that help AI search tools understand, summarize, and recommend your business more accurately.",
+        },
+      ],
+      ctaTitle: "Free SEO audit service by Nexaform",
+      ctaDescription:
+        "Nexaform offers a free SEO, AEO, and GEO audit to show where your website stands today. We check technical search health, content structure, local visibility, and AI-answer readiness, then share practical next steps.",
+      ctaLabel: "Get the Free SEO Audit",
+      ctaPath: "/free-audit",
+    },
+    faqs: [
+      {
+        question: "What is included in your SEO service?",
+        answer:
+          "Our SEO service can include technical audits, page speed recommendations, metadata and heading improvements, internal linking, schema markup, keyword mapping, content planning, local SEO guidance, AEO readiness, GEO readiness, and analytics setup.",
+      },
+      {
+        question: "Can you do SEO for an existing website?",
+        answer:
+          "Yes. We can review an existing website, identify technical and content issues, improve priority pages, and create a practical roadmap for ongoing organic growth.",
+      },
+      {
+        question: "Can I start with Nexaform's free SEO audit before buying SEO services?",
+        answer:
+          "Yes. The free SEO, AEO, and GEO audit is a good first step if you want to understand your current search visibility, technical issues, content gaps, and AI-answer readiness before planning paid SEO work.",
+      },
+      {
+        question: "How is SEO connected to web development?",
+        answer:
+          "Good SEO depends on clean site structure, performance, accessible markup, metadata, content hierarchy, and reliable deployment. Because we build websites and apps, we can fix both strategy-level and implementation-level issues.",
+      },
+    ],
+    relatedSlugs: [
+      "web-application-development",
+      "maintenance-support",
+      "ai-automation",
     ],
   },
   {
@@ -535,6 +656,7 @@ export const serviceItems: ServiceItem[] = [
     relatedSlugs: [
       "cloud-deployment",
       "web-application-development",
+      "search-engine-optimization",
       "custom-software-development",
     ],
   },

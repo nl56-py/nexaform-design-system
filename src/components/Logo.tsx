@@ -31,7 +31,7 @@ const Logo = ({
         )}
       >
         <span className="text-[#0A84D6]">Nexa</span>
-        <span className="text-foreground">form</span>
+        <span className="text-white">form</span>
       </span>
     ) : null}
   </div>

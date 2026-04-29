@@ -33,6 +33,7 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const location = useLocation();
+  const isHomePage = location.pathname === "/";
   const servicesActive =
     location.pathname === "/services" || location.pathname.startsWith("/services/");
 
@@ -50,7 +51,9 @@ const Navbar = () => {
   return (
     <header
       className={`fixed left-0 right-0 top-0 z-50 h-16 transition-all duration-300 ${
-        scrolled ? "glass-navbar" : "bg-transparent"
+        isHomePage
+          ? scrolled ? "glass-navbar-dark" : "glass-navbar-dark-initial"
+          : scrolled ? "glass-navbar" : "bg-transparent"
       }`}
     >
       <div className="container flex h-full items-center justify-between">
@@ -63,9 +66,9 @@ const Navbar = () => {
             to="/"
             className={cn(
               "link-underline px-2.5 py-2 text-sm transition-colors duration-200",
-              location.pathname === "/"
-                ? "text-foreground"
-                : "text-muted-foreground hover:text-foreground",
+              isHomePage
+                ? location.pathname === "/" ? "text-white" : "text-white/70 hover:text-white"
+                : location.pathname === "/" ? "text-foreground" : "text-muted-foreground hover:text-foreground",
             )}
           >
             Home
@@ -77,9 +80,9 @@ const Navbar = () => {
                 type="button"
                 className={cn(
                   "inline-flex items-center gap-1 px-2.5 py-2 text-sm transition-colors duration-200",
-                  servicesActive
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground",
+                  isHomePage
+                    ? servicesActive ? "text-white" : "text-white/70 hover:text-white"
+                    : servicesActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
                 )}
                 aria-label="Toggle services menu"
               >
@@ -111,7 +114,12 @@ const Navbar = () => {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <div className="relative mx-1 inline-flex items-center gap-0.5 rounded-full border border-sky-200/80 bg-white/80 px-1 py-1 shadow-[0_8px_24px_rgba(14,165,233,0.12)] backdrop-blur">
+          <div className={cn(
+            "relative mx-1 inline-flex items-center gap-0.5 rounded-full px-1 py-1 backdrop-blur",
+            isHomePage
+              ? "border border-white/20 bg-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.2)]"
+              : "border border-sky-200/80 bg-white/80 shadow-[0_8px_24px_rgba(14,165,233,0.12)]"
+          )}>
             <Sparkles
               size={14}
               className="pointer-events-none absolute -left-2 -top-2 text-amber-400 drop-shadow-sm"
@@ -130,7 +138,7 @@ const Navbar = () => {
                   "relative rounded-full px-2.5 py-1.5 text-sm font-semibold transition-colors duration-200",
                   location.pathname === link.to
                     ? "bg-sky-600 text-white shadow-sm"
-                    : "text-slate-700 hover:bg-sky-50 hover:text-sky-800",
+                    : isHomePage ? "text-white/90 hover:bg-white/10 hover:text-white" : "text-slate-700 hover:bg-sky-50 hover:text-sky-800",
                 )}
               >
                 <span className="whitespace-nowrap">{link.label}</span>
@@ -144,9 +152,9 @@ const Navbar = () => {
               to={link.to}
               className={cn(
                 "link-underline px-2.5 py-2 text-sm transition-colors duration-200",
-                location.pathname === link.to
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
+                isHomePage
+                  ? location.pathname === link.to ? "text-white" : "text-white/70 hover:text-white"
+                  : location.pathname === link.to ? "text-foreground" : "text-muted-foreground hover:text-foreground",
               )}
             >
               {link.label}
@@ -163,7 +171,7 @@ const Navbar = () => {
         </div>
 
         <button
-          className="p-2 text-foreground lg:hidden"
+          className={cn("p-2 lg:hidden", isHomePage ? "text-white" : "text-foreground")}
           onClick={() => setMobileOpen((current) => !current)}
           aria-label="Toggle menu"
         >

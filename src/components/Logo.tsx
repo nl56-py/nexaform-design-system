@@ -21,7 +21,9 @@ const Logo = ({
       alt={hideText ? "Nexaform" : ""}
       aria-hidden={hideText ? undefined : true}
       className={cn("aspect-square h-9 w-auto shrink-0 rounded-full bg-transparent object-cover select-none", imageClassName)}
-      decoding="async"
+      loading="eager"
+      fetchPriority="high"
+      decoding="sync"
     />
     {!hideText ? (
       <span

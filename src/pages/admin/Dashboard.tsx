@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
-import { ArrowRight, BookText, FolderKanban, Mail, SearchCheck, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, BookText, Briefcase, FolderKanban, Mail, SearchCheck, ShieldCheck, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { listAdminDigitalFairnessBookings, listAdminFreeAuditRequests } from "@/
 import { listAdminBlogs } from "@/lib/admin-blogs";
 import { listAdminContactSubmissions } from "@/lib/admin-contacts";
 import { listAdminProjects } from "@/lib/admin-projects";
+import { listAdminPositions, listAdminApplications } from "@/lib/admin-careers";
 
 const sections = [
   {
@@ -34,6 +35,12 @@ const sections = [
     icon: Mail,
     title: "Contacts",
     to: "/admin/contacts",
+  },
+  {
+    description: "Post open positions, review applications, and manage the hiring pipeline.",
+    icon: Briefcase,
+    title: "Careers",
+    to: "/admin/careers",
   },
 ];
 
@@ -66,9 +73,17 @@ const AdminDashboardPage = () => {
     queryKey: ["dashboard", "audit-requests"],
     queryFn: listAdminFreeAuditRequests,
   });
+  const { data: careerPositions = [], isLoading: loadingPositions } = useQuery({
+    queryKey: ["dashboard", "career-positions"],
+    queryFn: listAdminPositions,
+  });
+  const { data: careerApplications = [], isLoading: loadingApplications } = useQuery({
+    queryKey: ["dashboard", "career-applications"],
+    queryFn: listAdminApplications,
+  });
 
   const isLoading =
-    loadingBlogs || loadingProjects || loadingContacts || loadingCampaignBookings || loadingAuditRequests;
+    loadingBlogs || loadingProjects || loadingContacts || loadingCampaignBookings || loadingAuditRequests || loadingPositions || loadingApplications;
   const publishedBlogs = blogs.filter((blog) => blog.published).length;
   const publishedProjects = projects.filter((project) => project.published).length;
   const leadRecords = [...contacts, ...campaignBookings, ...auditRequests];

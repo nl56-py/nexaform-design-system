@@ -284,6 +284,122 @@ export type Database = {
         }
         Relationships: []
       }
+      job_positions: {
+        Row: {
+          id: string
+          title: string
+          slug: string
+          department: string
+          location: string
+          employment_type: string
+          experience_level: string
+          salary_range: string | null
+          description: string
+          requirements: string | null
+          benefits: string | null
+          published: boolean
+          published_at: string | null
+          deadline: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          slug: string
+          department?: string
+          location?: string
+          employment_type?: string
+          experience_level?: string
+          salary_range?: string | null
+          description?: string
+          requirements?: string | null
+          benefits?: string | null
+          published?: boolean
+          published_at?: string | null
+          deadline?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          slug?: string
+          department?: string
+          location?: string
+          employment_type?: string
+          experience_level?: string
+          salary_range?: string | null
+          description?: string
+          requirements?: string | null
+          benefits?: string | null
+          published?: boolean
+          published_at?: string | null
+          deadline?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      job_applications: {
+        Row: {
+          id: string
+          position_id: string
+          full_name: string
+          email: string
+          phone: string | null
+          portfolio_url: string | null
+          cover_letter: string | null
+          resume_url: string | null
+          experience_years: string | null
+          current_role: string | null
+          status: string
+          admin_notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          position_id: string
+          full_name: string
+          email: string
+          phone?: string | null
+          portfolio_url?: string | null
+          cover_letter?: string | null
+          resume_url?: string | null
+          experience_years?: string | null
+          current_role?: string | null
+          status?: string
+          admin_notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          position_id?: string
+          full_name?: string
+          email?: string
+          phone?: string | null
+          portfolio_url?: string | null
+          cover_letter?: string | null
+          resume_url?: string | null
+          experience_years?: string | null
+          current_role?: string | null
+          status?: string
+          admin_notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_applications_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "job_positions"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never

@@ -15,6 +15,8 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import DigitalFairnessCampaign from "./pages/DigitalFairnessCampaign";
 import FreeAudit from "./pages/FreeAudit";
+import Careers from "./pages/Careers";
+import CareerDetail from "./pages/CareerDetail";
 import NotFound from "./pages/NotFound";
 import ScrollToTop from "@/components/ScrollToTop";
 import { AdminAuthProvider } from "@/components/admin/AdminAuthProvider";
@@ -26,6 +28,7 @@ import AdminLayoutPage from "./pages/admin/Layout";
 import AdminLoginPage from "./pages/admin/Login";
 import AdminProjectsPage from "./pages/admin/Projects";
 import AdminSeoCampaignPage from "./pages/admin/SeoCampaign";
+import AdminCareersPage from "./pages/admin/Careers";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +64,7 @@ const App = () => (
               <Route path="projects" element={<AdminProjectsPage />} />
               <Route path="blogs" element={<AdminBlogsPage />} />
               <Route path="contacts" element={<AdminContactsPage />} />
+              <Route path="careers" element={<AdminCareersPage />} />
               <Route path="*" element={<Navigate to="/admin" replace />} />
             </Route>
 
@@ -77,6 +81,8 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/digital-fairness-campaign" element={<DigitalFairnessCampaign />} />
               <Route path="/free-audit" element={<FreeAudit />} />
+              <Route path="/careers" element={<Careers />} />
+              <Route path="/careers/:slug" element={<CareerDetail />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

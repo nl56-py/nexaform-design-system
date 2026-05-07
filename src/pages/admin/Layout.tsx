@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { BookText, FolderKanban, LayoutDashboard, LogOut, Mail, SearchCheck, ShieldCheck } from "lucide-react";
+import { BookText, Briefcase, FolderKanban, LayoutDashboard, LogOut, Mail, SearchCheck, ShieldCheck } from "lucide-react";
 import Seo from "@/components/Seo";
 import { Button } from "@/components/ui/button";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
@@ -11,6 +11,7 @@ const navItems = [
   { icon: FolderKanban, label: "Projects", to: "/admin/projects" },
   { icon: BookText, label: "Blogs", to: "/admin/blogs" },
   { icon: Mail, label: "Contacts", to: "/admin/contacts" },
+  { icon: Briefcase, label: "Careers", to: "/admin/careers" },
 ];
 
 const AdminLayoutPage = () => {

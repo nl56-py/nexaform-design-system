@@ -69,9 +69,9 @@ const connectionCards = [
   },
   {
     eyebrow: "Platform",
-    title: "Vibenest Learning Platform",
+    title: "Nexa Academy Learning Platform",
     description:
-      "Vibenest extends that service into an ongoing learning space for vibe coding, AI tool fluency, guided experiments, and hands-on practice.",
+      "Nexa Academy extends that service into an ongoing learning space for vibe coding, AI tool fluency, guided experiments, and hands-on practice.",
     icon: Sparkles,
     className: "border-primary/20 bg-gradient-to-br from-primary/10 via-white/90 to-cyan-100/60",
   },
@@ -92,7 +92,7 @@ const capabilityPoints = [
     text: "Understand AI use cases, limits, and workflow fit before scaling adoption.",
   },
   {
-    title: "Practice with Vibenest",
+    title: "Practice with Nexa Academy",
     text: "Turn theory into daily skill through vibe coding, tools, prompts, and guided experiments.",
   },
   {
@@ -118,13 +118,13 @@ const VibenestEcosystemSection = () => {
 
             <FadeUp delay={0.08}>
               <h2 className="mt-5 font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-                Vibenest connects AI literacy with practical building, tools, and automation
+                Nexa Academy connects AI literacy with practical building, tools, and automation
               </h2>
             </FadeUp>
 
             <FadeUp delay={0.16}>
               <p className="mt-5 max-w-[62ch] leading-8 text-muted-foreground">
-                Vibenest is Nexaform&apos;s learning initiative for people who want to move from
+                Nexa Academy is Nexaform&apos;s learning initiative for people who want to move from
                 curiosity to real AI capability. It connects our AI Literacy service with a more
                 hands-on platform experience around vibe coding, modern AI tools, and practical
                 workflow design.
@@ -167,6 +167,11 @@ const VibenestEcosystemSection = () => {
                     Discuss AI Literacy
                   </Button>
                 </Link>
+                <a href="https://academy.nexa-form.com" target="_blank" rel="noreferrer">
+                  <Button variant="outline" size="lg" className="rounded-2xl px-8">
+                    Visit Nexa Academy
+                  </Button>
+                </a>
               </div>
             </FadeUp>
           </div>

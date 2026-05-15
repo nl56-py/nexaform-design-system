@@ -72,9 +72,17 @@ const Footer = () => (
         <div className="space-y-4">
           <h4 className="mb-4 text-sm font-display font-semibold text-foreground">Ecosystem</h4>
           <p className="text-sm leading-relaxed text-muted-foreground">
-            Also supporting <span className="text-foreground">Vibenest</span>, a learning
+            Also supporting <span className="text-foreground">Nexa Academy</span>, a learning
             initiative focused on modern AI-assisted development and vibe coding education.
           </p>
+          <a
+            href="https://academy.nexa-form.com"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex text-sm text-primary transition-colors duration-200 hover:text-foreground"
+          >
+            academy.nexa-form.com
+          </a>
         </div>
       </div>
 

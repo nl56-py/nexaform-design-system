@@ -40,12 +40,38 @@ const SUPABASE_KEY =
   sanitizeKey(process.env.VITE_SUPABASE_PUBLISHABLE_KEY) ||
   "sb_publishable_dZF20TJxfnlBbdkfx9lp2Q_XJAq-h2i";
 
+const hasServiceRoleKey = Boolean(
+  process.env.SUPABASE_SERVICE_ROLE_KEY && sanitizeKey(process.env.SUPABASE_SERVICE_ROLE_KEY)
+);
+
 const MCP_API_KEY = process.env.MCP_API_KEY || "";
 const ADMIN_MEDIA_BUCKET = "admin-media";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: { persistSession: false },
 });
+
+function withTimeout<T>(promise: PromiseLike<T>, timeoutMs = 12000, context = "Operation"): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(
+        new Error(
+          `${context} timed out after ${timeoutMs / 1000}s. Please ensure SUPABASE_SERVICE_ROLE_KEY is set in Vercel to bypass RLS.`
+        )
+      );
+    }, timeoutMs);
+
+    Promise.resolve(promise)
+      .then((val) => {
+        clearTimeout(timer);
+        resolve(val);
+      })
+      .catch((err) => {
+        clearTimeout(timer);
+        reject(err);
+      });
+  });
+}
 
 function slugify(text: string): string {
   return text
@@ -223,14 +249,19 @@ const TOOLS_DEFINITIONS = [
 async function executeTool(name: string, args: Record<string, any>) {
   switch (name) {
     case "cms_upload_media": {
+      if (!hasServiceRoleKey) {
+        throw new Error(
+          "Upload blocked by Row-Level Security: SUPABASE_SERVICE_ROLE_KEY is not set in Vercel environment variables. The 'admin-media' storage bucket requires service_role admin credentials to write. Please add SUPABASE_SERVICE_ROLE_KEY in your Vercel Project Settings -> Environment Variables."
+        );
+      }
       const { url, base64Data, filename, folder = "blogs", contentType } = args;
       let buffer: Buffer;
       let mime = contentType || "image/png";
       let baseName = filename || "upload";
 
       if (url) {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`Failed to fetch URL: ${res.statusText}`);
+        const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+        if (!res.ok) throw new Error(`Failed to download image from URL (${res.status} ${res.statusText})`);
         buffer = Buffer.from(await res.arrayBuffer());
         if (!contentType) mime = res.headers.get("content-type") || "image/png";
       } else if (base64Data) {
@@ -244,10 +275,14 @@ async function executeTool(name: string, args: Record<string, any>) {
       const ext = mime.split("/")[1] || "png";
       const storagePath = `${folder}/${timestamp}-${crypto.randomUUID()}-${slugify(baseName)}.${ext}`;
 
-      const { error } = await supabase.storage.from(ADMIN_MEDIA_BUCKET).upload(storagePath, buffer, {
-        contentType: mime,
-        upsert: false,
-      });
+      const { error } = await withTimeout(
+        supabase.storage.from(ADMIN_MEDIA_BUCKET).upload(storagePath, buffer, {
+          contentType: mime,
+          upsert: false,
+        }),
+        10000,
+        "Media storage upload"
+      );
       if (error) throw error;
 
       const { data } = supabase.storage.from(ADMIN_MEDIA_BUCKET).getPublicUrl(storagePath);
@@ -266,7 +301,7 @@ async function executeTool(name: string, args: Record<string, any>) {
       if (args.category) q = q.ilike("category", `%${args.category}%`);
       if (args.search) q = q.or(`title.ilike.%${args.search}%,excerpt.ilike.%${args.search}%`);
 
-      const { data, error } = await q;
+      const { data, error } = await withTimeout(q, 10000, "List blogs");
       if (error) throw error;
       return { count: data?.length || 0, posts: data };
     }
@@ -277,30 +312,39 @@ async function executeTool(name: string, args: Record<string, any>) {
       else if (args.slug) q = q.eq("slug", args.slug);
       else throw new Error("id or slug is required");
 
-      const { data, error } = await q.maybeSingle();
+      const { data, error } = await withTimeout(q.maybeSingle(), 10000, "Get blog");
       if (error) throw error;
       return data || { error: "Post not found" };
     }
 
     case "cms_create_blog": {
+      if (!hasServiceRoleKey) {
+        throw new Error(
+          "Write operation blocked by Row-Level Security: SUPABASE_SERVICE_ROLE_KEY is not set in Vercel environment variables. The 'blog_posts' table requires service_role admin credentials to insert articles. Please add SUPABASE_SERVICE_ROLE_KEY in your Vercel Project Settings -> Environment Variables."
+        );
+      }
       const finalSlug = args.slug ? slugify(args.slug) : slugify(args.title);
       const now = new Date().toISOString();
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .insert({
-          title: args.title,
-          slug: finalSlug,
-          category: args.category || "Design System",
-          excerpt: args.excerpt,
-          content: args.content,
-          cover_image: args.cover_image || null,
-          tags: args.tags || [],
-          published: args.published || false,
-          published_at: args.published ? now : null,
-          updated_at: now,
-        })
-        .select()
-        .single();
+      const { data, error } = await withTimeout(
+        supabase
+          .from("blog_posts")
+          .insert({
+            title: args.title,
+            slug: finalSlug,
+            category: args.category || "Design System",
+            excerpt: args.excerpt,
+            content: args.content,
+            cover_image: args.cover_image || null,
+            tags: args.tags || [],
+            published: args.published || false,
+            published_at: args.published ? now : null,
+            updated_at: now,
+          })
+          .select()
+          .single(),
+        10000,
+        "Blog post insert"
+      );
       if (error) throw error;
       return { message: "Blog post created", post: data };
     }

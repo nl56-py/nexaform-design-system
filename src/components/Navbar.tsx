@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { label: "Home", to: "/" },
-  { label: "Rs. 6,999 Offers", to: "/digital-fairness-campaign" },
+  { label: "Digital Fairness", to: "/digital-fairness-campaign" },
   { label: "Free Audit", to: "/free-audit" },
   { label: "Projects", to: "/projects" },
   { label: "Blog", to: "/blog" },
@@ -26,7 +26,7 @@ const navLinks = [
   { label: "Contact", to: "/contact" },
 ];
 
-const offerLinks = navLinks.slice(1, 3);
+const campaignLinks = navLinks.slice(1, 3);
 const standardLinks = navLinks.slice(3);
 
 const Navbar = () => {
@@ -131,7 +131,7 @@ const Navbar = () => {
               className="pointer-events-none absolute -bottom-1.5 -right-1.5 text-cyan-500 drop-shadow-sm"
               aria-hidden="true"
             />
-            {offerLinks.map((link) => (
+            {campaignLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
@@ -251,7 +251,7 @@ const Navbar = () => {
                 aria-hidden="true"
               />
               <div className="grid gap-1 sm:grid-cols-2">
-                {offerLinks.map((link) => (
+                {campaignLinks.map((link) => (
                   <Link
                     key={link.to}
                     to={link.to}

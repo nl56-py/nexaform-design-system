@@ -7,7 +7,7 @@ import { siteContact } from "@/lib/site-config";
 const quickLinks = [
   { label: "Home", to: "/" },
   { label: "Services", to: "/services" },
-  { label: "Rs. 6,999 Offers", to: "/digital-fairness-campaign" },
+  { label: "Digital Fairness Campaign", to: "/digital-fairness-campaign" },
   { label: "Free Audit", to: "/free-audit" },
   { label: "Projects", to: "/projects" },
   { label: "Blog", to: "/blog" },

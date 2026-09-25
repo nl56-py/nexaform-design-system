@@ -4,10 +4,11 @@ import {
   ArrowRight,
   BadgeCheck,
   CalendarCheck,
+  Check,
   CheckCircle2,
   ClipboardList,
-  FileText,
   Globe2,
+  HeartHandshake,
   LayoutDashboard,
   Mail,
   MessageCircle,
@@ -16,6 +17,7 @@ import {
   ShieldCheck,
   Sparkles,
   Wrench,
+  XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -31,80 +33,108 @@ import { getSupabaseErrorMessage } from "@/lib/supabase-errors";
 
 const packageFeatures = [
   {
-    title: "Brand-first landing page",
-    description: "Hero section, colors, logo placement, and copy shaped around your own business identity.",
+    title: "Brand-First Responsive Experience",
+    description: "Tailored hero section, typography, logo placement, and modern styling shaped around your business identity.",
     icon: BadgeCheck,
   },
   {
-    title: "Admin panel content control",
-    description: "Upload website photos, videos, blogs, service updates, and campaign content from your own admin area.",
+    title: "Self-Managed Admin Control",
+    description: "Upload high-res photos, videos, blogs, service offerings, and team updates directly from your own admin dashboard.",
     icon: LayoutDashboard,
   },
   {
-    title: "Service booking flow",
-    description: "Let customers choose services, share details, and request a booking or consultation from the website.",
+    title: "Direct Client Booking Flow",
+    description: "Enable customers to explore services, choose options, and submit consultation or appointment inquiries with ease.",
     icon: CalendarCheck,
   },
   {
-    title: "Contact and inquiry forms",
-    description: "Capture leads with forms connected to the admin contact area for clean follow-up.",
+    title: "Lead Capture & Inquiries",
+    description: "Integrated contact capture forms hooked directly to your admin pipeline and WhatsApp for rapid conversions.",
     icon: ClipboardList,
   },
   {
-    title: "Mobile-first design",
-    description: "Built first for phones, then expanded for laptop and desktop browsing.",
+    title: "Mobile-First Architecture",
+    description: "Engineered specifically for lightning-fast mobile performance on Nepali networks, then scaled beautifully to desktops.",
     icon: MonitorSmartphone,
   },
   {
-    title: "Domain coordination",
-    description: "Mercantile coordination support is included for eligible .com.np, .edu.np, or name-based personal .np domains.",
+    title: "Official .np Domain Guidance",
+    description: "Full coordination with Mercantile for eligible free .com.np, .edu.np, or name-based personal .np domain registrations.",
     icon: Globe2,
   },
   {
-    title: "Free hosting support",
-    description: "Starter hosting is included with terms and conditions applied, so eligible businesses can launch without a separate first hosting bill.",
+    title: "Starter Hosting Support",
+    description: "Reliable starter hosting included under campaign terms and conditions, allowing you to launch without initial hosting barriers.",
     icon: ShieldCheck,
   },
   {
-    title: "Maintenance support",
-    description: "Post-launch support is included. No surprise maintenance bill hiding behind the offer.",
+    title: "Ongoing Maintenance & Care",
+    description: "Direct engineering support with post-launch onboarding. Zero hidden retainer fees or surprise maintenance charges.",
     icon: Wrench,
   },
   {
-    title: "SEO-ready foundation",
-    description: "Clean structure, metadata, fast pages, and a path into the free SEO/AEO/GEO audit.",
+    title: "AI & Search Discovery Engine",
+    description: "Engineered with clean schema metadata, sitemap automation, and an included free SEO/AEO/GEO readiness audit.",
     icon: SearchCheck,
   },
 ];
 
 const audiences = [
-  "Business owners",
-  "Doctors and clinics",
-  "Lawyers and consultants",
-  "Schools and colleges",
-  "Local service providers",
-  "Personal brands",
+  { title: "Local Businesses & Retail", desc: "Showcase products, store locations, and let customers reach out directly via WhatsApp." },
+  { title: "Doctors, Clinics & Health", desc: "Build patient trust with clinic credentials, department listings, and appointment forms." },
+  { title: "Lawyers & Consultants", desc: "Establish digital authority, display legal expertise, and accept confidential inquiries." },
+  { title: "Schools & Educational Academies", desc: "Highlight programs, faculty, admission procedures, and eligible .edu.np web identity." },
+  { title: "Hospitality & Local Services", desc: "Attract local and tourist clientele with clear service packages and instant bookings." },
+  { title: "Personal Brands & Founders", desc: "Own your Google and AI search footprint with a sleek personal portfolio and blog." },
 ];
 
 const packageIncludes = [
-  "Professional campaign-style landing page",
-  "Business logo and brand-aligned hero design",
-  "Services section with booking inquiry path",
-  "Photo, video, and blog publishing from admin",
-  "Contact form and WhatsApp call-to-action",
-  "Mobile-first responsive experience",
-  "Basic technical SEO setup",
-  "Eligible .np domain coordination with Mercantile support",
-  "Free hosting included with terms and conditions applied",
-  "Free SEO/AEO/GEO audit offer included",
+  "Bespoke mobile-first landing experience",
+  "Brand-aligned color palette & visual assets",
+  "Dedicated services & package inquiry path",
+  "Self-hosted admin panel for photos, blogs & updates",
+  "WhatsApp direct conversion integration",
+  "Full technical SEO and AI engine indexing setup",
+  "Eligible .np Mercantile domain registration assistance",
+  "Starter hosting included (Terms & Conditions applied)",
+  "Free SEO, AEO, and GEO AI readiness audit included",
+  "Transparent guidance with zero lock-ins",
+];
+
+const comparisonPoints = [
+  {
+    title: "Upfront Financial Cost",
+    traditional: "Heavy quotes of NPR 30,000 to 50,000+ for basic starter websites.",
+    campaign: "Subsidized, highly accessible campaign tier created to democratize web access.",
+  },
+  {
+    title: "Content & Admin Control",
+    traditional: "Code lock-in or complicated CMS setups requiring continuous agency invoices.",
+    campaign: "Full ownership via an intuitive built-in admin panel to upload images, blogs, and edits.",
+  },
+  {
+    title: "Domain Setup (.np)",
+    traditional: "Often left unassisted or upcharged despite Mercantile providing free .np domains.",
+    campaign: "Hands-on document coordination for eligible .com.np, .edu.np, or personal domains.",
+  },
+  {
+    title: "Hosting & Maintenance",
+    traditional: "Surprise monthly hosting bills, renewal markups, and unannounced fees.",
+    campaign: "Starter hosting support included (T&C applied) with completely transparent onboarding.",
+  },
+  {
+    title: "Search & AI Readiness",
+    traditional: "Static markup lacking modern schema, invisible to ChatGPT and Gemini.",
+    campaign: "Included comprehensive SEO/AEO/GEO audit to ensure humans and AI find you.",
+  },
 ];
 
 const campaignWhatsAppHref = `https://wa.me/977${siteContact.whatsappNumber}?text=${encodeURIComponent(
-  "Hello Nexaform, I want to join the Digital Fairness Campaign Rs. 6,999 website package.",
+  "Hello Nexaform, I want to join the Digital Fairness Campaign and get my professional website live.",
 )}`;
 
 const inputClass =
-  "w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 transition-all placeholder:text-slate-400 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100";
+  "w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-950 transition-all placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-4 focus:ring-sky-100";
 const labelClass = "mb-1.5 block text-sm font-semibold text-slate-800";
 
 const DigitalFairnessCampaign = () => {
@@ -155,9 +185,9 @@ const DigitalFairnessCampaign = () => {
     }
   };
 
-  const pageTitle = createTitle("Digital Fairness Campaign - Rs. 6,999 Website Package");
+  const pageTitle = createTitle("Digital Fairness Campaign - Accessible Websites for Nepal");
   const pageDescription = toMetaDescription(
-    "Nexaform Digital Fairness Campaign helps Nepali businesses and professionals launch a mobile-first professional website with admin panel, booking, contact forms, domain coordination, free hosting with terms and conditions applied, maintenance support, and a free SEO/AEO/GEO audit for Rs. 6,999.",
+    "Nexaform Digital Fairness Campaign empowers Nepali businesses, clinics, institutions, and professionals with accessible, mobile-first websites, admin panel control, domain guidance, starter hosting support, and a free SEO/AEO/GEO audit.",
   );
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: "Home", path: "/" },
@@ -174,12 +204,18 @@ const DigitalFairnessCampaign = () => {
     }),
     {
       "@context": "https://schema.org",
-      "@type": "Offer",
-      "@id": `${absoluteUrl("/digital-fairness-campaign")}#offer`,
-      name: "Nexaform Digital Fairness Website Package",
-      price: "6999",
-      priceCurrency: "NPR",
-      availability: "https://schema.org/InStock",
+      "@type": "Service",
+      "@id": `${absoluteUrl("/digital-fairness-campaign")}#campaign-service`,
+      name: "Nexaform Digital Fairness Campaign",
+      serviceType: "Website Design and Development Initiative",
+      description:
+        "Subsidized, mobile-first professional web development initiative for Nepali businesses with full admin control, .np domain guidance, starter hosting support, and search audit.",
+      provider: {
+        "@type": "Organization",
+        name: "Nexaform",
+        url: absoluteUrl("/"),
+      },
+      areaServed: "Nepal",
       url: absoluteUrl("/digital-fairness-campaign"),
     },
   ];
@@ -194,89 +230,99 @@ const DigitalFairnessCampaign = () => {
         structuredData={structuredData}
       />
 
-      <section className="relative isolate flex min-h-[92svh] items-center overflow-hidden pb-14 pt-24 sm:pt-28 lg:min-h-[88vh]">
+      {/* Hero Section */}
+      <section className="relative isolate flex min-h-[92svh] items-center overflow-hidden pb-16 pt-24 sm:pt-28 lg:min-h-[88vh]">
         <img
           src={digitalFairnessHero}
           alt="Nexaform Digital Fairness Campaign website package visual"
           className="absolute inset-0 h-full w-full object-cover object-center"
           loading="eager"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(248,250,252,0.98)_0%,rgba(248,250,252,0.9)_35%,rgba(248,250,252,0.42)_66%,rgba(248,250,252,0.16)_100%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-slate-50 to-transparent" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(248,250,252,0.98)_0%,rgba(248,250,252,0.92)_38%,rgba(248,250,252,0.48)_68%,rgba(248,250,252,0.2)_100%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-50 to-transparent" />
 
         <div className="container relative z-10">
           <div className="max-w-3xl">
             <FadeUp>
-              <span className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white/85 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.24em] text-sky-700 shadow-sm backdrop-blur">
-                <Sparkles size={14} />
+              <span className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white/90 px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.24em] text-sky-700 shadow-sm backdrop-blur">
+                <Sparkles size={14} className="text-amber-500" />
                 Digital Fairness Campaign
               </span>
             </FadeUp>
             <FadeUp delay={0.08}>
               <h1 className="mt-6 max-w-2xl text-balance font-display text-4xl font-bold leading-[1.05] tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
-                Professional website for Nepal, in just Rs. 6,999.
+                Democratizing professional web presence for Nepal.
               </h1>
             </FadeUp>
             <FadeUp delay={0.16}>
               <p className="mt-5 max-w-[62ch] text-base font-medium leading-7 text-slate-700 sm:text-lg">
-                Nexaform launched this campaign to remove the barrier of paying Rs. 30,000 to
-                Rs. 40,000 for a professional website. This is more than a business offer; it is a
-                campaign for digital fairness, with free hosting included. Terms and conditions
-                applied.
+                High agency costs should never block Nepali businesses from being found online.
+                Nexaform launched the Digital Fairness Campaign to eliminate the barrier of paying
+                Rs. 30,000 to Rs. 50,000 for a website. We deliver modern web infrastructure,
+                complete admin ownership, .np domain guidance, and starter hosting without hidden traps.
               </p>
             </FadeUp>
             <FadeUp delay={0.22}>
               <div className="mt-6 flex flex-wrap items-center gap-3">
-                <div className="rounded-lg border border-slate-200 bg-white/88 px-4 py-3 shadow-sm backdrop-blur">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
-                    Campaign price
+                <div className="rounded-xl border border-sky-200 bg-white/90 px-4 py-3 shadow-sm backdrop-blur">
+                  <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-sky-700 font-semibold">
+                    <HeartHandshake size={13} />
+                    Mission-Driven
                   </div>
-                  <div className="font-display text-2xl font-bold text-slate-950">Rs. 6,999</div>
+                  <div className="font-display text-lg font-bold text-slate-950">Subsidized Starter Tier</div>
                 </div>
-                <div className="rounded-lg border border-emerald-200 bg-emerald-50/90 px-4 py-3 text-sm font-semibold text-emerald-800 shadow-sm backdrop-blur">
-                  Free SEO, AEO and GEO audit included
+                <div className="rounded-xl border border-emerald-200 bg-emerald-50/90 px-4 py-3 text-sm font-semibold text-emerald-800 shadow-sm backdrop-blur">
+                  Free SEO, AEO & GEO audit included
                 </div>
-                <div className="rounded-lg border border-sky-200 bg-sky-50/90 px-4 py-3 text-sm font-semibold text-sky-800 shadow-sm backdrop-blur">
-                  Free hosting included. Terms and conditions applied.
+                <div className="rounded-xl border border-sky-100 bg-white/85 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm backdrop-blur">
+                  Starter hosting included (T&C applied)
                 </div>
               </div>
             </FadeUp>
             <FadeUp delay={0.3}>
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="mt-8 flex flex-wrap items-center gap-3">
                 <a href="#campaign-booking">
                   <Button variant="gradient" size="lg">
-                    Book Rs. 6,999 Package <ArrowRight size={18} />
+                    Join Fairness Campaign <ArrowRight size={18} />
                   </Button>
                 </a>
                 <Link to="/free-audit">
-                  <Button size="lg" variant="outline" className="border-slate-300 bg-white/80 text-slate-950 hover:bg-white">
+                  <Button size="lg" variant="outline" className="border-slate-300 bg-white/90 text-slate-950 shadow-sm hover:bg-white">
+                    <SearchCheck size={18} />
                     Get Free SEO/AI Audit
                   </Button>
                 </Link>
+                <a href={campaignWhatsAppHref} target="_blank" rel="noreferrer">
+                  <Button variant="outline" size="lg" className="border-emerald-200 bg-emerald-50 text-emerald-800 shadow-sm hover:bg-emerald-100">
+                    <MessageCircle size={18} />
+                    WhatsApp
+                  </Button>
+                </a>
               </div>
             </FadeUp>
           </div>
         </div>
       </section>
 
+      {/* Package Feature Grid */}
       <SectionWrapper className="bg-slate-50">
         <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
           <FadeUp>
-            <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-sky-700">
-              The package
+            <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-sky-700 font-semibold">
+              The Campaign Package
             </span>
             <h2 className="mt-3 max-w-xl font-display text-3xl font-bold tracking-tight text-slate-950 md:text-4xl">
-              Everything a serious professional website needs to go live.
+              Everything your business needs to launch with authority.
             </h2>
             <p className="mt-4 max-w-[62ch] leading-7 text-slate-600">
-              Your brand, logo, services, booking flow, content updates, and contact capture are
-              shaped into a mobile-first website that gives your business a proper digital identity.
+              Your visual brand, services, booking pathways, and lead forms are built into a high-performance,
+              mobile-first architecture that establishes legitimate credibility in Nepal and beyond.
             </p>
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
               {packageIncludes.map((item) => (
-                <div key={item} className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+                <div key={item} className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
                   <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-emerald-500" />
-                  <span className="text-sm font-medium leading-6 text-slate-700">{item}</span>
+                  <span className="text-sm font-medium leading-snug text-slate-700">{item}</span>
                 </div>
               ))}
             </div>
@@ -288,8 +334,8 @@ const DigitalFairnessCampaign = () => {
 
               return (
                 <StaggerItem key={feature.title}>
-                  <article className="h-full rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition-transform duration-200 hover:-translate-y-0.5">
-                    <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-sky-50 text-sky-700">
+                  <article className="group h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-sky-200 hover:shadow-md">
+                    <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-sky-50 text-sky-700 transition-colors group-hover:bg-sky-600 group-hover:text-white">
                       <Icon size={20} />
                     </div>
                     <h3 className="font-display text-base font-semibold text-slate-950">{feature.title}</h3>
@@ -302,79 +348,119 @@ const DigitalFairnessCampaign = () => {
         </div>
       </SectionWrapper>
 
-      <section className="relative overflow-hidden bg-white py-14 md:py-20">
+      {/* Comparison: Traditional Agency vs Digital Fairness */}
+      <section className="relative overflow-hidden bg-white py-16 md:py-24">
         <div className="container">
-          <div className="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
-            <FadeUp>
-              <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-sky-700">
-                Why this exists
-              </span>
-              <h2 className="mt-3 max-w-3xl font-display text-3xl font-bold tracking-tight text-slate-950 md:text-4xl">
-                Professional website pricing should not block Nepali businesses from being found.
-              </h2>
-              <p className="mt-4 max-w-[68ch] leading-7 text-slate-600">
-                Many agencies quote Rs. 30,000 to Rs. 40,000 for a professional website. For many
-                businesses and professionals, that is not just a price; it is a barrier. Nexaform is
-                here to break that barrier with a fair launch package.
-              </p>
-              <p className="mt-4 max-w-[68ch] leading-7 text-slate-600">
-                This campaign is not only about profit. It is designed to help businesses, doctors,
-                clinics, lawyers, schools, colleges, and professionals in Nepal build a proper
-                digital identity.
-              </p>
-              <p className="mt-4 max-w-[68ch] leading-7 text-slate-600">
-                If you are a registered organization, we can help coordinate an eligible .com.np
-                domain. For education-sector organizations, we can support eligible .edu.np
-                coordination. For personal brands, we can help with eligible name-based .np domain
-                coordination through Mercantile.
-              </p>
-              <p className="mt-4 max-w-[68ch] leading-7 text-slate-600">
-                Starter hosting is also included with the campaign package. Terms and conditions
-                applied. Hosting scope, renewal, and usage limits will be confirmed during onboarding.
-              </p>
-            </FadeUp>
+          <FadeUp className="text-center max-w-3xl mx-auto mb-14">
+            <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-sky-700 font-semibold">
+              Transparent Accountability
+            </span>
+            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-slate-950 md:text-4xl">
+              Traditional Agency Barriers vs. Digital Fairness
+            </h2>
+            <p className="mt-4 text-base leading-7 text-slate-600">
+              Why we started this campaign: to eliminate unnecessary gatekeeping and provide an honest,
+              modern software foundation for Nepali enterprise.
+            </p>
+          </FadeUp>
 
-            <FadeUp delay={0.12}>
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-5 shadow-sm">
-                <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
-                  Built for
-                </div>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  {audiences.map((audience) => (
-                    <div key={audience} className="flex items-center gap-3 rounded-lg bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
-                      <ShieldCheck size={17} className="text-sky-600" />
-                      {audience}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {comparisonPoints.map((item) => (
+              <div key={item.title} className="rounded-2xl border border-slate-200 bg-slate-50/70 p-6 shadow-sm flex flex-col justify-between">
+                <div>
+                  <h3 className="font-display text-lg font-bold text-slate-950 mb-4">{item.title}</h3>
+
+                  <div className="space-y-4">
+                    <div className="rounded-xl border border-rose-100 bg-rose-50/60 p-3.5 text-xs">
+                      <div className="flex items-center gap-1.5 font-semibold text-rose-700 mb-1">
+                        <XCircle size={14} />
+                        The Traditional Barrier
+                      </div>
+                      <p className="text-slate-600 leading-relaxed">{item.traditional}</p>
                     </div>
-                  ))}
+
+                    <div className="rounded-xl border border-emerald-100 bg-emerald-50/70 p-3.5 text-xs">
+                      <div className="flex items-center gap-1.5 font-semibold text-emerald-800 mb-1">
+                        <Check size={14} className="stroke-[3]" />
+                        The Digital Fairness Standard
+                      </div>
+                      <p className="text-slate-700 leading-relaxed font-medium">{item.campaign}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </FadeUp>
+            ))}
           </div>
         </div>
       </section>
 
+      {/* Built For Section */}
+      <SectionWrapper className="bg-slate-50">
+        <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-center">
+          <FadeUp>
+            <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-sky-700 font-semibold">
+              Empowering Sectors
+            </span>
+            <h2 className="mt-3 max-w-xl font-display text-3xl font-bold tracking-tight text-slate-950 md:text-4xl">
+              Engineered for real businesses, practices, and institutions in Nepal.
+            </h2>
+            <p className="mt-4 max-w-[64ch] leading-7 text-slate-600">
+              Whether you are launching a new clinic, registering a school, growing a law practice,
+              or taking your local brand digital, the Digital Fairness Campaign equips you with
+              a battle-tested website and verified .np domain guidance.
+            </p>
+            <div className="mt-6 p-4 rounded-xl border border-sky-100 bg-white/90 text-sm text-slate-700 space-y-2">
+              <div className="flex items-center gap-2 font-semibold text-sky-900">
+                <Globe2 size={18} className="text-sky-600" />
+                Free .np Domain Guidance Included
+              </div>
+              <p className="text-xs leading-relaxed text-slate-600">
+                Registered companies are guided on official Mercantile .com.np registration. Educational
+                institutions receive .edu.np guidance. Personal brand leaders receive assistance with
+                name-based official .np domains at no extra charge.
+              </p>
+            </div>
+          </FadeUp>
+
+          <FadeUp delay={0.12}>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {audiences.map((audience) => (
+                <div key={audience.title} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="flex items-center gap-2 font-display text-sm font-bold text-slate-950">
+                    <ShieldCheck size={18} className="text-sky-600 shrink-0" />
+                    {audience.title}
+                  </div>
+                  <p className="mt-2 text-xs leading-relaxed text-slate-600">{audience.desc}</p>
+                </div>
+              ))}
+            </div>
+          </FadeUp>
+        </div>
+      </SectionWrapper>
+
+      {/* Synergy with Free Audit */}
       <SectionWrapper className="bg-[linear-gradient(180deg,#f8fcff_0%,#f1f8ff_100%)]">
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <FadeUp>
             <img
               src={freeAuditHero}
               alt="Nexaform free SEO AEO GEO audit dashboard visual"
-              className="aspect-[16/10] w-full rounded-lg border border-white object-cover shadow-[0_28px_70px_rgba(59,130,246,0.13)]"
+              className="aspect-[16/10] w-full rounded-2xl border border-white object-cover shadow-[0_28px_70px_rgba(59,130,246,0.13)]"
               loading="lazy"
             />
           </FadeUp>
           <FadeUp delay={0.12}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.22em] text-emerald-700 shadow-sm">
+            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.22em] text-emerald-700 shadow-sm">
               <SearchCheck size={14} />
-              Free Audit Offer
+              Included Search & AI Audit
             </span>
             <h2 className="mt-5 max-w-2xl font-display text-3xl font-bold tracking-tight text-slate-950 md:text-4xl">
-              Your website should be readable by Google and AI engines.
+              Be discoverable on Google and conversational AI engines.
             </h2>
             <p className="mt-4 max-w-[64ch] leading-7 text-slate-600">
-              A website alone is not enough. In 2026, customers search on Google, ChatGPT, Gemini,
-              Grok, and other AI engines. Nexaform will check your SEO, AEO, and GEO readiness and
-              send an in-depth report for free.
+              Having a website is only step one. Customers increasingly search on ChatGPT, Gemini, Grok,
+              and AI answer engines. Nexaform audits your search signals (SEO), answer engine optimization (AEO),
+              and generative engine optimization (GEO) for free so you stay visible.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link to="/free-audit">
@@ -393,45 +479,45 @@ const DigitalFairnessCampaign = () => {
         </div>
       </SectionWrapper>
 
-      <section id="campaign-booking" className="bg-white py-14 md:py-20">
+      {/* Campaign Application / Booking Form */}
+      <section id="campaign-booking" className="bg-white py-16 md:py-24">
         <div className="container">
           <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
             <FadeUp>
-              <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-sky-700">
-                Book the package
+              <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-sky-700 font-semibold">
+                Join The Movement
               </span>
               <h2 className="mt-3 max-w-xl font-display text-3xl font-bold tracking-tight text-slate-950 md:text-4xl">
-                Send your details. We will guide the next step.
+                Apply for the Digital Fairness Campaign.
               </h2>
               <p className="mt-4 max-w-[58ch] leading-7 text-slate-600">
-                If you are a business owner, doctor, clinic owner, lawyer, school owner, college
-                owner, or any professional wanting to enhance your digital identity at a fair cost,
-                fill this form or message us directly on WhatsApp.
+                Submit your business details below. Our engineering team reviews each application,
+                confirms domain eligibility, and schedules a transparent onboarding call within 24 hours.
               </p>
               <div className="mt-7 space-y-4">
                 <a
                   href={campaignWhatsAppHref}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-emerald-900 transition-colors hover:bg-emerald-100"
+                  className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4 text-emerald-950 transition-colors hover:bg-emerald-100/70"
                 >
-                  <MessageCircle size={20} className="mt-0.5 shrink-0" />
+                  <MessageCircle size={22} className="mt-0.5 shrink-0 text-emerald-600" />
                   <span>
-                    <span className="block text-sm font-semibold">WhatsApp: {siteContact.whatsappNumber}</span>
-                    <span className="mt-1 block text-sm text-emerald-800">
-                      Fastest way to join the Digital Fairness Campaign.
+                    <span className="block text-sm font-semibold">WhatsApp Direct: {siteContact.whatsappNumber}</span>
+                    <span className="mt-1 block text-xs text-emerald-800 leading-relaxed">
+                      Instant communication with Nexaform leads team for immediate answers.
                     </span>
                   </span>
                 </a>
                 <a
                   href={siteContact.emailHref}
-                  className="flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-slate-800 transition-colors hover:bg-slate-100"
+                  className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-800 transition-colors hover:bg-slate-100"
                 >
-                  <Mail size={20} className="mt-0.5 shrink-0 text-sky-700" />
+                  <Mail size={22} className="mt-0.5 shrink-0 text-sky-700" />
                   <span>
                     <span className="block text-sm font-semibold">{siteContact.email}</span>
-                    <span className="mt-1 block text-sm text-slate-600">
-                      Share documents, brand assets, or organization details by email.
+                    <span className="mt-1 block text-xs text-slate-600 leading-relaxed">
+                      Send your existing brand collateral, registration documents, or requirements.
                     </span>
                   </span>
                 </a>
@@ -439,19 +525,24 @@ const DigitalFairnessCampaign = () => {
             </FadeUp>
 
             <FadeUp delay={0.12}>
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-5 shadow-sm sm:p-6">
-                <h3 className="font-display text-xl font-semibold text-slate-950">
-                  Digital Fairness booking form
-                </h3>
+              <div className="rounded-3xl border border-slate-200 bg-slate-50/80 p-6 shadow-sm sm:p-8">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-100 text-sky-700">
+                    <Sparkles size={16} />
+                  </span>
+                  <h3 className="font-display text-xl font-bold text-slate-950">
+                    Campaign Application Form
+                  </h3>
+                </div>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  Fill this once. We will contact you with the checklist, domain guidance, and launch
-                  process.
+                  Fill out this brief application. We will follow up with your customized onboarding
+                  checklist, domain coordination steps, and rapid development timeline.
                 </p>
 
                 <form onSubmit={handleSubmit} className="mt-6 space-y-5">
                   <div className="grid gap-5 sm:grid-cols-2">
                     <div>
-                      <label className={labelClass}>Full name</label>
+                      <label className={labelClass}>Full name *</label>
                       <input
                         className={inputClass}
                         value={form.name}
@@ -461,18 +552,18 @@ const DigitalFairnessCampaign = () => {
                       />
                     </div>
                     <div>
-                      <label className={labelClass}>Email address</label>
+                      <label className={labelClass}>Email address *</label>
                       <input
                         type="email"
                         className={inputClass}
                         value={form.email}
                         onChange={(event) => setForm({ ...form, email: event.target.value })}
-                        placeholder="you@gmail.com"
+                        placeholder="you@company.com"
                         required
                       />
                     </div>
                     <div>
-                      <label className={labelClass}>WhatsApp or contact number</label>
+                      <label className={labelClass}>WhatsApp or mobile number *</label>
                       <input
                         className={inputClass}
                         value={form.phone}
@@ -487,11 +578,11 @@ const DigitalFairnessCampaign = () => {
                         className={inputClass}
                         value={form.organization}
                         onChange={(event) => setForm({ ...form, organization: event.target.value })}
-                        placeholder="Business name"
+                        placeholder="Organization or brand name"
                       />
                     </div>
                     <div>
-                      <label className={labelClass}>Business category</label>
+                      <label className={labelClass}>Business category *</label>
                       <select
                         className={inputClass}
                         value={form.category}
@@ -508,22 +599,22 @@ const DigitalFairnessCampaign = () => {
                       </select>
                     </div>
                     <div>
-                      <label className={labelClass}>Domain support</label>
+                      <label className={labelClass}>Domain requirement</label>
                       <select
                         className={inputClass}
                         value={form.domainNeed}
                         onChange={(event) => setForm({ ...form, domainNeed: event.target.value })}
                       >
                         <option value="">Select option</option>
-                        <option>Need .com.np help</option>
-                        <option>Need .edu.np help</option>
+                        <option>Need .com.np registration help</option>
+                        <option>Need .edu.np registration help</option>
                         <option>Need personal .np domain help</option>
-                        <option>Already have a domain</option>
+                        <option>Already have an active domain</option>
                         <option>Not sure yet</option>
                       </select>
                     </div>
                     <div className="sm:col-span-2">
-                      <label className={labelClass}>Preferred launch timeline</label>
+                      <label className={labelClass}>Target launch timeline</label>
                       <select
                         className={inputClass}
                         value={form.timeline}
@@ -539,19 +630,21 @@ const DigitalFairnessCampaign = () => {
                   </div>
 
                   <div>
-                    <label className={labelClass}>What services or products do you provide?</label>
+                    <label className={labelClass}>What services or products do you provide? *</label>
                     <textarea
-                      className={`${inputClass} min-h-[124px] resize-y`}
+                      className={`${inputClass} min-h-[120px] resize-y`}
                       value={form.message}
                       onChange={(event) => setForm({ ...form, message: event.target.value })}
-                      placeholder="Tell us about your services, target customers, booking needs, and any photo/video/blog content you want on the website."
+                      placeholder="Briefly describe your services, target audience, booking requirements, or any specific media/blog content you want featured."
                       required
                     />
                   </div>
 
-                  <Button type="submit" variant="gradient" size="lg" className="w-full sm:w-auto" disabled={submitting}>
-                    {submitting ? "Sending..." : "Book Campaign Package"}
-                  </Button>
+                  <div className="pt-2">
+                    <Button type="submit" variant="gradient" size="lg" className="w-full sm:w-auto" disabled={submitting}>
+                      {submitting ? "Submitting Application..." : "Submit Campaign Application"}
+                    </Button>
+                  </div>
                 </form>
               </div>
             </FadeUp>

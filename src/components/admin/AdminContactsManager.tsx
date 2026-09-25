@@ -127,7 +127,7 @@ const AdminContactsManager = () => {
 
       <Tabs defaultValue="campaign" className="space-y-5">
         <TabsList className="h-auto flex-wrap justify-start rounded-2xl bg-white/75 p-1.5">
-          <TabsTrigger value="campaign">Rs. 6,999 bookings ({campaignBookings.length})</TabsTrigger>
+          <TabsTrigger value="campaign">Digital Fairness bookings ({campaignBookings.length})</TabsTrigger>
           <TabsTrigger value="audits">Free audits ({auditRequests.length})</TabsTrigger>
           <TabsTrigger value="contacts">General contacts ({contacts.length})</TabsTrigger>
         </TabsList>

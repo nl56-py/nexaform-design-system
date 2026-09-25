@@ -5,7 +5,6 @@ import {
   BadgeCheck,
   Building2,
   Calendar,
-  CircleDollarSign,
   ExternalLink,
   Globe2,
   Mail,
@@ -32,7 +31,6 @@ import type { DigitalFairnessBookingRecord, FreeAuditRequestRecord } from "@/lib
 const campaignBookingsQueryKey = ["admin-digital-fairness-bookings"];
 const auditRequestsQueryKey = ["admin-free-audit-requests"];
 const leadStatusOptions = ["new", "reviewing", "contacted", "completed", "converted", "archived"];
-const campaignPackagePrice = 6999;
 
 const statusStyles: Record<string, string> = {
   new: "bg-primary/10 text-primary border-primary/15",
@@ -111,7 +109,6 @@ const AdminSeoCampaignDashboard = () => {
   const totalNew = allLeads.filter((lead) => lead.status === "new").length;
   const followUpQueue = allLeads.filter((lead) => ["new", "reviewing", "contacted"].includes(lead.status)).length;
   const convertedCampaigns = campaignBookings.filter((booking) => booking.status === "converted").length;
-  const potentialCampaignValue = campaignBookings.length * campaignPackagePrice;
   const isLoading = isCampaignLoading || isAuditsLoading;
   const isFetching = isCampaignFetching || isAuditsFetching;
 
@@ -170,7 +167,7 @@ const AdminSeoCampaignDashboard = () => {
               SEO audit and Digital Fairness campaign pipeline
             </h3>
             <p className="mt-2 text-sm leading-7 text-muted-foreground md:text-base">
-              Track free SEO/AEO/GEO audit requests and Rs. 6,999 campaign bookings, then move each
+              Track free SEO/AEO/GEO audit requests and Digital Fairness campaign applications, then move each
               lead through follow-up, completion, conversion, or archive.
             </p>
           </div>
@@ -201,10 +198,10 @@ const AdminSeoCampaignDashboard = () => {
           detail="New submissions across both funnels"
         />
         <MetricCard
-          icon={<CircleDollarSign size={20} />}
-          label="Campaign value"
-          value={formatRupees(potentialCampaignValue)}
-          detail="Potential Rs. 6,999 booking value"
+          icon={<Sparkles size={20} />}
+          label="Fairness leads"
+          value={campaignBookings.length}
+          detail="Total campaign applications"
         />
       </div>
 
@@ -220,7 +217,7 @@ const AdminSeoCampaignDashboard = () => {
             <div className="space-y-6">
               <StatusBreakdown
                 title="Digital Fairness funnel"
-                description="Rs. 6,999 campaign booking status mix."
+                description="Digital Fairness campaign booking status mix."
                 records={campaignBookings}
               />
               <StatusBreakdown
@@ -400,7 +397,7 @@ const CampaignBookingCard = ({
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="outline" className="border-sky-500/20 text-sky-600">
-            Rs. 6,999 campaign
+            Digital Fairness campaign
           </Badge>
           <StatusBadge status={booking.status} />
         </div>

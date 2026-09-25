@@ -45,7 +45,7 @@ const AnimatedHeroSection = () => {
               <div className="mb-5 flex flex-wrap gap-3">
                 <Link to="/digital-fairness-campaign">
                   <Button variant="gradient" size="lg">
-                    Rs. 6,999 Offers
+                    Digital Fairness Campaign
                   </Button>
                 </Link>
                 <Link to="/free-audit">
@@ -77,7 +77,7 @@ const AnimatedHeroSection = () => {
                 </div>
                 <div className="flex items-start gap-3 rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm font-semibold leading-6 text-emerald-200 shadow-sm backdrop-blur-md">
                   <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-emerald-400" />
-                  Free SEO, AEO and GEO audit included with the offer.
+                  Free SEO, AEO and GEO audit included with the campaign.
                 </div>
               </div>
             </FadeUp>

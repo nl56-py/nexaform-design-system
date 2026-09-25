@@ -13,7 +13,7 @@ import { listAdminPositions, listAdminApplications } from "@/lib/admin-careers";
 
 const sections = [
   {
-    description: "Monitor free SEO/AEO/GEO audits and Rs. 6,999 campaign bookings.",
+    description: "Monitor free SEO/AEO/GEO audits and Digital Fairness campaign bookings.",
     icon: SearchCheck,
     title: "SEO & Campaign",
     to: "/admin/seo-campaign",

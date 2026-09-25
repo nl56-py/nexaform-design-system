@@ -81,6 +81,24 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.nexa-form.com/blog/empowering-dangs-ambitious-minds-choosing-study-abroad-destination-2026</loc>
+    <lastmod>2026-09-25T10:09:17.187Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.nexa-form.com/blog/definitive-roadmap-studying-in-japan-from-nepal-lamahi-to-tokyo</loc>
+    <lastmod>2026-09-25T10:09:17.187Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.nexa-form.com/blog/building-custom-mcp-servers-for-clients-connecting-systems-to-ai</loc>
+    <lastmod>2026-09-25T07:09:47.708Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.nexa-form.com/blog/modern-web-architecture-himalayan-academy-case-study</loc>
     <lastmod>2026-09-11T17:05:45.411Z</lastmod>
     <changefreq>monthly</changefreq>
@@ -413,6 +431,12 @@
   <url>
     <loc>https://www.nexa-form.com/projects/alpha-lubricants-digital-flagship-and-enterprise-platform</loc>
     <lastmod>2026-09-14T15:22:11.781Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nexa-form.com/projects/gowell-education-center-digital-counseling-platform</loc>
+    <lastmod>2026-09-25T10:09:17.187Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

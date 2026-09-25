@@ -207,7 +207,7 @@ const FreeAudit = () => {
                 </a>
                 <Link to="/digital-fairness-campaign">
                   <Button size="lg" variant="outline" className="border-slate-300 bg-white/80 text-slate-950 hover:bg-white">
-                    View Rs. 6,999 Package
+                    Digital Fairness Campaign
                   </Button>
                 </Link>
               </div>
@@ -462,18 +462,17 @@ const FreeAudit = () => {
                 Need a website first?
               </div>
               <h2 className="mt-3 max-w-xl font-display text-3xl font-bold tracking-tight text-slate-950 md:text-4xl">
-                No website yet? Start with the Rs. 6,999 Digital Fairness package.
+                No website yet? Join the Digital Fairness Campaign.
               </h2>
               <p className="mt-4 max-w-[58ch] leading-7 text-slate-600">
-                Search and AI visibility starts with a proper website. The campaign package gives
-                you a mobile-first site, admin content control, booking flow, contact forms, domain
-                coordination with Mercantile support for eligible .np domains, and maintenance
-                support.
+                Search and AI visibility starts with a proper digital presence. Through our Digital
+                Fairness Campaign, get an accessible, mobile-first website with full admin content ownership,
+                booking flow, contact capture, .np domain coordination, and starter hosting support.
               </p>
               <div className="mt-7">
                 <Link to="/digital-fairness-campaign">
                   <Button variant="gradient" size="lg">
-                    Explore Rs. 6,999 Package <ArrowRight size={18} />
+                    Explore Digital Fairness Campaign <ArrowRight size={18} />
                   </Button>
                 </Link>
               </div>

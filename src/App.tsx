@@ -29,6 +29,7 @@ import AdminLoginPage from "./pages/admin/Login";
 import AdminProjectsPage from "./pages/admin/Projects";
 import AdminSeoCampaignPage from "./pages/admin/SeoCampaign";
 import AdminCareersPage from "./pages/admin/Careers";
+import AdminHmsLeadsPage from "./pages/admin/HmsLeads";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,7 @@ const App = () => (
               }
             >
               <Route index element={<AdminDashboardPage />} />
+              <Route path="hms-leads" element={<AdminHmsLeadsPage />} />
               <Route path="seo-campaign" element={<AdminSeoCampaignPage />} />
               <Route path="projects" element={<AdminProjectsPage />} />
               <Route path="blogs" element={<AdminBlogsPage />} />

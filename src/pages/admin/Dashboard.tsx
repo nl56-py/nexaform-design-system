@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
-import { ArrowRight, BookText, Briefcase, FolderKanban, Mail, SearchCheck, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, BookText, Briefcase, Building2, FolderKanban, Mail, SearchCheck, ShieldCheck, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,8 +10,15 @@ import { listAdminBlogs } from "@/lib/admin-blogs";
 import { listAdminContactSubmissions } from "@/lib/admin-contacts";
 import { listAdminProjects } from "@/lib/admin-projects";
 import { listAdminPositions, listAdminApplications } from "@/lib/admin-careers";
+import { listAdminHmsLeads } from "@/lib/admin-hms-leads";
 
 const sections = [
+  {
+    description: "Manage 190+ hostel leads, demo pipeline, and outreach for the Hostel Management System.",
+    icon: Building2,
+    title: "HMS Leads",
+    to: "/admin/hms-leads",
+  },
   {
     description: "Monitor free SEO/AEO/GEO audits and Digital Fairness campaign bookings.",
     icon: SearchCheck,
@@ -81,14 +88,21 @@ const AdminDashboardPage = () => {
     queryKey: ["dashboard", "career-applications"],
     queryFn: listAdminApplications,
   });
+  const { data: hmsData, isLoading: loadingHms } = useQuery({
+    queryKey: ["dashboard", "hms-leads"],
+    queryFn: listAdminHmsLeads,
+  });
+  const hmsLeads = hmsData?.leads ?? [];
 
   const isLoading =
-    loadingBlogs || loadingProjects || loadingContacts || loadingCampaignBookings || loadingAuditRequests || loadingPositions || loadingApplications;
+    loadingBlogs || loadingProjects || loadingContacts || loadingCampaignBookings || loadingAuditRequests || loadingPositions || loadingApplications || loadingHms;
   const publishedBlogs = blogs.filter((blog) => blog.published).length;
   const publishedProjects = projects.filter((project) => project.published).length;
   const leadRecords = [...contacts, ...campaignBookings, ...auditRequests];
   const newContacts = leadRecords.filter((lead) => lead.status === "new").length;
   const reviewingContacts = leadRecords.filter((lead) => lead.status === "reviewing").length;
+  const hmsPipelineCount = hmsLeads.filter((lead) => ["contacted", "interested", "demo_scheduled"].includes(lead.status)).length;
+  const hmsConvertedCount = hmsLeads.filter((lead) => lead.status === "converted").length;
 
   const recentActivity = useMemo(
     () =>
@@ -104,6 +118,12 @@ const AdminDashboardPage = () => {
           kind: project.published ? "Published project" : "Draft project",
           timestamp: project.updated_at,
           title: project.title,
+        })),
+        ...hmsLeads.slice(0, 3).map((lead) => ({
+          id: lead.id,
+          kind: "HMS Hostel Lead",
+          timestamp: lead.updated_at || lead.created_at,
+          title: `${lead.name} (${lead.type}) - ${lead.area_city}`,
         })),
         ...contacts.map((contact) => ({
           id: contact.id,
@@ -126,7 +146,7 @@ const AdminDashboardPage = () => {
       ]
         .sort((left, right) => new Date(right.timestamp).getTime() - new Date(left.timestamp).getTime())
         .slice(0, 6),
-    [auditRequests, blogs, campaignBookings, contacts, projects],
+    [auditRequests, blogs, campaignBookings, contacts, projects, hmsLeads],
   );
 
   return (
@@ -156,7 +176,7 @@ const AdminDashboardPage = () => {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         <div className="card-surface rounded-card p-5">
           <div className="text-sm text-muted-foreground">Projects published</div>
           <div className="mt-2 font-display text-3xl font-semibold text-foreground">
@@ -171,8 +191,20 @@ const AdminDashboardPage = () => {
           </div>
           <div className="mt-2 text-sm text-muted-foreground">{blogs.length} total posts</div>
         </div>
+        <div className="card-surface rounded-card p-5 border border-primary/20 bg-primary/[0.02]">
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>HMS Hostel Leads</span>
+            <Building2 size={16} className="text-primary" />
+          </div>
+          <div className="mt-2 font-display text-3xl font-semibold text-primary">
+            {hmsLeads.length}
+          </div>
+          <div className="mt-2 text-sm text-muted-foreground">
+            {hmsPipelineCount} active · {hmsConvertedCount} won
+          </div>
+        </div>
         <div className="card-surface rounded-card p-5">
-          <div className="text-sm text-muted-foreground">New leads</div>
+          <div className="text-sm text-muted-foreground">Inbound leads</div>
           <div className="mt-2 font-display text-3xl font-semibold text-foreground">{newContacts}</div>
           <div className="mt-2 text-sm text-muted-foreground">{reviewingContacts} under review</div>
         </div>

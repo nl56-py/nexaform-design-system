@@ -1,0 +1,2 @@
+Hostel name,Type,Area and city,Full address as listed,Phone number(s),WhatsApp or Viber number,Email,Website,Facebook page URL,Contact person name,Google Maps rating and number of reviews,Approximate size,Source URL(s)
+City Stay Boys Hostel,Boys,"Samakhusi, Kathmandu","Behind City Square Mall, Samakhusi Chowk, Kathmandu 44600",+977 985-1190252,Not found,Not found,Not found,Not found,Not found,4

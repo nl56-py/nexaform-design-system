@@ -11,6 +11,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "seo:generate": "node scripts/generate-seo-assets.mjs",
+    "seed:hms": "node scripts/generate-hms-seeds.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "mcp:build": "npm --prefix mcp-server run build",

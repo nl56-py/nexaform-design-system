@@ -400,6 +400,87 @@ export type Database = {
           }
         ]
       }
+      hms_leads: {
+        Row: {
+          id: string
+          name: string
+          type: string
+          area_city: string
+          address: string | null
+          phone: string | null
+          whatsapp_viber: string | null
+          email: string | null
+          website: string | null
+          facebook_url: string | null
+          contact_person: string | null
+          rating: number | null
+          reviews_count: number | null
+          rating_raw: string | null
+          approximate_size: string | null
+          source_urls: string | null
+          status: string
+          priority: string
+          notes: string | null
+          follow_up_date: string | null
+          last_contacted_at: string | null
+          assigned_to: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          type?: string
+          area_city: string
+          address?: string | null
+          phone?: string | null
+          whatsapp_viber?: string | null
+          email?: string | null
+          website?: string | null
+          facebook_url?: string | null
+          contact_person?: string | null
+          rating?: number | null
+          reviews_count?: number | null
+          rating_raw?: string | null
+          approximate_size?: string | null
+          source_urls?: string | null
+          status?: string
+          priority?: string
+          notes?: string | null
+          follow_up_date?: string | null
+          last_contacted_at?: string | null
+          assigned_to?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          type?: string
+          area_city?: string
+          address?: string | null
+          phone?: string | null
+          whatsapp_viber?: string | null
+          email?: string | null
+          website?: string | null
+          facebook_url?: string | null
+          contact_person?: string | null
+          rating?: number | null
+          reviews_count?: number | null
+          rating_raw?: string | null
+          approximate_size?: string | null
+          source_urls?: string | null
+          status?: string
+          priority?: string
+          notes?: string | null
+          follow_up_date?: string | null
+          last_contacted_at?: string | null
+          assigned_to?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

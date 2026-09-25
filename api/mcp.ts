@@ -13,15 +13,29 @@ interface VercelResponse extends ServerResponse {
   status: (statusCode: number) => VercelResponse;
 }
 
+function sanitizeUrl(url?: string): string {
+  if (url && (url.startsWith("https://") || url.startsWith("http://"))) {
+    return url.trim();
+  }
+  return "";
+}
+
+function sanitizeKey(key?: string): string {
+  if (key && key.trim().length > 10) {
+    return key.trim();
+  }
+  return "";
+}
+
 const SUPABASE_URL =
-  process.env.SUPABASE_URL ||
-  process.env.VITE_SUPABASE_URL ||
+  sanitizeUrl(process.env.SUPABASE_URL) ||
+  sanitizeUrl(process.env.VITE_SUPABASE_URL) ||
   "https://ljjlopuelwbwpwxtzhpa.supabase.co";
 
 const SUPABASE_KEY =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  process.env.SUPABASE_KEY ||
-  process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  sanitizeKey(process.env.SUPABASE_SERVICE_ROLE_KEY) ||
+  sanitizeKey(process.env.SUPABASE_KEY) ||
+  sanitizeKey(process.env.VITE_SUPABASE_PUBLISHABLE_KEY) ||
   "sb_publishable_dZF20TJxfnlBbdkfx9lp2Q_XJAq-h2i";
 
 const MCP_API_KEY = process.env.MCP_API_KEY || "";
@@ -531,11 +545,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         error: { code: -32601, message: `Method not found: ${method}` },
       });
     } catch (err: any) {
-      return res.status(500).json({
-        jsonrpc: "2.0",
-        id,
-        error: { code: -32603, message: err?.message || String(err) },
-      });
+        const errorDetail = err?.cause ? `${err.message} (${err.cause.code || err.cause.message || err.cause})` : (err?.message || String(err));
+        return res.status(500).json({
+          jsonrpc: "2.0",
+          id,
+          error: { code: -32603, message: errorDetail },
+        });
     }
   }
 

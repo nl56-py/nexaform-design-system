@@ -97,17 +97,18 @@ describe("AdminHmsLeadsManager", () => {
   it("renders the HMS pipeline dashboard heading and metrics", () => {
     render(<AdminHmsLeadsManager />);
 
-    expect(screen.getByText(/HMS \(Hostel Management System\) Outreach Pipeline/i)).toBeInTheDocument();
+    expect(screen.getByText(/HMS \(Hostel Management System\) Leads/i)).toBeInTheDocument();
     expect(screen.getByText("Total Hostels")).toBeInTheDocument();
     expect(screen.getByText("New Uncontacted")).toBeInTheDocument();
     expect(screen.getByText("Phone Reachable")).toBeInTheDocument();
   });
 
-  it("displays hostel cards in Kanban view", () => {
+  it("displays hostel cards in rich list view with pagination", () => {
     render(<AdminHmsLeadsManager />);
 
     expect(screen.getByText("Toshit Boys Hostel")).toBeInTheDocument();
     expect(screen.getByText("Shree Girls Hostel")).toBeInTheDocument();
+    expect(screen.getByText(/Page 1 of 1/i)).toBeInTheDocument();
   });
 
   it("switches to Table view and displays hostel rows", () => {
@@ -134,7 +135,7 @@ describe("AdminHmsLeadsManager", () => {
   it("opens the SQL migration dialog when requested", () => {
     render(<AdminHmsLeadsManager />);
 
-    const sqlBtn = screen.getByRole("button", { name: /SQL Migration & Seed/i });
+    const sqlBtn = screen.getByRole("button", { name: /SQL Migration/i });
     fireEvent.click(sqlBtn);
 
     expect(screen.getByText(/HMS Leads Database Migration & Seed SQL/i)).toBeInTheDocument();

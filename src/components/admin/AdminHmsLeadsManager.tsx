@@ -16,21 +16,28 @@ import {
   Sparkles,
   ExternalLink,
   ChevronRight,
+  ChevronLeft,
+  ChevronsLeft,
+  ChevronsRight,
   Database,
   Copy,
   Check,
   Calendar,
   User,
-  SlidersHorizontal,
   Flame,
   LayoutGrid,
   List,
+  Columns3,
   CheckCircle2,
   Clock,
   Send,
   BedDouble,
   FileCode2,
   Trash2,
+  Eye,
+  ArrowRight,
+  PhoneCall,
+  SlidersHorizontal,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -81,16 +88,64 @@ const queryKey = ["admin-hms-leads"];
 
 const statusConfig: Record<
   HmsLeadStatus,
-  { label: string; bg: string; text: string; border: string }
+  { label: string; bg: string; text: string; border: string; dot: string }
 > = {
-  new: { label: "New Lead", bg: "bg-blue-500/10", text: "text-blue-600", border: "border-blue-500/20" },
-  contacted: { label: "Contacted", bg: "bg-sky-500/10", text: "text-sky-600", border: "border-sky-500/20" },
-  interested: { label: "Interested", bg: "bg-emerald-500/10", text: "text-emerald-600", border: "border-emerald-500/20" },
-  demo_scheduled: { label: "Demo Scheduled", bg: "bg-purple-500/10", text: "text-purple-600", border: "border-purple-500/20" },
-  negotiating: { label: "Negotiating", bg: "bg-amber-500/10", text: "text-amber-600", border: "border-amber-500/20" },
-  converted: { label: "Converted / Won", bg: "bg-emerald-600/15", text: "text-emerald-700", border: "border-emerald-600/30" },
-  not_interested: { label: "Not Interested", bg: "bg-rose-500/10", text: "text-rose-600", border: "border-rose-500/20" },
-  archived: { label: "Archived", bg: "bg-muted/40", text: "text-muted-foreground", border: "border-border/60" },
+  new: {
+    label: "New Lead",
+    bg: "bg-blue-500/10",
+    text: "text-blue-600",
+    border: "border-blue-500/20",
+    dot: "bg-blue-500",
+  },
+  contacted: {
+    label: "Contacted",
+    bg: "bg-sky-500/10",
+    text: "text-sky-600",
+    border: "border-sky-500/20",
+    dot: "bg-sky-500",
+  },
+  interested: {
+    label: "Interested",
+    bg: "bg-emerald-500/10",
+    text: "text-emerald-600",
+    border: "border-emerald-500/20",
+    dot: "bg-emerald-500",
+  },
+  demo_scheduled: {
+    label: "Demo Scheduled",
+    bg: "bg-purple-500/10",
+    text: "text-purple-600",
+    border: "border-purple-500/20",
+    dot: "bg-purple-500",
+  },
+  negotiating: {
+    label: "Negotiating",
+    bg: "bg-amber-500/10",
+    text: "text-amber-600",
+    border: "border-amber-500/20",
+    dot: "bg-amber-500",
+  },
+  converted: {
+    label: "Converted / Won",
+    bg: "bg-emerald-600/15",
+    text: "text-emerald-700",
+    border: "border-emerald-600/30",
+    dot: "bg-emerald-600",
+  },
+  not_interested: {
+    label: "Not Interested",
+    bg: "bg-rose-500/10",
+    text: "text-rose-600",
+    border: "border-rose-500/20",
+    dot: "bg-rose-500",
+  },
+  archived: {
+    label: "Archived",
+    bg: "bg-muted/40",
+    text: "text-muted-foreground",
+    border: "border-border/60",
+    dot: "bg-slate-400",
+  },
 };
 
 const priorityConfig: Record<
@@ -124,8 +179,8 @@ const AdminHmsLeadsManager = () => {
   const leads = data?.leads ?? [];
   const isFallback = data?.isFallback ?? false;
 
-  // UI States
-  const [viewMode, setViewMode] = useState<"kanban" | "table">("kanban");
+  // UI States - Default to "list" (User asked for list view with pagination!)
+  const [viewMode, setViewMode] = useState<"list" | "table" | "kanban">("list");
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -133,6 +188,11 @@ const AdminHmsLeadsManager = () => {
   const [areaFilter, setAreaFilter] = useState("all");
   const [hasPhoneOnly, setHasPhoneOnly] = useState(false);
   const [hasWhatsAppOnly, setHasWhatsAppOnly] = useState(false);
+  const [highRatingOnly, setHighRatingOnly] = useState(false);
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(15);
 
   // Selected Lead Drawer
   const [selectedLead, setSelectedLead] = useState<HmsLeadRecord | null>(null);
@@ -211,19 +271,42 @@ const AdminHmsLeadsManager = () => {
 
       if (hasPhoneOnly && !lead.phone) return false;
       if (hasWhatsAppOnly && !lead.whatsapp_viber) return false;
+      if (highRatingOnly && (!lead.rating || lead.rating < 4.5)) return false;
 
       return true;
     });
-  }, [leads, searchQuery, typeFilter, statusFilter, priorityFilter, areaFilter, hasPhoneOnly, hasWhatsAppOnly]);
+  }, [
+    leads,
+    searchQuery,
+    typeFilter,
+    statusFilter,
+    priorityFilter,
+    areaFilter,
+    hasPhoneOnly,
+    hasWhatsAppOnly,
+    highRatingOnly,
+  ]);
 
-  // Aggregate Metrics
+  // Reset page when filters change
+  const totalPages = Math.max(1, Math.ceil(filteredLeads.length / pageSize));
+  const validCurrentPage = Math.min(currentPage, totalPages);
+
+  const paginatedLeads = useMemo(() => {
+    const start = (validCurrentPage - 1) * pageSize;
+    return filteredLeads.slice(start, start + pageSize);
+  }, [filteredLeads, validCurrentPage, pageSize]);
+
+  // Aggregate Metrics & Stage Counts
   const metrics = useMemo(() => {
     const total = leads.length;
     const newCount = leads.filter((l) => l.status === "new").length;
-    const pipelineCount = leads.filter((l) =>
-      ["contacted", "interested", "demo_scheduled", "negotiating"].includes(l.status)
-    ).length;
+    const contactedCount = leads.filter((l) => l.status === "contacted").length;
+    const interestedCount = leads.filter((l) => l.status === "interested").length;
+    const demoCount = leads.filter((l) => l.status === "demo_scheduled").length;
+    const negotiatingCount = leads.filter((l) => l.status === "negotiating").length;
     const convertedCount = leads.filter((l) => l.status === "converted").length;
+
+    const pipelineActive = contactedCount + interestedCount + demoCount + negotiatingCount;
     const withPhoneCount = leads.filter((l) => Boolean(l.phone)).length;
     const highPriorityCount = leads.filter((l) => l.priority === "high" || l.priority === "urgent").length;
 
@@ -234,8 +317,12 @@ const AdminHmsLeadsManager = () => {
     return {
       total,
       newCount,
-      pipelineCount,
+      contactedCount,
+      interestedCount,
+      demoCount,
+      negotiatingCount,
       convertedCount,
+      pipelineActive,
       withPhoneCount,
       phoneReachability: total > 0 ? Math.round((withPhoneCount / total) * 100) : 0,
       highPriorityCount,
@@ -245,7 +332,7 @@ const AdminHmsLeadsManager = () => {
     };
   }, [leads]);
 
-  // Handle stage change
+  // Handle stage change with instant toast
   const handleStatusChange = async (leadId: string, newStatus: HmsLeadStatus) => {
     try {
       await updateAdminHmsLead(leadId, { status: newStatus });
@@ -253,10 +340,22 @@ const AdminHmsLeadsManager = () => {
       if (selectedLead && selectedLead.id === leadId) {
         setSelectedLead({ ...selectedLead, status: newStatus });
       }
-      toast.success(`Stage moved to ${statusConfig[newStatus]?.label || newStatus}`);
+      toast.success(`Status updated to "${statusConfig[newStatus]?.label || newStatus}"`);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to update lead status");
     }
+  };
+
+  // Handle quick progression (Next Stage shortcut)
+  const getNextStage = (current: string): HmsLeadStatus | null => {
+    const map: Record<string, HmsLeadStatus> = {
+      new: "contacted",
+      contacted: "interested",
+      interested: "demo_scheduled",
+      demo_scheduled: "negotiating",
+      negotiating: "converted",
+    };
+    return map[current] || null;
   };
 
   // Handle priority change
@@ -402,7 +501,8 @@ const AdminHmsLeadsManager = () => {
       `"${(l.notes || "").replace(/"/g, '""')}"`,
     ]);
 
-    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const csvContent =
+      "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -419,9 +519,15 @@ const AdminHmsLeadsManager = () => {
     if (!raw) return null;
     const digits = raw.replace(/\D/g, "");
     if (!digits) return null;
-    const phoneWithCountry = digits.startsWith("977") ? digits : digits.length === 10 ? `977${digits}` : digits;
+    const phoneWithCountry = digits.startsWith("977")
+      ? digits
+      : digits.length === 10
+      ? `977${digits}`
+      : digits;
     const text = encodeURIComponent(
-      `Namaste! I'm reaching out from Nexaform regarding our modern Hostel Management System (HMS) tailored for hostels in ${lead.area_city || "Kathmandu"}. Would love to share a quick 5-min demo with ${lead.contact_person || "the hostel management"}.`
+      `Namaste! I'm reaching out from Nexaform regarding our modern Hostel Management System (HMS) tailored for hostels in ${
+        lead.area_city || "Kathmandu"
+      }. Would love to share a quick 5-min demo with ${lead.contact_person || "the hostel management"}.`
     );
     return `https://wa.me/${phoneWithCountry}?text=${text}`;
   };
@@ -434,7 +540,7 @@ const AdminHmsLeadsManager = () => {
 
   // Copy SQL to clipboard
   const handleCopySql = () => {
-    const script = `-- Quick instruction: Run this file located at 'supabase/hms_leads_seed.sql' in your Supabase SQL editor\n-- or execute the migration file 'supabase/migrations/20260520120000_hms_lead_management.sql'`;
+    const script = `-- Run this file located at 'supabase/hms_leads_seed.sql' in your Supabase SQL editor\n-- or migration file 'supabase/migrations/20260520120000_hms_lead_management.sql'`;
     navigator.clipboard.writeText(script);
     setCopiedSql(true);
     toast.success("SQL reference command copied to clipboard!");
@@ -442,32 +548,32 @@ const AdminHmsLeadsManager = () => {
   };
 
   return (
-    <div className="space-y-8">
-      {/* Top Banner & Database Status */}
+    <div className="space-y-6">
+      {/* Top Header & Database Sync Status */}
       <div className="flex flex-col gap-4 rounded-2xl border border-border/60 bg-white/80 p-6 shadow-[0_12px_24px_rgba(22,34,71,0.06)] md:flex-row md:items-center md:justify-between">
-        <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Building2 size={22} />
+        <div className="flex items-start gap-3.5">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-sm">
+            <Building2 size={24} />
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-xl font-bold tracking-tight text-foreground">
-                HMS (Hostel Management System) Outreach Pipeline
+              <h2 className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
+                HMS (Hostel Management System) Leads
               </h2>
               {isFallback ? (
-                <Badge variant="outline" className="border-amber-500/30 bg-amber-500/10 text-amber-600">
+                <Badge variant="outline" className="border-amber-500/30 bg-amber-500/10 text-amber-600 font-medium">
                   <Database size={12} className="mr-1" />
-                  Local Seed Cache Active
+                  Local Seed Cache ({leads.length} hostels)
                 </Badge>
               ) : (
-                <Badge variant="outline" className="border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
+                <Badge variant="outline" className="border-emerald-500/30 bg-emerald-500/10 text-emerald-600 font-medium">
                   <Database size={12} className="mr-1" />
                   Live Supabase Sync Active
                 </Badge>
               )}
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              {leads.length} hostels across Kathmandu Valley seeded for SaaS demo scheduling and acquisition.
+              Track outreach, schedule product demos, and update sales pipeline for {leads.length} hostels in Kathmandu Valley.
             </p>
           </div>
         </div>
@@ -481,7 +587,7 @@ const AdminHmsLeadsManager = () => {
             className="gap-2"
           >
             <FileCode2 size={15} />
-            SQL Migration & Seed
+            SQL Migration
           </Button>
 
           <Button
@@ -520,8 +626,16 @@ const AdminHmsLeadsManager = () => {
       </div>
 
       {/* KPI Ribbon */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-        <div className="rounded-2xl border border-border/60 bg-white/70 p-4 shadow-sm transition hover:shadow-md">
+      <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 lg:grid-cols-6">
+        <div
+          onClick={() => {
+            setStatusFilter("all");
+            setCurrentPage(1);
+          }}
+          className={`cursor-pointer rounded-2xl border p-4 shadow-sm transition hover:shadow-md ${
+            statusFilter === "all" ? "border-primary bg-primary/[0.04]" : "border-border/60 bg-white/70"
+          }`}
+        >
           <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
             <span>Total Hostels</span>
             <Building2 size={16} className="text-primary" />
@@ -532,25 +646,66 @@ const AdminHmsLeadsManager = () => {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-border/60 bg-white/70 p-4 shadow-sm transition hover:shadow-md">
+        <div
+          onClick={() => {
+            setStatusFilter("new");
+            setCurrentPage(1);
+          }}
+          className={`cursor-pointer rounded-2xl border p-4 shadow-sm transition hover:shadow-md ${
+            statusFilter === "new" ? "border-blue-500 bg-blue-500/[0.04]" : "border-border/60 bg-white/70"
+          }`}
+        >
           <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
             <span>New Uncontacted</span>
             <Clock size={16} className="text-blue-500" />
           </div>
           <p className="mt-2 text-2xl font-bold tracking-tight text-blue-600">{metrics.newCount}</p>
-          <p className="mt-1 text-xs text-muted-foreground">Ready for outreach</p>
+          <p className="mt-1 text-xs text-muted-foreground">Ready for initial pitch</p>
         </div>
 
-        <div className="rounded-2xl border border-border/60 bg-white/70 p-4 shadow-sm transition hover:shadow-md">
+        <div
+          onClick={() => {
+            setStatusFilter("contacted");
+            setCurrentPage(1);
+          }}
+          className={`cursor-pointer rounded-2xl border p-4 shadow-sm transition hover:shadow-md ${
+            statusFilter === "contacted" ? "border-sky-500 bg-sky-500/[0.04]" : "border-border/60 bg-white/70"
+          }`}
+        >
           <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
-            <span>In Discussions</span>
-            <MessageSquare size={16} className="text-amber-500" />
+            <span>Contacted</span>
+            <PhoneCall size={16} className="text-sky-500" />
           </div>
-          <p className="mt-2 text-2xl font-bold tracking-tight text-amber-600">{metrics.pipelineCount}</p>
-          <p className="mt-1 text-xs text-muted-foreground">Contacted or warm</p>
+          <p className="mt-2 text-2xl font-bold tracking-tight text-sky-600">{metrics.contactedCount}</p>
+          <p className="mt-1 text-xs text-muted-foreground">Awaiting response</p>
         </div>
 
-        <div className="rounded-2xl border border-border/60 bg-white/70 p-4 shadow-sm transition hover:shadow-md">
+        <div
+          onClick={() => {
+            setStatusFilter("demo_scheduled");
+            setCurrentPage(1);
+          }}
+          className={`cursor-pointer rounded-2xl border p-4 shadow-sm transition hover:shadow-md ${
+            statusFilter === "demo_scheduled" ? "border-purple-500 bg-purple-500/[0.04]" : "border-border/60 bg-white/70"
+          }`}
+        >
+          <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
+            <span>Demo Scheduled</span>
+            <Calendar size={16} className="text-purple-500" />
+          </div>
+          <p className="mt-2 text-2xl font-bold tracking-tight text-purple-600">{metrics.demoCount}</p>
+          <p className="mt-1 text-xs text-muted-foreground">Software demo booked</p>
+        </div>
+
+        <div
+          onClick={() => {
+            setStatusFilter("converted");
+            setCurrentPage(1);
+          }}
+          className={`cursor-pointer rounded-2xl border p-4 shadow-sm transition hover:shadow-md ${
+            statusFilter === "converted" ? "border-emerald-500 bg-emerald-500/[0.04]" : "border-border/60 bg-white/70"
+          }`}
+        >
           <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
             <span>Converted / Won</span>
             <CheckCircle2 size={16} className="text-emerald-500" />
@@ -559,80 +714,145 @@ const AdminHmsLeadsManager = () => {
           <p className="mt-1 text-xs text-muted-foreground">Active HMS users</p>
         </div>
 
-        <div className="rounded-2xl border border-border/60 bg-white/70 p-4 shadow-sm transition hover:shadow-md">
+        <div className="rounded-2xl border border-border/60 bg-white/70 p-4 shadow-sm">
           <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
             <span>Phone Reachable</span>
-            <Phone size={16} className="text-sky-500" />
+            <Phone size={16} className="text-amber-500" />
           </div>
-          <p className="mt-2 text-2xl font-bold tracking-tight text-sky-600">{metrics.phoneReachability}%</p>
-          <p className="mt-1 text-xs text-muted-foreground">{metrics.withPhoneCount} verified phones</p>
-        </div>
-
-        <div className="rounded-2xl border border-border/60 bg-white/70 p-4 shadow-sm transition hover:shadow-md">
-          <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
-            <span>High Potential</span>
-            <Flame size={16} className="text-rose-500" />
-          </div>
-          <p className="mt-2 text-2xl font-bold tracking-tight text-rose-600">{metrics.highPriorityCount}</p>
-          <p className="mt-1 text-xs text-muted-foreground">4.5+ ★ or 30+ reviews</p>
+          <p className="mt-2 text-2xl font-bold tracking-tight text-amber-600">{metrics.phoneReachability}%</p>
+          <p className="mt-1 text-xs text-muted-foreground">{metrics.withPhoneCount} verified numbers</p>
         </div>
       </div>
 
-      {/* Filter and Search Controls */}
-      <div className="rounded-2xl border border-border/60 bg-white/75 p-5 shadow-[0_12px_24px_rgba(22,34,71,0.04)]">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          {/* Search bar */}
+      {/* Stage Filter Pills Bar (Fast Stage Switching) */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+        <button
+          type="button"
+          onClick={() => {
+            setStatusFilter("all");
+            setCurrentPage(1);
+          }}
+          className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-medium transition ${
+            statusFilter === "all"
+              ? "bg-foreground text-background shadow-sm"
+              : "bg-white/80 text-muted-foreground hover:bg-white hover:text-foreground border border-border/60"
+          }`}
+        >
+          All Hostels
+          <span className="rounded-full bg-secondary/80 px-2 py-0.5 text-[10px]">
+            {leads.length}
+          </span>
+        </button>
+
+        {pipelineStages.map((stage) => {
+          const config = statusConfig[stage];
+          const count = leads.filter((l) => l.status === stage).length;
+          const isActive = statusFilter === stage;
+
+          return (
+            <button
+              key={stage}
+              type="button"
+              onClick={() => {
+                setStatusFilter(stage);
+                setCurrentPage(1);
+              }}
+              className={`inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-medium transition ${
+                isActive
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-white/80 text-muted-foreground hover:bg-white hover:text-foreground border border-border/60"
+              }`}
+            >
+              <span className={`h-2 w-2 rounded-full ${isActive ? "bg-white" : config.dot}`} />
+              {config.label}
+              <span
+                className={`rounded-full px-2 py-0.5 text-[10px] ${
+                  isActive ? "bg-white/20 text-white" : "bg-secondary text-muted-foreground"
+                }`}
+              >
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Search & Deep Filtering Toolbar */}
+      <div className="rounded-2xl border border-border/60 bg-white/80 p-4 shadow-[0_12px_24px_rgba(22,34,71,0.04)]">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          {/* Search box */}
           <div className="relative flex-1">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
             <Input
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search hostel name, area, address, contact person, or phone..."
-              className="pl-10 pr-4"
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+              placeholder="Search hostel name, area, address, contact person, or phone number..."
+              className="pl-10 pr-4 h-10 bg-white text-sm"
             />
           </div>
 
-          {/* View Toggle */}
+          {/* View Mode Toggle */}
           <div className="flex items-center gap-2 self-start lg:self-center">
             <div className="flex rounded-xl border border-border/60 bg-secondary/50 p-1">
               <button
                 type="button"
-                onClick={() => setViewMode("kanban")}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition ${
-                  viewMode === "kanban"
-                    ? "bg-white text-primary shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <LayoutGrid size={14} />
-                Kanban
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode("table")}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition ${
-                  viewMode === "table"
+                onClick={() => setViewMode("list")}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                  viewMode === "list"
                     ? "bg-white text-primary shadow-sm"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <List size={14} />
-                Table ({filteredLeads.length})
+                Rich List
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("table")}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                  viewMode === "table"
+                    ? "bg-white text-primary shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <LayoutGrid size={14} />
+                Table
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("kanban")}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                  viewMode === "kanban"
+                    ? "bg-white text-primary shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Columns3 size={14} />
+                Kanban
               </button>
             </div>
           </div>
         </div>
 
-        {/* Filter Dropdowns row */}
-        <div className="mt-4 flex flex-wrap items-center gap-3 pt-3 border-t border-border/40">
-          <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-            <Filter size={14} />
-            Filters:
+        {/* Secondary Filter Chips */}
+        <div className="mt-3 flex flex-wrap items-center gap-2.5 pt-3 border-t border-border/40">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+            <Filter size={13} />
+            <span>Filter by:</span>
           </div>
 
           {/* Type Filter */}
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="h-8 w-[130px] text-xs">
+          <Select
+            value={typeFilter}
+            onValueChange={(val) => {
+              setTypeFilter(val);
+              setCurrentPage(1);
+            }}
+          >
+            <SelectTrigger className="h-8 w-[130px] text-xs bg-white">
               <SelectValue placeholder="Gender Type" />
             </SelectTrigger>
             <SelectContent>
@@ -643,24 +863,15 @@ const AdminHmsLeadsManager = () => {
             </SelectContent>
           </Select>
 
-          {/* Status Filter */}
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="h-8 w-[140px] text-xs">
-              <SelectValue placeholder="Stage" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Stages</SelectItem>
-              {Object.entries(statusConfig).map(([key, config]) => (
-                <SelectItem key={key} value={key}>
-                  {config.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
           {/* Priority Filter */}
-          <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-            <SelectTrigger className="h-8 w-[130px] text-xs">
+          <Select
+            value={priorityFilter}
+            onValueChange={(val) => {
+              setPriorityFilter(val);
+              setCurrentPage(1);
+            }}
+          >
+            <SelectTrigger className="h-8 w-[125px] text-xs bg-white">
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
             <SelectContent>
@@ -673,12 +884,18 @@ const AdminHmsLeadsManager = () => {
           </Select>
 
           {/* Area Filter */}
-          <Select value={areaFilter} onValueChange={setAreaFilter}>
-            <SelectTrigger className="h-8 w-[170px] text-xs">
+          <Select
+            value={areaFilter}
+            onValueChange={(val) => {
+              setAreaFilter(val);
+              setCurrentPage(1);
+            }}
+          >
+            <SelectTrigger className="h-8 w-[170px] text-xs bg-white">
               <SelectValue placeholder="Area Cluster" />
             </SelectTrigger>
-            <SelectContent className="max-h-60">
-              <SelectItem value="all">All Areas</SelectItem>
+            <SelectContent className="max-h-64">
+              <SelectItem value="all">All Areas ({uniqueAreas.length})</SelectItem>
               {uniqueAreas.map((area) => (
                 <SelectItem key={area} value={area}>
                   {area}
@@ -687,31 +904,53 @@ const AdminHmsLeadsManager = () => {
             </SelectContent>
           </Select>
 
-          {/* Toggles */}
+          {/* Quick Toggles */}
           <button
             type="button"
-            onClick={() => setHasPhoneOnly(!hasPhoneOnly)}
-            className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1 text-xs transition ${
+            onClick={() => {
+              setHasPhoneOnly(!hasPhoneOnly);
+              setCurrentPage(1);
+            }}
+            className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs transition ${
               hasPhoneOnly
                 ? "border-primary bg-primary/10 font-semibold text-primary"
-                : "border-border/60 text-muted-foreground hover:bg-secondary"
+                : "border-border/60 bg-white text-muted-foreground hover:bg-secondary"
             }`}
           >
             <Phone size={12} />
-            Has Phone
+            Has Phone ({metrics.withPhoneCount})
           </button>
 
           <button
             type="button"
-            onClick={() => setHasWhatsAppOnly(!hasWhatsAppOnly)}
-            className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1 text-xs transition ${
+            onClick={() => {
+              setHasWhatsAppOnly(!hasWhatsAppOnly);
+              setCurrentPage(1);
+            }}
+            className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs transition ${
               hasWhatsAppOnly
                 ? "border-emerald-500 bg-emerald-500/10 font-semibold text-emerald-600"
-                : "border-border/60 text-muted-foreground hover:bg-secondary"
+                : "border-border/60 bg-white text-muted-foreground hover:bg-secondary"
             }`}
           >
             <MessageSquare size={12} />
             Has WhatsApp
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setHighRatingOnly(!highRatingOnly);
+              setCurrentPage(1);
+            }}
+            className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs transition ${
+              highRatingOnly
+                ? "border-amber-500 bg-amber-500/10 font-semibold text-amber-600"
+                : "border-border/60 bg-white text-muted-foreground hover:bg-secondary"
+            }`}
+          >
+            <Star size={12} className="fill-amber-400 text-amber-400" />
+            4.5+ ★ Only
           </button>
 
           {(searchQuery ||
@@ -720,7 +959,8 @@ const AdminHmsLeadsManager = () => {
             priorityFilter !== "all" ||
             areaFilter !== "all" ||
             hasPhoneOnly ||
-            hasWhatsAppOnly) && (
+            hasWhatsAppOnly ||
+            highRatingOnly) && (
             <button
               type="button"
               onClick={() => {
@@ -731,198 +971,256 @@ const AdminHmsLeadsManager = () => {
                 setAreaFilter("all");
                 setHasPhoneOnly(false);
                 setHasWhatsAppOnly(false);
+                setHighRatingOnly(false);
+                setCurrentPage(1);
               }}
-              className="text-xs text-rose-600 hover:underline"
+              className="text-xs font-medium text-rose-600 hover:underline ml-1"
             >
-              Reset Filters
+              Reset All
             </button>
           )}
 
           <div className="ml-auto text-xs text-muted-foreground">
-            Showing <span className="font-semibold text-foreground">{filteredLeads.length}</span> of{" "}
-            {leads.length} hostels
+            Found <span className="font-semibold text-foreground">{filteredLeads.length}</span> hostels
           </div>
         </div>
       </div>
 
-      {/* Main Content Area */}
-      {viewMode === "kanban" ? (
-        /* Kanban Pipeline Board */
-        <div className="grid grid-cols-1 gap-4 overflow-x-auto pb-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 min-w-[1200px]">
-          {pipelineStages.map((stage) => {
-            const stageLeads = filteredLeads.filter((l) => l.status === stage);
-            const stageInfo = statusConfig[stage];
+      {/* Main Leads Display Area */}
+      {viewMode === "list" && (
+        /* Rich Card List View with Direct Status Updaters & Quick Actions */
+        <div className="space-y-3.5">
+          {paginatedLeads.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-border/60 bg-white/50 p-12 text-center">
+              <Building2 className="mx-auto h-12 w-12 text-muted-foreground/40" />
+              <h3 className="mt-3 font-semibold text-foreground">No hostels match the criteria</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Try clearing your search query or adjusting your filters.
+              </p>
+            </div>
+          ) : (
+            paginatedLeads.map((lead) => {
+              const waLink = getWhatsAppLink(lead);
+              const statusInfo = statusConfig[lead.status as HmsLeadStatus] || statusConfig.new;
+              const priorityInfo = priorityConfig[lead.priority as HmsLeadPriority] || priorityConfig.medium;
+              const nextStage = getNextStage(lead.status);
 
-            return (
-              <div
-                key={stage}
-                className="flex flex-col rounded-2xl border border-border/60 bg-white/60 p-3 shadow-sm min-h-[500px]"
-              >
-                {/* Column Header */}
-                <div className="flex items-center justify-between pb-3 border-b border-border/40">
-                  <div className="flex items-center gap-2">
-                    <span className={`inline-block h-2.5 w-2.5 rounded-full ${stageInfo.bg.replace('/10', '')} ${stage === 'converted' ? 'bg-emerald-500' : stage === 'new' ? 'bg-blue-500' : stage === 'contacted' ? 'bg-sky-500' : stage === 'interested' ? 'bg-emerald-400' : stage === 'demo_scheduled' ? 'bg-purple-500' : 'bg-amber-500'}`} />
-                    <h3 className="font-semibold text-xs tracking-tight text-foreground">
-                      {stageInfo.label}
-                    </h3>
-                  </div>
-                  <Badge variant="secondary" className="text-[11px] px-2 py-0.5">
-                    {stageLeads.length}
-                  </Badge>
-                </div>
-
-                {/* Cards List */}
-                <div className="mt-3 flex flex-1 flex-col gap-2.5 overflow-y-auto max-h-[700px] pr-1">
-                  {stageLeads.length === 0 ? (
-                    <div className="flex flex-1 items-center justify-center p-6 text-center text-xs text-muted-foreground/60 border border-dashed border-border/40 rounded-xl">
-                      No hostels in this stage
-                    </div>
-                  ) : (
-                    stageLeads.map((lead) => {
-                      const waLink = getWhatsAppLink(lead);
-                      const isHighPriority = lead.priority === "high" || lead.priority === "urgent";
-
-                      return (
-                        <div
-                          key={lead.id}
-                          onClick={() => handleOpenLead(lead)}
-                          className="group relative cursor-pointer rounded-xl border border-border/60 bg-white p-3.5 shadow-sm transition-all hover:border-primary/40 hover:shadow-md"
+              return (
+                <div
+                  key={lead.id}
+                  className="group relative rounded-2xl border border-border/60 bg-white p-5 shadow-sm transition-all hover:border-primary/40 hover:shadow-md"
+                >
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    {/* Left: Hostel Details and Profile */}
+                    <div className="flex-1 space-y-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {/* Type Badge */}
+                        <span
+                          className={`inline-flex items-center rounded-lg px-2.5 py-0.5 text-xs font-semibold ${
+                            lead.type === "Boys"
+                              ? "bg-blue-50 text-blue-700 border border-blue-200/60"
+                              : lead.type === "Girls"
+                              ? "bg-purple-50 text-purple-700 border border-purple-200/60"
+                              : "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
+                          }`}
                         >
-                          {/* Top Badges */}
-                          <div className="flex items-center justify-between gap-1">
-                            <span
-                              className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-medium ${
-                                lead.type === "Boys"
-                                  ? "bg-blue-50 text-blue-700"
-                                  : lead.type === "Girls"
-                                  ? "bg-purple-50 text-purple-700"
-                                  : "bg-emerald-50 text-emerald-700"
-                              }`}
-                            >
-                              <BedDouble size={10} className="mr-1" />
-                              {lead.type}
-                            </span>
+                          <BedDouble size={12} className="mr-1.5" />
+                          {lead.type} Hostel
+                        </span>
 
-                            {isHighPriority && (
-                              <span className="inline-flex items-center rounded-md bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">
-                                <Flame size={10} className="mr-0.5 text-amber-500" />
-                                {lead.priority}
+                        {/* Priority Badge */}
+                        <span
+                          className={`inline-flex items-center rounded-lg border px-2 py-0.5 text-[11px] font-semibold ${priorityInfo.bg}`}
+                        >
+                          {lead.priority === "urgent" || lead.priority === "high" ? (
+                            <Flame size={12} className="mr-1" />
+                          ) : null}
+                          {priorityInfo.label} Priority
+                        </span>
+
+                        {/* Google Rating Star */}
+                        {lead.rating ? (
+                          <div className="inline-flex items-center gap-1 rounded-lg bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                            <Star size={12} className="fill-amber-400 text-amber-400" />
+                            <span>{lead.rating.toFixed(1)}</span>
+                            {lead.reviews_count ? (
+                              <span className="font-normal text-muted-foreground">
+                                ({lead.reviews_count} reviews)
                               </span>
-                            )}
+                            ) : null}
                           </div>
+                        ) : null}
 
-                          {/* Hostel Name */}
-                          <h4 className="mt-2 font-semibold text-sm leading-tight text-foreground group-hover:text-primary transition line-clamp-2">
-                            {lead.name}
-                          </h4>
+                        {/* Capacity / Size */}
+                        {lead.approximate_size ? (
+                          <span className="text-xs text-muted-foreground bg-secondary/80 px-2 py-0.5 rounded-md">
+                            {lead.approximate_size}
+                          </span>
+                        ) : null}
+                      </div>
 
-                          {/* Location & Reviews */}
-                          <div className="mt-2 space-y-1 text-xs text-muted-foreground">
-                            <div className="flex items-center gap-1 truncate">
-                              <MapPin size={11} className="shrink-0 text-muted-foreground/80" />
-                              <span className="truncate">{lead.area_city || "Kathmandu"}</span>
-                            </div>
+                      {/* Hostel Name */}
+                      <div className="flex items-center gap-2">
+                        <h3
+                          onClick={() => handleOpenLead(lead)}
+                          className="cursor-pointer text-lg font-bold text-foreground transition hover:text-primary"
+                        >
+                          {lead.name}
+                        </h3>
+                      </div>
 
-                            {lead.rating && (
-                              <div className="flex items-center gap-1 font-medium text-amber-600">
-                                <Star size={11} className="fill-amber-400 text-amber-400" />
-                                <span>{lead.rating.toFixed(1)}</span>
-                                {lead.reviews_count && (
-                                  <span className="text-muted-foreground font-normal">
-                                    ({lead.reviews_count} reviews)
-                                  </span>
-                                )}
-                              </div>
-                            )}
-
-                            {lead.contact_person && (
-                              <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                                <User size={11} className="shrink-0" />
-                                <span className="truncate">{lead.contact_person}</span>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Quick Action Buttons */}
-                          <div
-                            className="mt-3 flex items-center justify-between border-t border-border/40 pt-2"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <div className="flex items-center gap-1">
-                              {lead.phone && (
-                                <a
-                                  href={`tel:${lead.phone.split(",")[0].trim()}`}
-                                  title={`Call ${lead.phone}`}
-                                  className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition hover:border-primary hover:bg-primary/10 hover:text-primary"
-                                >
-                                  <Phone size={12} />
-                                </a>
-                              )}
-
-                              {waLink && (
-                                <a
-                                  href={waLink}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  title="Chat on WhatsApp"
-                                  className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition hover:border-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-600"
-                                >
-                                  <MessageSquare size={12} />
-                                </a>
-                              )}
-
-                              {lead.facebook_url && (
-                                <a
-                                  href={lead.facebook_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  title="Open Facebook Page"
-                                  className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition hover:border-blue-500 hover:bg-blue-500/10 hover:text-blue-600"
-                                >
-                                  <Facebook size={12} />
-                                </a>
-                              )}
-                            </div>
-
-                            {/* Move stage dropdown */}
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <button
-                                  type="button"
-                                  className="inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[11px] font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
-                                >
-                                  Stage
-                                  <ChevronRight size={12} />
-                                </button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end" className="w-44">
-                                <DropdownMenuLabel className="text-xs">Move to stage</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                {pipelineStages.map((targetStage) => (
-                                  <DropdownMenuItem
-                                    key={targetStage}
-                                    disabled={targetStage === lead.status}
-                                    onClick={() => void handleStatusChange(lead.id, targetStage)}
-                                    className="text-xs"
-                                  >
-                                    {statusConfig[targetStage].label}
-                                  </DropdownMenuItem>
-                                ))}
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
+                      {/* Location & Contact Meta */}
+                      <div className="flex flex-wrap items-center gap-y-1.5 gap-x-4 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1 text-foreground font-medium">
+                          <MapPin size={13} className="text-primary shrink-0" />
+                          <span>{lead.area_city || "Kathmandu"}</span>
+                          {lead.address && (
+                            <span className="font-normal text-muted-foreground">
+                              — {lead.address}
+                            </span>
+                          )}
                         </div>
-                      );
-                    })
-                  )}
+
+                        {lead.contact_person && (
+                          <div className="flex items-center gap-1">
+                            <User size={12} className="shrink-0" />
+                            <span>
+                              Contact: <strong className="text-foreground">{lead.contact_person}</strong>
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Direct Outreach Trigger Buttons Bar */}
+                      <div className="flex flex-wrap items-center gap-2 pt-1">
+                        {lead.phone && (
+                          <a
+                            href={`tel:${lead.phone.split(",")[0].trim()}`}
+                            className="inline-flex items-center gap-1.5 rounded-xl border border-border/70 bg-secondary/40 px-3 py-1.5 text-xs font-semibold text-foreground transition hover:border-primary hover:bg-primary/10 hover:text-primary"
+                          >
+                            <Phone size={13} className="text-primary" />
+                            {lead.phone.split(",")[0].trim()}
+                          </a>
+                        )}
+
+                        {waLink && (
+                          <a
+                            href={waLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-500/20"
+                          >
+                            <MessageSquare size={13} className="text-emerald-600" />
+                            WhatsApp Demo
+                          </a>
+                        )}
+
+                        {lead.facebook_url && (
+                          <a
+                            href={lead.facebook_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-xl border border-blue-500/30 bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-500/20"
+                          >
+                            <Facebook size={13} className="text-blue-600" />
+                            Facebook
+                          </a>
+                        )}
+
+                        {lead.website && (
+                          <a
+                            href={lead.website.startsWith("http") ? lead.website : `https://${lead.website}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-xl border border-border/60 bg-secondary/40 px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
+                          >
+                            <Globe size={13} />
+                            Website
+                          </a>
+                        )}
+
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                            `${lead.name} ${lead.area_city || "Kathmandu"}`
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 rounded-xl border border-border/60 bg-secondary/40 px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
+                        >
+                          <ExternalLink size={12} />
+                          Map
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* Right: Prominent Status Updater & Action Hub */}
+                    <div className="flex flex-row lg:flex-col items-center lg:items-end justify-between gap-3 border-t lg:border-t-0 border-border/40 pt-3 lg:pt-0 shrink-0">
+                      {/* Status Dropdown Selector */}
+                      <div className="flex flex-col items-start lg:items-end gap-1">
+                        <span className="text-[11px] font-medium text-muted-foreground">Pipeline Stage</span>
+                        <Select
+                          value={lead.status}
+                          onValueChange={(val) => void handleStatusChange(lead.id, val as HmsLeadStatus)}
+                        >
+                          <SelectTrigger className={`h-9 w-[160px] text-xs font-semibold border ${statusInfo.border} ${statusInfo.bg} ${statusInfo.text}`}>
+                            <div className="flex items-center gap-2 truncate">
+                              <span className={`h-2 w-2 rounded-full ${statusInfo.dot}`} />
+                              <span className="truncate">{statusInfo.label}</span>
+                            </div>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <DropdownMenuLabel className="text-xs text-muted-foreground">
+                              Move stage to:
+                            </DropdownMenuLabel>
+                            {Object.entries(statusConfig).map(([sKey, sConf]) => (
+                              <SelectItem key={sKey} value={sKey} className="text-xs">
+                                <div className="flex items-center gap-2">
+                                  <span className={`h-2 w-2 rounded-full ${sConf.dot}`} />
+                                  <span>{sConf.label}</span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Quick Next Stage Button or Details */}
+                      <div className="flex items-center gap-2">
+                        {nextStage && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => void handleStatusChange(lead.id, nextStage)}
+                            className="h-8 gap-1.5 text-xs font-medium border-primary/20 hover:bg-primary/10 hover:text-primary"
+                          >
+                            <span>Mark as {statusConfig[nextStage].label}</span>
+                            <ArrowRight size={12} />
+                          </Button>
+                        )}
+
+                        <Button
+                          type="button"
+                          size="sm"
+                          onClick={() => handleOpenLead(lead)}
+                          className="h-8 gap-1.5 text-xs"
+                        >
+                          <Eye size={13} />
+                          Details
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
-      ) : (
-        /* Table View */
-        <div className="overflow-hidden rounded-2xl border border-border/60 bg-white/80 shadow-sm">
+      )}
+
+      {viewMode === "table" && (
+        /* Compact Table View */
+        <div className="overflow-hidden rounded-2xl border border-border/60 bg-white shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-border/60 bg-secondary/50 font-medium text-xs text-muted-foreground">
@@ -930,22 +1228,22 @@ const AdminHmsLeadsManager = () => {
                   <th className="py-3.5 pl-6 pr-3">Hostel Name</th>
                   <th className="px-3 py-3.5">Type</th>
                   <th className="px-3 py-3.5">Area & Address</th>
-                  <th className="px-3 py-3.5">Rating & Reviews</th>
+                  <th className="px-3 py-3.5">Google Rating</th>
                   <th className="px-3 py-3.5">Direct Contact</th>
                   <th className="px-3 py-3.5">Priority</th>
-                  <th className="px-3 py-3.5">Pipeline Stage</th>
+                  <th className="px-3 py-3.5">Pipeline Stage (Update)</th>
                   <th className="py-3.5 pl-3 pr-6 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
-                {filteredLeads.length === 0 ? (
+                {paginatedLeads.length === 0 ? (
                   <tr>
                     <td colSpan={8} className="py-12 text-center text-sm text-muted-foreground">
                       No hostel leads match the current filters.
                     </td>
                   </tr>
                 ) : (
-                  filteredLeads.map((lead) => {
+                  paginatedLeads.map((lead) => {
                     const waLink = getWhatsAppLink(lead);
                     const statusInfo = statusConfig[lead.status as HmsLeadStatus] || statusConfig.new;
                     const priorityInfo = priorityConfig[lead.priority as HmsLeadPriority] || priorityConfig.medium;
@@ -956,7 +1254,7 @@ const AdminHmsLeadsManager = () => {
                         onClick={() => handleOpenLead(lead)}
                         className="cursor-pointer transition hover:bg-secondary/40"
                       >
-                        <td className="py-4 pl-6 pr-3 font-semibold text-foreground">
+                        <td className="py-3.5 pl-6 pr-3 font-semibold text-foreground">
                           <div className="flex flex-col">
                             <span className="hover:text-primary transition">{lead.name}</span>
                             {lead.contact_person && (
@@ -967,7 +1265,7 @@ const AdminHmsLeadsManager = () => {
                           </div>
                         </td>
 
-                        <td className="px-3 py-4">
+                        <td className="px-3 py-3.5">
                           <span
                             className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
                               lead.type === "Boys"
@@ -981,7 +1279,7 @@ const AdminHmsLeadsManager = () => {
                           </span>
                         </td>
 
-                        <td className="px-3 py-4 max-w-[220px]">
+                        <td className="px-3 py-3.5 max-w-[220px]">
                           <div className="truncate text-xs text-foreground font-medium">
                             {lead.area_city || "Kathmandu"}
                           </div>
@@ -990,7 +1288,7 @@ const AdminHmsLeadsManager = () => {
                           </div>
                         </td>
 
-                        <td className="px-3 py-4">
+                        <td className="px-3 py-3.5">
                           {lead.rating ? (
                             <div className="flex items-center gap-1 text-xs font-semibold text-amber-600">
                               <Star size={12} className="fill-amber-400 text-amber-400" />
@@ -1004,7 +1302,7 @@ const AdminHmsLeadsManager = () => {
                           )}
                         </td>
 
-                        <td className="px-3 py-4" onClick={(e) => e.stopPropagation()}>
+                        <td className="px-3 py-3.5" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center gap-1.5">
                             {lead.phone ? (
                               <a
@@ -1039,22 +1337,10 @@ const AdminHmsLeadsManager = () => {
                                 <Facebook size={12} />
                               </a>
                             ) : null}
-
-                            {lead.website ? (
-                              <a
-                                href={lead.website.startsWith("http") ? lead.website : `https://${lead.website}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-border/60 text-muted-foreground hover:bg-indigo-500/10 hover:text-indigo-600"
-                                title="Website"
-                              >
-                                <Globe size={12} />
-                              </a>
-                            ) : null}
                           </div>
                         </td>
 
-                        <td className="px-3 py-4">
+                        <td className="px-3 py-3.5">
                           <span
                             className={`inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-medium ${priorityInfo.bg}`}
                           >
@@ -1062,12 +1348,12 @@ const AdminHmsLeadsManager = () => {
                           </span>
                         </td>
 
-                        <td className="px-3 py-4" onClick={(e) => e.stopPropagation()}>
+                        <td className="px-3 py-3.5" onClick={(e) => e.stopPropagation()}>
                           <Select
                             value={lead.status}
                             onValueChange={(val) => void handleStatusChange(lead.id, val as HmsLeadStatus)}
                           >
-                            <SelectTrigger className="h-7 w-[130px] text-xs">
+                            <SelectTrigger className="h-7 w-[140px] text-xs">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -1080,7 +1366,7 @@ const AdminHmsLeadsManager = () => {
                           </Select>
                         </td>
 
-                        <td className="py-4 pl-3 pr-6 text-right" onClick={(e) => e.stopPropagation()}>
+                        <td className="py-3.5 pl-3 pr-6 text-right" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center justify-end gap-1">
                             <Button
                               type="button"
@@ -1112,6 +1398,246 @@ const AdminHmsLeadsManager = () => {
         </div>
       )}
 
+      {viewMode === "kanban" && (
+        /* Kanban Pipeline View */
+        <div className="grid grid-cols-1 gap-4 overflow-x-auto pb-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 min-w-[1200px]">
+          {pipelineStages.map((stage) => {
+            const stageLeads = filteredLeads.filter((l) => l.status === stage);
+            const stageInfo = statusConfig[stage];
+
+            return (
+              <div
+                key={stage}
+                className="flex flex-col rounded-2xl border border-border/60 bg-white/60 p-3 shadow-sm min-h-[500px]"
+              >
+                {/* Column Header */}
+                <div className="flex items-center justify-between pb-3 border-b border-border/40">
+                  <div className="flex items-center gap-2">
+                    <span className={`inline-block h-2.5 w-2.5 rounded-full ${stageInfo.dot}`} />
+                    <h3 className="font-semibold text-xs tracking-tight text-foreground">
+                      {stageInfo.label}
+                    </h3>
+                  </div>
+                  <Badge variant="secondary" className="text-[11px] px-2 py-0.5">
+                    {stageLeads.length}
+                  </Badge>
+                </div>
+
+                {/* Cards List */}
+                <div className="mt-3 flex flex-1 flex-col gap-2.5 overflow-y-auto max-h-[700px] pr-1">
+                  {stageLeads.length === 0 ? (
+                    <div className="flex flex-1 items-center justify-center p-6 text-center text-xs text-muted-foreground/60 border border-dashed border-border/40 rounded-xl">
+                      No hostels in this stage
+                    </div>
+                  ) : (
+                    stageLeads.map((lead) => {
+                      const waLink = getWhatsAppLink(lead);
+                      const isHighPriority = lead.priority === "high" || lead.priority === "urgent";
+
+                      return (
+                        <div
+                          key={lead.id}
+                          onClick={() => handleOpenLead(lead)}
+                          className="group relative cursor-pointer rounded-xl border border-border/60 bg-white p-3.5 shadow-sm transition-all hover:border-primary/40 hover:shadow-md"
+                        >
+                          <div className="flex items-center justify-between gap-1">
+                            <span
+                              className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-medium ${
+                                lead.type === "Boys"
+                                  ? "bg-blue-50 text-blue-700"
+                                  : lead.type === "Girls"
+                                  ? "bg-purple-50 text-purple-700"
+                                  : "bg-emerald-50 text-emerald-700"
+                              }`}
+                            >
+                              <BedDouble size={10} className="mr-1" />
+                              {lead.type}
+                            </span>
+
+                            {isHighPriority && (
+                              <span className="inline-flex items-center rounded-md bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">
+                                <Flame size={10} className="mr-0.5 text-amber-500" />
+                                {lead.priority}
+                              </span>
+                            )}
+                          </div>
+
+                          <h4 className="mt-2 font-semibold text-sm leading-tight text-foreground group-hover:text-primary transition line-clamp-2">
+                            {lead.name}
+                          </h4>
+
+                          <div className="mt-2 space-y-1 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-1 truncate">
+                              <MapPin size={11} className="shrink-0 text-muted-foreground/80" />
+                              <span className="truncate">{lead.area_city || "Kathmandu"}</span>
+                            </div>
+
+                            {lead.rating && (
+                              <div className="flex items-center gap-1 font-medium text-amber-600">
+                                <Star size={11} className="fill-amber-400 text-amber-400" />
+                                <span>{lead.rating.toFixed(1)}</span>
+                                {lead.reviews_count && (
+                                  <span className="text-muted-foreground font-normal">
+                                    ({lead.reviews_count})
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+
+                          <div
+                            className="mt-3 flex items-center justify-between border-t border-border/40 pt-2"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <div className="flex items-center gap-1">
+                              {lead.phone && (
+                                <a
+                                  href={`tel:${lead.phone.split(",")[0].trim()}`}
+                                  className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-border/60 text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                                >
+                                  <Phone size={12} />
+                                </a>
+                              )}
+
+                              {waLink && (
+                                <a
+                                  href={waLink}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-border/60 text-muted-foreground hover:bg-emerald-500/10 hover:text-emerald-600"
+                                >
+                                  <MessageSquare size={12} />
+                                </a>
+                              )}
+                            </div>
+
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <button
+                                  type="button"
+                                  className="inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[11px] font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
+                                >
+                                  Update Stage
+                                  <ChevronRight size={12} />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-44">
+                                <DropdownMenuLabel className="text-xs">Move to stage</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                {pipelineStages.map((targetStage) => (
+                                  <DropdownMenuItem
+                                    key={targetStage}
+                                    disabled={targetStage === lead.status}
+                                    onClick={() => void handleStatusChange(lead.id, targetStage)}
+                                    className="text-xs"
+                                  >
+                                    {statusConfig[targetStage].label}
+                                  </DropdownMenuItem>
+                                ))}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Pagination Footer Controls (User asked for pagination!) */}
+      {viewMode !== "kanban" && filteredLeads.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl border border-border/60 bg-white/80 p-4 shadow-sm">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span>Rows per page:</span>
+            <Select
+              value={String(pageSize)}
+              onValueChange={(val) => {
+                setPageSize(Number(val));
+                setCurrentPage(1);
+              }}
+            >
+              <SelectTrigger className="h-8 w-16 text-xs bg-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="15">15</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <span className="ml-2">
+              Showing{" "}
+              <strong>
+                {(validCurrentPage - 1) * pageSize + 1}–
+                {Math.min(validCurrentPage * pageSize, filteredLeads.length)}
+              </strong>{" "}
+              of <strong>{filteredLeads.length}</strong> hostels
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={validCurrentPage <= 1}
+              onClick={() => setCurrentPage(1)}
+              className="h-8 w-8 p-0"
+              title="First Page"
+            >
+              <ChevronsLeft size={14} />
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={validCurrentPage <= 1}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              className="h-8 w-8 p-0"
+              title="Previous Page"
+            >
+              <ChevronLeft size={14} />
+            </Button>
+
+            <div className="px-3 text-xs font-semibold text-foreground">
+              Page {validCurrentPage} of {totalPages}
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={validCurrentPage >= totalPages}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              className="h-8 w-8 p-0"
+              title="Next Page"
+            >
+              <ChevronRight size={14} />
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={validCurrentPage >= totalPages}
+              onClick={() => setCurrentPage(totalPages)}
+              className="h-8 w-8 p-0"
+              title="Last Page"
+            >
+              <ChevronsRight size={14} />
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Selected Lead Profile Drawer */}
       <Sheet open={Boolean(selectedLead)} onOpenChange={(open) => !open && setSelectedLead(null)}>
         <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
@@ -1120,7 +1646,7 @@ const AdminHmsLeadsManager = () => {
               <SheetHeader>
                 <div className="flex items-center gap-2">
                   <span
-                    className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
+                    className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold ${
                       selectedLead.type === "Boys"
                         ? "bg-blue-50 text-blue-700"
                         : selectedLead.type === "Girls"
@@ -1133,7 +1659,7 @@ const AdminHmsLeadsManager = () => {
                   </span>
 
                   <span
-                    className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium ${
+                    className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-semibold ${
                       priorityConfig[selectedLead.priority as HmsLeadPriority]?.bg || ""
                     }`}
                   >
@@ -1161,7 +1687,7 @@ const AdminHmsLeadsManager = () => {
                   >
                     <a href={`tel:${selectedLead.phone.split(",")[0].trim()}`}>
                       <Phone size={15} />
-                      Call {selectedLead.phone.split(",")[0].trim()}
+                      Call Phone
                     </a>
                   </Button>
                 )}
@@ -1173,7 +1699,7 @@ const AdminHmsLeadsManager = () => {
                   >
                     <a href={getWhatsAppLink(selectedLead)!} target="_blank" rel="noopener noreferrer">
                       <MessageSquare size={15} />
-                      WhatsApp Demo Pitch
+                      WhatsApp Pitch
                     </a>
                   </Button>
                 )}
@@ -1196,7 +1722,7 @@ const AdminHmsLeadsManager = () => {
                     rel="noopener noreferrer"
                   >
                     <MapPin size={15} className="text-rose-500" />
-                    Open in Maps
+                    Google Maps
                   </a>
                 </Button>
               </div>
@@ -1204,12 +1730,12 @@ const AdminHmsLeadsManager = () => {
               {/* Status and Priority Selectors */}
               <div className="grid grid-cols-2 gap-4 rounded-xl border border-border/60 bg-secondary/40 p-4">
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground">Pipeline Stage</label>
+                  <label className="text-xs font-semibold text-muted-foreground">Pipeline Stage</label>
                   <Select
                     value={selectedLead.status}
                     onValueChange={(val) => void handleStatusChange(selectedLead.id, val as HmsLeadStatus)}
                   >
-                    <SelectTrigger className="mt-1 h-9 bg-white text-xs">
+                    <SelectTrigger className="mt-1 h-9 bg-white text-xs font-semibold">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1223,12 +1749,12 @@ const AdminHmsLeadsManager = () => {
                 </div>
 
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground">Priority Level</label>
+                  <label className="text-xs font-semibold text-muted-foreground">Priority Level</label>
                   <Select
                     value={selectedLead.priority}
                     onValueChange={(val) => void handlePriorityChange(selectedLead.id, val as HmsLeadPriority)}
                   >
-                    <SelectTrigger className="mt-1 h-9 bg-white text-xs">
+                    <SelectTrigger className="mt-1 h-9 bg-white text-xs font-semibold">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1250,34 +1776,34 @@ const AdminHmsLeadsManager = () => {
                 <div className="grid grid-cols-1 gap-2.5 text-xs sm:grid-cols-2">
                   <div>
                     <span className="text-muted-foreground">Contact Person:</span>
-                    <p className="font-medium text-foreground">{selectedLead.contact_person || "Not listed"}</p>
+                    <p className="font-semibold text-foreground">{selectedLead.contact_person || "Not listed"}</p>
                   </div>
 
                   <div>
                     <span className="text-muted-foreground">Phone Number(s):</span>
-                    <p className="font-medium text-foreground">{selectedLead.phone || "Not listed"}</p>
+                    <p className="font-semibold text-foreground">{selectedLead.phone || "Not listed"}</p>
                   </div>
 
                   <div>
                     <span className="text-muted-foreground">WhatsApp / Viber:</span>
-                    <p className="font-medium text-foreground">{selectedLead.whatsapp_viber || "Not listed"}</p>
+                    <p className="font-semibold text-foreground">{selectedLead.whatsapp_viber || "Not listed"}</p>
                   </div>
 
                   <div>
                     <span className="text-muted-foreground">Email:</span>
-                    <p className="font-medium text-foreground">{selectedLead.email || "Not listed"}</p>
+                    <p className="font-semibold text-foreground">{selectedLead.email || "Not listed"}</p>
                   </div>
 
                   <div>
                     <span className="text-muted-foreground">Google Rating:</span>
-                    <p className="font-medium text-amber-600">
+                    <p className="font-semibold text-amber-600">
                       {selectedLead.rating ? `★ ${selectedLead.rating.toFixed(1)} (${selectedLead.reviews_count || 0} reviews)` : "Not listed"}
                     </p>
                   </div>
 
                   <div>
                     <span className="text-muted-foreground">Capacity / Size:</span>
-                    <p className="font-medium text-foreground">{selectedLead.approximate_size || "Not listed"}</p>
+                    <p className="font-semibold text-foreground">{selectedLead.approximate_size || "Not listed"}</p>
                   </div>
                 </div>
 
@@ -1305,7 +1831,7 @@ const AdminHmsLeadsManager = () => {
                   value={notesDraft}
                   onChange={(e) => setNotesDraft(e.target.value)}
                   placeholder="Record call summary, warden/owner conversation, software requirements, scheduled demo details..."
-                  className="min-h-[120px] text-xs leading-relaxed"
+                  className="min-h-[120px] text-xs leading-relaxed bg-white"
                 />
                 <div className="flex items-center justify-between pt-1">
                   <Button

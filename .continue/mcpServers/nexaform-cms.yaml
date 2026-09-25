@@ -1,0 +1,11 @@
+name: Nexaform CMS
+version: 1.0.0
+schema: v1
+mcpServers:
+  - name: Nexaform CMS
+    command: node
+    args:
+      - g:/nexaform-design-system/mcp-server/dist/index.js
+    env:
+      SUPABASE_URL: "https://ljjlopuelwbwpwxtzhpa.supabase.co"
+      SUPABASE_SERVICE_ROLE_KEY: ""

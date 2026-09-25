@@ -12,7 +12,10 @@
     "preview": "vite preview",
     "seo:generate": "node scripts/generate-seo-assets.mjs",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "mcp:build": "npm --prefix mcp-server run build",
+    "mcp:start": "npm --prefix mcp-server start",
+    "mcp:dev": "npm --prefix mcp-server run dev"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

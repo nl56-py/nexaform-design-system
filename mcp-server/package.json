@@ -1,0 +1,39 @@
+{
+  "name": "nexaform-cms-mcp",
+  "version": "1.0.0",
+  "description": "Model Context Protocol (MCP) server for Nexaform CMS (Supabase)",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "nexaform-cms-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "start:remote": "node dist/remote.js",
+    "dev": "tsx src/index.ts",
+    "dev:remote": "tsx src/remote.ts"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "supabase",
+    "cms",
+    "ai",
+    "antigravity",
+    "claude"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "@supabase/supabase-js": "^2.49.1",
+    "dotenv": "^16.4.7",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

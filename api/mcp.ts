@@ -15,6 +15,7 @@ interface VercelResponse extends ServerResponse {
 
 function sanitizeUrl(url?: string): string {
   if (url && (url.startsWith("https://") || url.startsWith("http://"))) {
+    if (url.includes("nomalsddmrxdfnsajqaj")) return "";
     return url.trim();
   }
   return "";
@@ -22,6 +23,7 @@ function sanitizeUrl(url?: string): string {
 
 function sanitizeKey(key?: string): string {
   if (key && key.trim().length > 10) {
+    if (key.includes("nomalsddmrxdfnsajqaj")) return "";
     return key.trim();
   }
   return "";

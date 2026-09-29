@@ -88,16 +88,26 @@ export const buildWhatsAppMessage = (lead: LeadNames, kind: WhatsAppMessageKind)
     ? buildWhatsAppFollowUp(lead)
     : buildWhatsAppPitch(lead);
 
-/** The lead's WhatsApp number with country code, or null. Prefers the WhatsApp/Viber number over the main phone. */
-export const getWhatsAppNumber = (lead: Pick<HmsLeadRecord, "whatsapp_viber" | "phone">): string | null => {
-  const raw = lead.whatsapp_viber || lead.phone;
-  if (!raw) return null;
-  const digits = raw.replace(/\D/g, "");
-  if (!digits) return null;
-  if (digits.startsWith("977")) return digits;
-  if (digits.length === 10) return `977${digits}`;
-  return digits;
+/** Every Nepali mobile number in a field that may hold several ("+977 980-…, +977 1-4475161, …"), as 977XXXXXXXXXX. */
+export const parseMobileNumbers = (raw: string | null | undefined): string[] => {
+  if (!raw) return [];
+  const found: string[] = [];
+  for (const part of raw.split(/[,;/|\n]+/)) {
+    let digits = part.replace(/\D/g, "");
+    if (digits.startsWith("977")) digits = digits.slice(3);
+    if (digits.startsWith("0")) digits = digits.slice(1);
+    // Mobiles are 10 digits starting 97/98/96; landlines (01-…) cannot have WhatsApp.
+    if (/^9[678]\d{8}$/.test(digits) && !found.includes(`977${digits}`)) found.push(`977${digits}`);
+  }
+  return found;
 };
+
+/**
+ * The lead's WhatsApp number with country code, or null. Takes the first mobile number,
+ * preferring the WhatsApp/Viber field over the main phone; landline-only leads return null.
+ */
+export const getWhatsAppNumber = (lead: Pick<HmsLeadRecord, "whatsapp_viber" | "phone">): string | null =>
+  parseMobileNumbers(lead.whatsapp_viber)[0] ?? parseMobileNumbers(lead.phone)[0] ?? null;
 
 /**
  * Pre-filled WhatsApp link. Uses api.whatsapp.com/send rather than wa.me, because wa.me links
@@ -134,11 +144,26 @@ const byPriorityThenRating = (a: HmsLeadRecord, b: HmsLeadRecord) =>
   (b.rating ?? 0) - (a.rating ?? 0) ||
   a.name.localeCompare(b.name);
 
-/** New leads with a WhatsApp number that have never been messaged, most promising first. */
-export const getOutreachQueue = (leads: HmsLeadRecord[]): HmsLeadRecord[] =>
-  leads
+/**
+ * New leads with a WhatsApp number that have never been messaged, most promising first.
+ * A number shared by several leads (duplicate entries, or one owner with two hostels) is
+ * queued once, and never again once any lead with that number has been messaged.
+ */
+export const getOutreachQueue = (leads: HmsLeadRecord[]): HmsLeadRecord[] => {
+  const alreadyMessaged = new Set(
+    leads.filter((l) => l.last_contacted_at).map((l) => getWhatsAppNumber(l)).filter(Boolean)
+  );
+  const queued = new Set<string>();
+  return leads
     .filter((l) => l.status === "new" && !l.last_contacted_at && getWhatsAppNumber(l))
-    .sort(byPriorityThenRating);
+    .sort(byPriorityThenRating)
+    .filter((l) => {
+      const number = getWhatsAppNumber(l)!;
+      if (alreadyMessaged.has(number) || queued.has(number)) return false;
+      queued.add(number);
+      return true;
+    });
+};
 
 /**
  * Leads still at "Contacted" (no reply moved them further) whose last message is at least

@@ -10,6 +10,7 @@ import {
   getOutreachQueue,
   getWhatsAppNumber,
   nepalDayKey,
+  parseMobileNumbers,
 } from "@/lib/hms-whatsapp";
 
 const lead = (overrides: Partial<HmsLeadRecord>): HmsLeadRecord => ({
@@ -54,6 +55,29 @@ describe("hms-whatsapp", () => {
     expect(decodeURIComponent(link.split("text=")[1])).toContain("🙏");
   });
 
+  it("picks the first mobile from a field with several numbers and skips landlines", () => {
+    expect(parseMobileNumbers("+977 980-4915365, +977 986-0497181, +977 981-5653549")).toEqual([
+      "9779804915365",
+      "9779860497181",
+      "9779815653549",
+    ]);
+    expect(getWhatsAppNumber({ whatsapp_viber: null, phone: "+977 1-4110038, +977 981-3230542" })).toBe(
+      "9779813230542"
+    );
+    expect(getWhatsAppNumber({ whatsapp_viber: null, phone: "+977 1-4475161" })).toBeNull();
+    expect(getWhatsAppNumber({ whatsapp_viber: "01-5367530", phone: "9841000000" })).toBe("9779841000000");
+  });
+
+  it("queues a shared number once, and not at all once it has been messaged", () => {
+    const queue = getOutreachQueue([
+      lead({ name: "Dup A", whatsapp_viber: "9841748599", priority: "high" }),
+      lead({ name: "Dup B", whatsapp_viber: "+977 984-1748599" }),
+      lead({ name: "Owner's second hostel", whatsapp_viber: "9851144936" }),
+      lead({ name: "Owner's first hostel", status: "contacted", whatsapp_viber: "9851144936", last_contacted_at: "2026-09-28T00:00:00Z" }),
+    ]);
+    expect(queue.map((l) => l.name)).toEqual(["Dup A"]);
+  });
+
   it("counts today's sends in Nepal time", () => {
     // 20:00 UTC on the 28th is already 01:45 on the 29th in Nepal
     const now = new Date("2026-09-29T06:00:00Z");
@@ -68,8 +92,8 @@ describe("hms-whatsapp", () => {
 
   it("queues only never-messaged new leads with a number, highest priority first", () => {
     const queue = getOutreachQueue([
-      lead({ name: "Low", priority: "low" }),
-      lead({ name: "Urgent", priority: "urgent" }),
+      lead({ name: "Low", priority: "low", whatsapp_viber: "9841000001" }),
+      lead({ name: "Urgent", priority: "urgent", whatsapp_viber: "9841000002" }),
       lead({ name: "No number", whatsapp_viber: null, phone: null }),
       lead({ name: "Contacted", status: "contacted", last_contacted_at: "2026-09-20T00:00:00Z" }),
     ]);

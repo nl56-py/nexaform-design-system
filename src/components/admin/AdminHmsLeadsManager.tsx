@@ -570,7 +570,7 @@ const AdminHmsLeadsManager = () => {
       ? `977${digits}`
       : digits;
     const text = encodeURIComponent(buildWhatsAppPitch(lead));
-    return `https://wa.me/${phoneWithCountry}?text=${text}`;
+    return `https://api.whatsapp.com/send?phone=${phoneWithCountry}&text=${text}`;
   };
 
   // Open lead sheet

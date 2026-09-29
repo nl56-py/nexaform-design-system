@@ -167,6 +167,51 @@ const pipelineStages: HmsLeadStatus[] = [
   "converted",
 ];
 
+// WhatsApp outreach pitch (Nepali) for the hostel website offer.
+// Greets the contact person by name; falls back to "<hostel> परिवार", then to a plain greeting.
+const buildWhatsAppPitch = (lead: Pick<HmsLeadRecord, "name" | "contact_person">): string => {
+  const hostel = lead.name?.trim();
+  const contact = lead.contact_person?.trim();
+  const greeting = contact
+    ? `नमस्ते ${contact} जी 🙏`
+    : hostel
+    ? `नमस्ते ${hostel} परिवार 🙏`
+    : "नमस्ते 🙏";
+  const hostelRef = hostel || "तपाईंको होस्टल";
+
+  return [
+    greeting,
+    "",
+    `म NexaForm Technologies बाट सम्पर्क गर्दैछु। ${hostelRef} को सुविधा, सफाइ र सेवाबारे जानेर हामी साँच्चै प्रभावित भयौं, जुन निकै प्रशंसनीय छ! 👏`,
+    "",
+    "तर एउटा कुरा खट्कियो: तपाईंको होस्टलको आफ्नै वेबसाइट छैन, त्यसैले अनलाइनमा तपाईंको उपस्थिति शून्य छ। आजकल विद्यार्थी र अभिभावकले होस्टल खोज्दा सबैभन्दा पहिले Google वा AI (ChatGPT, Gemini) मा खोज्छन्। वेबसाइट नभएमा उनीहरूले तपाईंलाई भेट्टाउँदैनन् र अर्को होस्टलमा जान्छन्।",
+    "",
+    "हामी होस्टलका लागि विशेष रूपमा बनाइएको वेबसाइट दिन्छौं:",
+    "✅ Google र AI सर्चमा देखिने",
+    "✅ खाली बेडको लाइभ जानकारी",
+    "✅ अनलाइन बुकिङ र सोधपुछ फारम",
+    "✅ कोठाका प्रकार र शुल्क",
+    "✅ फोटो ग्यालरी",
+    "✅ साप्ताहिक खानाको मेनु",
+    "✅ सूचना र पपअप",
+    "✅ विद्यार्थीका समीक्षा, नियम र FAQ",
+    "✅ WhatsApp/कल बटन र Google Map",
+    "✅ मोबाइलमा राम्रोसँग चल्ने",
+    "✅ Admin Panel, जहाँबाट सबै कुरा आफैँ अपडेट गर्न सकिन्छ",
+    "",
+    "💰 मूल्य: *Rs. 10,000 मात्र* (एकपटक मात्र तिर्ने)",
+    "",
+    "🌐 डेमो हेर्नुहोस्: https://hostel.nexa-form.com",
+    "🔐 Admin Panel: https://hostel.nexa-form.com/admin",
+    "Email: hostelweb@nexa.com",
+    "Password: 12345678",
+    "",
+    "अरू होस्टलभन्दा अलग देखिन र धेरै विद्यार्थीसम्म पुग्न आजै सम्पर्क गर्नुहोस्।",
+    "📞 9868731607",
+    "– NexaForm Technologies",
+  ].join("\n");
+};
+
 const AdminHmsLeadsManager = () => {
   const queryClient = useQueryClient();
 
@@ -524,11 +569,7 @@ const AdminHmsLeadsManager = () => {
       : digits.length === 10
       ? `977${digits}`
       : digits;
-    const text = encodeURIComponent(
-      `Namaste! I'm reaching out from Nexaform regarding our modern Hostel Management System (HMS) tailored for hostels in ${
-        lead.area_city || "Kathmandu"
-      }. Would love to share a quick 5-min demo with ${lead.contact_person || "the hostel management"}.`
-    );
+    const text = encodeURIComponent(buildWhatsAppPitch(lead));
     return `https://wa.me/${phoneWithCountry}?text=${text}`;
   };
 

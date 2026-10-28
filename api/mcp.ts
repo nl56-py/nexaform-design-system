@@ -244,6 +244,55 @@ const TOOLS_DEFINITIONS = [
       },
     },
   },
+  {
+    name: "cms_list_hms_leads",
+    description: "List Hostel Management System (HMS) / CRM leads with filters for status, type, area, and search query.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        status: { type: "string", description: "Filter by status ('new', 'contacted', 'interested', 'demo_scheduled', 'converted')" },
+        type: { type: "string", description: "Filter by hostel type ('Boys', 'Girls', 'Co-ed')" },
+        area: { type: "string", description: "Filter by city or area (e.g. 'Baneshwor', 'Kathmandu')" },
+        limit: { type: "number", default: 50 },
+        search: { type: "string", description: "Search by hostel name, phone, or address" },
+      },
+    },
+  },
+  {
+    name: "cms_update_hms_lead_status",
+    description: "Update pipeline status, priority, and follow-up notes for an HMS CRM lead.",
+    inputSchema: {
+      type: "object",
+      required: ["id"],
+      properties: {
+        id: { type: "string", description: "UUID of the HMS lead" },
+        status: { type: "string", description: "New status ('new', 'contacted', 'interested', 'demo_scheduled', 'converted', 'archived')" },
+        priority: { type: "string", description: "Priority ('low', 'medium', 'high', 'urgent')" },
+        notes: { type: "string", description: "Internal notes or follow-up summary" },
+        follow_up_date: { type: "string", description: "ISO timestamp for next follow up" },
+      },
+    },
+  },
+  {
+    name: "cms_create_hms_lead",
+    description: "Create and register a new HMS hostel lead for CRM sales outreach.",
+    inputSchema: {
+      type: "object",
+      required: ["name", "area_city"],
+      properties: {
+        name: { type: "string", description: "Hostel name" },
+        type: { type: "string", enum: ["Boys", "Girls", "Co-ed"], default: "Boys" },
+        area_city: { type: "string", description: "Area or city (e.g. 'Old Baneshwor, Kathmandu')" },
+        address: { type: "string" },
+        phone: { type: "string" },
+        whatsapp_viber: { type: "string" },
+        email: { type: "string" },
+        contact_person: { type: "string" },
+        priority: { type: "string", enum: ["low", "medium", "high", "urgent"], default: "medium" },
+        notes: { type: "string" },
+      },
+    },
+  },
 ];
 
 async function executeTool(name: string, args: Record<string, any>) {
@@ -444,6 +493,59 @@ async function executeTool(name: string, args: Record<string, any>) {
       return { count: data?.length || 0, requests: data };
     }
 
+    case "cms_list_hms_leads": {
+      let q = supabase.from("hms_leads").select("*").order("created_at", { ascending: false });
+      if (args.status) q = q.eq("status", args.status);
+      if (args.type) q = q.eq("type", args.type);
+      if (args.area) q = q.ilike("area_city", `%${args.area}%`);
+      if (args.search) {
+        q = q.or(`name.ilike.%${args.search}%,address.ilike.%${args.search}%,phone.ilike.%${args.search}%`);
+      }
+      const { data, error } = await q.limit(args.limit || 50);
+      if (error) throw error;
+      return { count: data?.length || 0, leads: data };
+    }
+
+    case "cms_update_hms_lead_status": {
+      const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+      if (args.status) updates.status = args.status;
+      if (args.priority) updates.priority = args.priority;
+      if (args.notes !== undefined) updates.notes = args.notes;
+      if (args.follow_up_date !== undefined) updates.follow_up_date = args.follow_up_date;
+
+      const { data, error } = await withTimeout(
+        supabase.from("hms_leads").update(updates).eq("id", args.id).select().single(),
+        10000,
+        "Update HMS Lead"
+      );
+      if (error) throw error;
+      return { message: "HMS lead updated successfully", lead: data };
+    }
+
+    case "cms_create_hms_lead": {
+      const { data, error } = await withTimeout(
+        supabase.from("hms_leads").insert({
+          name: args.name,
+          type: args.type || "Boys",
+          area_city: args.area_city,
+          address: args.address || "",
+          phone: args.phone || "",
+          whatsapp_viber: args.whatsapp_viber || "",
+          email: args.email || "",
+          contact_person: args.contact_person || "",
+          priority: args.priority || "medium",
+          notes: args.notes || "",
+          status: "new",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }).select().single(),
+        10000,
+        "Create HMS Lead"
+      );
+      if (error) throw error;
+      return { message: "HMS lead created successfully", lead: data };
+    }
+
     default:
       throw new Error(`Unknown tool: ${name}`);
   }
@@ -552,8 +654,257 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
-  // GET: Health check & Schema Discovery
+  // GET: Health check, Browser Developer Portal & Schema Discovery
   if (req.method === "GET") {
+    const accept = req.headers.accept || "";
+    if (accept.includes("text/html") && !req.query.json) {
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      return res.status(200).send(`<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexaform Universal MCP Gateway | Enterprise AI Connector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdfa',
+              500: '#14b8a6',
+              600: '#0d9488',
+              900: '#134e4a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen selection:bg-teal-500 selection:text-black">
+  <div class="max-w-5xl mx-auto px-4 py-12">
+    <!-- Header -->
+    <header class="border-b border-slate-800 pb-8 mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+          <div class="h-8 w-8 rounded-lg bg-teal-500 flex items-center justify-center font-bold text-black text-lg">N</div>
+          <span class="text-xs uppercase tracking-widest font-mono text-teal-400 font-semibold">Nexaform Platform</span>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Live Gateway
+          </span>
+        </div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Universal MCP & AI Connector</h1>
+        <p class="text-slate-400 mt-1">Connect Claude, ChatGPT Web, Gemini, and Cursor directly to live ERP, CRM, and Supabase data.</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="/api/openapi" target="_blank" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-teal-400 border border-teal-500/30 rounded-lg text-sm font-mono flex items-center gap-2 transition">
+          <span>⚡ OpenAPI 3.1 Spec</span>
+        </a>
+        <a href="https://www.nexa-form.com" class="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold rounded-lg text-sm transition">
+          Nexaform Home
+        </a>
+      </div>
+    </header>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+        <div class="text-xs text-slate-400 font-mono">STATUS</div>
+        <div class="text-xl font-bold text-emerald-400 mt-1">ONLINE</div>
+      </div>
+      <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+        <div class="text-xs text-slate-400 font-mono">TOOLS ACTIVE</div>
+        <div class="text-xl font-bold text-white mt-1">${TOOLS_DEFINITIONS.length} Enterprise Tools</div>
+      </div>
+      <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+        <div class="text-xs text-slate-400 font-mono">PROTOCOL</div>
+        <div class="text-xl font-bold text-teal-400 mt-1">MCP 2.0 & OpenAPI</div>
+      </div>
+      <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+        <div class="text-xs text-slate-400 font-mono">SECURITY</div>
+        <div class="text-xl font-bold ${MCP_API_KEY ? 'text-amber-400' : 'text-cyan-400'} mt-1">${MCP_API_KEY ? 'API KEY REQUIRED' : 'OPEN DEMO MODE'}</div>
+      </div>
+    </div>
+
+    <!-- Connector Guides -->
+    <div class="grid md:grid-cols-3 gap-6 mb-12">
+      <!-- ChatGPT Web -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-2xl">🤖</span>
+            <h2 class="text-lg font-bold text-white">ChatGPT Web</h2>
+          </div>
+          <p class="text-xs text-slate-400 mb-4">Add to any Custom GPT Action in 10 seconds. Supports native Bearer key prompting.</p>
+          <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 font-mono text-xs text-teal-300 break-all select-all mb-4">
+            https://www.nexa-form.com/api/openapi
+          </div>
+        </div>
+        <div class="text-xs text-slate-400 font-sans">
+          ✓ In GPT Actions → Click <strong>Import from URL</strong><br>
+          ✓ Auth Type: <strong>Bearer Token</strong>
+        </div>
+      </div>
+
+      <!-- Claude Desktop & Web -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-2xl">🧠</span>
+            <h2 class="text-lg font-bold text-white">Claude Desktop / Web</h2>
+          </div>
+          <p class="text-xs text-slate-400 mb-4">Connect Claude directly to the Supabase database and ERP records.</p>
+          <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 font-mono text-xs text-teal-300 break-all select-all mb-4">
+            https://www.nexa-form.com/api/mcp
+          </div>
+        </div>
+        <div class="text-xs text-slate-400 font-sans">
+          ✓ Configured via <code>claude_desktop_config.json</code><br>
+          ✓ Prompts for security key in chat
+        </div>
+      </div>
+
+      <!-- Cursor & Antigravity IDE -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-2xl">⚡</span>
+            <h2 class="text-lg font-bold text-white">Cursor & Gemini</h2>
+          </div>
+          <p class="text-xs text-slate-400 mb-4">Real-time code & CRM querying in Cursor, Gemini, and Continue.</p>
+          <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 font-mono text-xs text-teal-300 break-all select-all mb-4">
+            Bearer YOUR_MCP_API_KEY
+          </div>
+        </div>
+        <div class="text-xs text-slate-400 font-sans">
+          ✓ Settings → Features → MCP<br>
+          ✓ Full schema validation with Zod
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive Live Tester -->
+    <div class="bg-slate-900/90 border border-teal-500/30 rounded-2xl p-6 mb-12 shadow-2xl shadow-teal-500/5">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <span>🧪</span> Live In-Browser MCP Tool Tester
+        </h2>
+        <span class="text-xs font-mono text-teal-400">Direct Gateway Execution</span>
+      </div>
+      <p class="text-xs text-slate-400 mb-6">Test any ERP or CRM tool right now. If authorization is enabled, supply your key in the header input.</p>
+
+      <div class="grid md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-xs font-mono text-slate-400 mb-1">SELECT TOOL</label>
+          <select id="toolSelect" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal-500 font-mono">
+            ${TOOLS_DEFINITIONS.map(t => `<option value="${t.name}">${t.name} — ${t.description.slice(0, 45)}...</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-mono text-slate-400 mb-1">SECURITY KEY (OPTIONAL IN DEMO)</label>
+          <input id="apiKeyInput" type="password" placeholder="Enter MCP_API_KEY or Bearer token" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-teal-500 font-mono">
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-xs font-mono text-slate-400 mb-1">TOOL ARGUMENTS (JSON)</label>
+        <textarea id="argsInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-teal-300 font-mono focus:outline-none focus:border-teal-500">{"limit": 3}</textarea>
+      </div>
+
+      <button id="runBtn" onclick="runToolTest()" class="px-6 py-2.5 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold rounded-lg text-sm transition flex items-center gap-2">
+        <span>▶ Execute Tool Call</span>
+      </button>
+
+      <div id="resultBox" class="mt-4 hidden">
+        <label class="block text-xs font-mono text-slate-400 mb-1">GATEWAY RESPONSE</label>
+        <pre id="resultOutput" class="bg-slate-950 border border-slate-800 p-4 rounded-lg text-xs font-mono text-emerald-400 overflow-x-auto max-h-72"></pre>
+      </div>
+    </div>
+
+    <!-- Active Tools Table -->
+    <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+      <h2 class="text-xl font-bold text-white mb-4">Registered Tools Catalog (${TOOLS_DEFINITIONS.length})</h2>
+      <div class="divide-y divide-slate-800">
+        ${TOOLS_DEFINITIONS.map(t => `
+          <div class="py-3 flex flex-col md:flex-row md:items-center justify-between gap-2">
+            <div>
+              <span class="font-mono text-sm font-semibold text-teal-400">${t.name}</span>
+              <p class="text-xs text-slate-400 mt-0.5">${t.description}</p>
+            </div>
+            <span class="text-xs font-mono px-2 py-1 bg-slate-950 rounded border border-slate-800 text-slate-400 self-start md:self-auto">JSON-RPC / REST</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <footer class="mt-12 pt-6 border-t border-slate-800 text-center text-xs text-slate-400 font-mono">
+      Nexaform Design System & Enterprise AI Gateway • Powered by Model Context Protocol (MCP)
+    </footer>
+  </div>
+
+  <script>
+    async function runToolTest() {
+      const btn = document.getElementById('runBtn');
+      const tool = document.getElementById('toolSelect').value;
+      const key = document.getElementById('apiKeyInput').value.trim();
+      const rawArgs = document.getElementById('argsInput').value.trim();
+      const resultBox = document.getElementById('resultBox');
+      const resultOutput = document.getElementById('resultOutput');
+
+      let parsedArgs = {};
+      try {
+        if (rawArgs) parsedArgs = JSON.parse(rawArgs);
+      } catch (err) {
+        alert('Invalid JSON in arguments: ' + err.message);
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = 'Calling Gateway...';
+      resultBox.classList.remove('hidden');
+      resultOutput.innerText = 'Sending request to https://www.nexa-form.com/api/mcp ...';
+
+      const headers = { 'Content-Type': 'application/json' };
+      if (key) headers['Authorization'] = key.startsWith('Bearer ') ? key : 'Bearer ' + key;
+
+      try {
+        const res = await fetch('/api/mcp', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: Date.now(),
+            method: 'tools/call',
+            params: { name: tool, arguments: parsedArgs }
+          })
+        });
+
+        const data = await res.json();
+        resultOutput.innerText = JSON.stringify(data, null, 2);
+      } catch (err) {
+        resultOutput.innerText = 'Error: ' + err.message;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>▶ Execute Tool Call</span>';
+      }
+    }
+  </script>
+</body>
+</html>`);
+    }
+
     return res.status(200).json({
       status: "online",
       server: "nexaform-cms-vercel",
@@ -562,8 +913,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       toolsCount: TOOLS_DEFINITIONS.length,
       tools: TOOLS_DEFINITIONS,
       connectors: {
-        openApiSpec: "https://www.nexa-form.com/api/mcp?format=openapi",
-        claudeConfigSnippet: "node mcp-server/dist/index.js",
+        openApiSpec: "https://www.nexa-form.com/api/openapi",
+        mcpEndpoint: "https://www.nexa-form.com/api/mcp",
+        claudeDesktopConfig: "node mcp-server/dist/index.js",
       },
     });
   }

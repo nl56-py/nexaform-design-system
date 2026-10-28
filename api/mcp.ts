@@ -459,13 +459,96 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(204).end();
   }
 
+  // OpenAPI Specification endpoint for ChatGPT Custom GPT Actions, Gemini & Connectors
+  if (req.method === "GET" && (req.query.format === "openapi" || req.query.spec === "openapi")) {
+    const paths: Record<string, any> = {};
+
+    for (const tool of TOOLS_DEFINITIONS) {
+      paths[`/mcp?tool=${tool.name}`] = {
+        post: {
+          operationId: tool.name,
+          summary: tool.description,
+          description: tool.description,
+          security: [{ BearerAuth: [] }],
+          requestBody: {
+            required: false,
+            content: {
+              "application/json": {
+                schema: tool.inputSchema,
+              },
+            },
+          },
+          responses: {
+            "200": {
+              description: "Tool execution result",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      success: { type: "boolean" },
+                      result: { type: "object" },
+                    },
+                  },
+                },
+              },
+            },
+            "401": {
+              description: "Unauthorized: MCP API key required",
+            },
+          },
+        },
+      };
+    }
+
+    return res.status(200).json({
+      openapi: "3.1.0",
+      info: {
+        title: "Nexaform ERP & CRM MCP Gateway",
+        version: "1.0.0",
+        description: "Connect ChatGPT, Gemini, or Claude to live Nexaform ERP, CRM, and Supabase data with conversational prompts.",
+      },
+      servers: [
+        {
+          url: "https://www.nexa-form.com/api",
+          description: "Live Nexaform MCP Production Gateway",
+        },
+      ],
+      components: {
+        securitySchemes: {
+          BearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
+            description: "Enter your Nexaform MCP API Key to authenticate.",
+          },
+        },
+      },
+      security: [{ BearerAuth: [] }],
+      paths,
+    });
+  }
+
   // Auth check
   if (MCP_API_KEY) {
     const authHeader = req.headers.authorization || "";
     const token = authHeader.replace(/^Bearer\s+/i, "").trim();
     const queryToken = (req.query.apiKey as string) || "";
     if (token !== MCP_API_KEY && queryToken !== MCP_API_KEY) {
-      return res.status(401).json({ error: "Unauthorized: Invalid or missing MCP API key" });
+      res.setHeader(
+        "WWW-Authenticate",
+        'Bearer realm="Nexaform ERP MCP", error="invalid_token", error_description="Please provide your Nexaform MCP API key"'
+      );
+      return res.status(401).json({
+        jsonrpc: "2.0",
+        id: (req.body && req.body.id) || null,
+        error: {
+          code: -32000,
+          message: "Authentication required: Please enter your Nexaform Security Key to access ERP/CRM tools.",
+        },
+        prompt: "To connect, please provide your Nexaform MCP API Key via Authorization Bearer header or ?apiKey= query parameter.",
+        requiresKey: true,
+      });
     }
   }
 
@@ -475,8 +558,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       status: "online",
       server: "nexaform-cms-vercel",
       protocol: "mcp-jsonrpc-2.0",
+      authRequired: Boolean(MCP_API_KEY),
       toolsCount: TOOLS_DEFINITIONS.length,
       tools: TOOLS_DEFINITIONS,
+      connectors: {
+        openApiSpec: "https://www.nexa-form.com/api/mcp?format=openapi",
+        claudeConfigSnippet: "node mcp-server/dist/index.js",
+      },
     });
   }
 
@@ -578,10 +666,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
       }
 
-      // Fallback for simple direct action POST { action: "create_blog", ... }
-      if (body.action || body.tool) {
-        const toolName = body.action || body.tool;
-        const result = await executeTool(toolName, body.params || body.arguments || body);
+      // Fallback for simple direct action POST { action: "create_blog", ... } or /mcp?tool=...
+      const directTool = body.action || body.tool || (req.query.tool as string);
+      if (directTool) {
+        const result = await executeTool(directTool, body.params || body.arguments || body);
         return res.status(200).json({ success: true, result });
       }
 

@@ -293,6 +293,28 @@ const TOOLS_DEFINITIONS = [
       },
     },
   },
+  {
+    name: "cms_batch_execute",
+    description: "Execute multiple ERP/CRM tasks sequentially in a single command with automatic approval. Runs chained actions back-to-back.",
+    inputSchema: {
+      type: "object",
+      required: ["tasks"],
+      properties: {
+        tasks: {
+          type: "array",
+          description: "Ordered list of tools and arguments to execute",
+          items: {
+            type: "object",
+            required: ["tool"],
+            properties: {
+              tool: { type: "string", description: "Name of the tool to execute" },
+              arguments: { type: "object", description: "Parameters for the tool" },
+            },
+          },
+        },
+      },
+    },
+  },
 ];
 
 async function executeTool(name: string, args: Record<string, any>) {
@@ -544,6 +566,36 @@ async function executeTool(name: string, args: Record<string, any>) {
       );
       if (error) throw error;
       return { message: "HMS lead created successfully", lead: data };
+    }
+
+    case "cms_batch_execute": {
+      const tasks = Array.isArray(args.tasks) ? args.tasks : [];
+      const results: Array<Record<string, any>> = [];
+
+      for (let i = 0; i < tasks.length; i++) {
+        const task = tasks[i];
+        const toolName = task.tool || task.action;
+        const toolArgs = task.arguments || task.params || {};
+
+        if (!toolName) {
+          results.push({ step: i + 1, success: false, error: "Missing tool name in task" });
+          continue;
+        }
+
+        try {
+          const res = await executeTool(toolName, toolArgs);
+          results.push({ step: i + 1, tool: toolName, success: true, result: res });
+        } catch (err: any) {
+          results.push({ step: i + 1, tool: toolName, success: false, error: err.message || String(err) });
+        }
+      }
+
+      return {
+        message: `Executed ${results.length} tasks in single command`,
+        total: results.length,
+        successful: results.filter((r) => r.success).length,
+        tasks: results,
+      };
     }
 
     default:
